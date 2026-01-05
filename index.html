@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Samaflux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,6 +11,7 @@
 <div id="landing" class="page active">
   <h1>Welcome to Samaflux</h1>
   <p>Send • Receive • Withdraw money securely</p>
+
   <button onclick="show('login')">Login</button>
   <button onclick="show('register')">Register</button>
 </div>
@@ -19,19 +19,23 @@
 <!-- LOGIN -->
 <div id="login" class="page">
   <h2>Login</h2>
+
   <input id="email" placeholder="Email" />
   <input id="password" type="password" placeholder="Password" />
+
   <button onclick="login()">Login</button>
-  <p onclick="show('landing')">← Back</p>
+  <p class="link" onclick="show('landing')">← Back</p>
 </div>
 
 <!-- REGISTER -->
 <div id="register" class="page">
   <h2>Register</h2>
+
   <input id="regEmail" placeholder="Email" />
   <input id="regPassword" type="password" placeholder="Password" />
+
   <button onclick="register()">Create Account</button>
-  <p onclick="show('landing')">← Back</p>
+  <p class="link" onclick="show('landing')">← Back</p>
 </div>
 
 <!-- DASHBOARD -->
@@ -40,26 +44,23 @@
 
   <h3>Send Money</h3>
   <input id="toEmail" placeholder="Recipient Email" />
-  <input id="amountSend" placeholder="Amount" />
+  <input id="amountSend" type="number" placeholder="Amount" />
   <button onclick="sendMoney()">Send</button>
 
   <h3>Add Money</h3>
-  <input id="amountAdd" placeholder="Amount" />
+  <input id="amountAdd" type="number" placeholder="Amount" />
   <button onclick="addMoney()">Add Funds</button>
 
   <h3>Withdraw</h3>
-  <input id="amountWithdraw" placeholder="Amount" />
+  <input id="amountWithdraw" type="number" placeholder="Amount" />
   <input id="bank" placeholder="Bank Code" />
   <input id="account" placeholder="Account Number" />
   <button onclick="withdraw()">Withdraw</button>
 
-  <h3>History</h3>
-  <button onclick="loadHistory()">Load</button>
-  <ul id="historyList"></ul>
-
   <p id="msg"></p>
+  <p class="link" onclick="show('landing')">Logout</p>
 </div>
 
-<script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
