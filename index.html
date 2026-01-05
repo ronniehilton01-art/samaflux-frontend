@@ -1,252 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SamaFlux Wallet</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f7fa;
-  margin: 0;
-}
-header {
-  background: #003087;
-  color: white;
-  padding: 15px;
-  text-align: center;
-}
-.container {
-  max-width: 420px;
-  margin: 20px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,.1);
-}
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-}
-button {
-  background: #003087;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-button:hover {
-  background: #001f5f;
-}
-.page {
-  display: none;
-}
-.page.active {
-  display: block;
-}
-#msg {
-  margin-top: 10px;
-  color: red;
-}
-#balance {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-ul {
-  padding-left: 20px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Samaflux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<header>
-  <h2>SamaFlux Wallet</h2>
-</header>
-
-<div class="container">
+<!-- LANDING -->
+<div id="landing" class="page active">
+  <h1>Welcome to Samaflux</h1>
+  <p>Send • Receive • Withdraw money securely</p>
+  <button onclick="show('login')">Login</button>
+  <button onclick="show('register')">Register</button>
+</div>
 
 <!-- LOGIN -->
-<div class="page active" id="loginPage">
-  <h3>Login</h3>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
+<div id="login" class="page">
+  <h2>Login</h2>
+  <input id="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
   <button onclick="login()">Login</button>
-  <p><a href="#" onclick="show('registerPage')">Create account</a></p>
+  <p onclick="show('landing')">← Back</p>
 </div>
 
 <!-- REGISTER -->
-<div class="page" id="registerPage">
-  <h3>Register</h3>
-  <input id="regEmail" placeholder="Email">
-  <input id="regPassword" type="password" placeholder="Password">
-  <button onclick="register()">Register</button>
-  <p><a href="#" onclick="show('loginPage')">Back to login</a></p>
+<div id="register" class="page">
+  <h2>Register</h2>
+  <input id="regEmail" placeholder="Email" />
+  <input id="regPassword" type="password" placeholder="Password" />
+  <button onclick="register()">Create Account</button>
+  <p onclick="show('landing')">← Back</p>
 </div>
 
 <!-- DASHBOARD -->
-<div class="page" id="dashboard">
-  <div id="balance">Balance: ₦0</div>
+<div id="dashboard" class="page">
+  <h2 id="balance">Balance: ₦0</h2>
 
-  <h4>Send Money</h4>
-  <input id="toEmail" placeholder="Recipient Email">
-  <input id="amountSend" type="number" placeholder="Amount">
+  <h3>Send Money</h3>
+  <input id="toEmail" placeholder="Recipient Email" />
+  <input id="amountSend" placeholder="Amount" />
   <button onclick="sendMoney()">Send</button>
 
-  <h4>Add Money</h4>
-  <input id="amountAdd" type="number" placeholder="Amount">
+  <h3>Add Money</h3>
+  <input id="amountAdd" placeholder="Amount" />
   <button onclick="addMoney()">Add Funds</button>
 
-  <h4>Withdraw</h4>
-  <input id="bank" placeholder="Bank Code">
-  <input id="account" placeholder="Account Number">
-  <input id="amountWithdraw" type="number" placeholder="Amount">
+  <h3>Withdraw</h3>
+  <input id="amountWithdraw" placeholder="Amount" />
+  <input id="bank" placeholder="Bank Code" />
+  <input id="account" placeholder="Account Number" />
   <button onclick="withdraw()">Withdraw</button>
 
-  <h4>Transactions</h4>
-  <button onclick="loadHistory()">Load History</button>
+  <h3>History</h3>
+  <button onclick="loadHistory()">Load</button>
   <ul id="historyList"></ul>
 
-  <h4>Refund</h4>
-  <input id="txid" placeholder="Transaction ID">
-  <input id="reason" placeholder="Reason">
-  <button onclick="requestRefund()">Request Refund</button>
-
-  <button style="background:#999" onclick="logout()">Logout</button>
+  <p id="msg"></p>
 </div>
 
-<div id="msg"></div>
-
-</div>
-
-<script>
-const API = "https://samaflux-backend.onrender.com";
-let currentEmail = "";
-
-// DOM
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const regEmail = document.getElementById("regEmail");
-const regPassword = document.getElementById("regPassword");
-const balance = document.getElementById("balance");
-const msg = document.getElementById("msg");
-const toEmail = document.getElementById("toEmail");
-const amountSend = document.getElementById("amountSend");
-const amountAdd = document.getElementById("amountAdd");
-const amountWithdraw = document.getElementById("amountWithdraw");
-const bank = document.getElementById("bank");
-const account = document.getElementById("account");
-const historyList = document.getElementById("historyList");
-const txid = document.getElementById("txid");
-const reason = document.getElementById("reason");
-
-function show(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  msg.innerText = "";
-}
-
-function register() {
-  fetch(API + "/auth/register", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      email: regEmail.value,
-      password: regPassword.value
-    })
-  }).then(r=>r.json()).then(d=>{
-    msg.innerText = d.message || d.error;
-    if(d.message) show("loginPage");
-  });
-}
-
-function login() {
-  fetch(API + "/auth/login", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      email: email.value,
-      password: password.value
-    })
-  }).then(r=>r.json()).then(d=>{
-    if(d.email){
-      currentEmail = d.email;
-      balance.innerText = "Balance: ₦" + d.balance;
-      show("dashboard");
-    } else {
-      msg.innerText = d.error;
-    }
-  });
-}
-
-function sendMoney() {
-  fetch(API + "/wallet/send", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      fromEmail: currentEmail,
-      toEmail: toEmail.value,
-      amount: Number(amountSend.value)
-    })
-  }).then(r=>r.json()).then(d=>msg.innerText=d.message||d.error);
-}
-
-function addMoney() {
-  fetch(API + "/wallet/add/init", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      email: currentEmail,
-      amount: amountAdd.value
-    })
-  }).then(r=>r.json()).then(d=>{
-    if(d.data) window.location = d.data.authorization_url;
-  });
-}
-
-function withdraw() {
-  fetch(API + "/wallet/withdraw", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      email: currentEmail,
-      amount: amountWithdraw.value,
-      bank_code: bank.value,
-      account_number: account.value
-    })
-  }).then(r=>r.json()).then(d=>msg.innerText=d.message||d.error);
-}
-
-function loadHistory() {
-  fetch(API + "/wallet/history/" + currentEmail)
-    .then(r=>r.json())
-    .then(data=>{
-      historyList.innerHTML="";
-      data.forEach(t=>{
-        const li=document.createElement("li");
-        li.innerText=`${t.type} ₦${t.amount}`;
-        historyList.appendChild(li);
-      });
-    });
-}
-
-function requestRefund() {
-  fetch(API + "/wallet/refund/request", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      transactionId: txid.value,
-      reason: reason.value
-    })
-  }).then(r=>r.json()).then(d=>msg.innerText=d.message||d.error);
-}
-
-function logout(){
-  currentEmail="";
-  show("loginPage");
-}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
