@@ -1,0 +1,124 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* BODY */
+body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* APP LAYOUT */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: #0b1f3a;
+  color: #fff;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+}
+
+.sidebar a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* MAIN CONTENT */
+.content {
+  flex: 1;
+  width: 100%;
+  background: #ffffff;
+}
+
+/* HERO (PAYPAL STYLE FULL WIDTH) */
+.hero {
+  width: 100%;
+  min-height: 70vh;
+  padding: 80px 60px;
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0.45)
+    ),
+    url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f")
+      center / cover no-repeat;
+  color: #ffffff;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 18px;
+  max-width: 600px;
+}
+
+/* FORM SECTION */
+.section {
+  padding: 40px 60px;
+}
+
+.section h2 {
+  margin-bottom: 20px;
+}
+
+/* INPUTS */
+input,
+select,
+button {
+  width: 100%;
+  max-width: 420px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+button {
+  background: #0070ba;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #005ea6;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .hero {
+    padding: 50px 25px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+}

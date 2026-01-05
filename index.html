@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Samaflux</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #222;
+    }
+
+    header {
+      width: 100%;
+      background: #ffffff;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #0070ba;
+    }
+
+    .nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .hero {
+      width: 100%;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: linear-gradient(to right, #0070ba, #009cde);
+      color: #fff;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .hero-text {
+      max-width: 600px;
+    }
+
+    .hero-text h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .hero-text p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .hero-text button {
+      padding: 14px 28px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      background: #ffffff;
+      color: #0070ba;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hero-image {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-image img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      background: #ffffff;
+      color: #666;
+    }
+
+    @media (max-width: 900px) {
+      .hero-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Samaflux</div>
+    <nav class="nav">
+      <a href="#">Personal</a>
+      <a href="#">Business</a>
+      <a href="#">Login</a>
+      <a href="#">Sign Up</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Fast, Secure Payments with Samaflux</h1>
+        <p>
+          Send and receive money globally with confidence.
+          Samaflux protects your transactions and gives you
+          full control over your finances.
+        </p>
+        <button>Learn More</button>
+      </div>
+
+      <div class="hero-image">
+        <img src="https://www.paypalobjects.com/marketing/web/us/en/home/hero-device.png" alt="Payments">
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Samaflux. All rights reserved.
+  </footer>
+
+</body>
+</html>

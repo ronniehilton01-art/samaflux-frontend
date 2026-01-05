@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Samaflux Admin</title>
+</head>
+<body>
+
+<h2>Admin Dashboard</h2>
+<button onclick="loadUsers()">Users</button>
+<button onclick="loadTxs()">Transactions</button>
+
+<pre id="out"></pre>
+
+<script>
+const API = "/samaflux/backend/admin";
+const KEY = "supersecretadmin123";
+
+function loadUsers() {
+  fetch(API + "/users", { headers: { "x-admin-key": KEY } })
+    .then(r => r.json())
+    .then(d => out.textContent = JSON.stringify(d, null, 2));
+}
+
+function loadTxs() {
+  fetch(API + "/transactions", { headers: { "x-admin-key": KEY } })
+    .then(r => r.json())
+    .then(d => out.textContent = JSON.stringify(d, null, 2));
+}
+</script>
+
+</body>
+</html>
