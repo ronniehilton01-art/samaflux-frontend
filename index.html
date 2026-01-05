@@ -1,151 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Samaflux</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SamaFlux Wallet</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body {
-      background: #f5f7fa;
-      color: #222;
-    }
-
-    header {
-      width: 100%;
-      background: #ffffff;
-      padding: 16px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: bold;
-      color: #0070ba;
-    }
-
-    .nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .hero {
-      width: 100%;
-      min-height: 80vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      background: linear-gradient(to right, #0070ba, #009cde);
-      color: #fff;
-    }
-
-    .hero-content {
-      max-width: 1200px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-    }
-
-    .hero-text {
-      max-width: 600px;
-    }
-
-    .hero-text h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
-
-    .hero-text p {
-      font-size: 18px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-    }
-
-    .hero-text button {
-      padding: 14px 28px;
-      font-size: 16px;
-      border: none;
-      border-radius: 25px;
-      background: #ffffff;
-      color: #0070ba;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .hero-image {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-
-    .hero-image img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    footer {
-      padding: 20px;
-      text-align: center;
-      background: #ffffff;
-      color: #666;
-    }
-
-    @media (max-width: 900px) {
-      .hero-content {
-        flex-direction: column;
-        text-align: center;
-      }
-    }
-  </style>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+}
+header {
+  background: #003087;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+.container {
+  max-width: 420px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+}
+button {
+  background: #003087;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background: #001f5f;
+}
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
+#msg {
+  margin-top: 10px;
+  color: red;
+}
+#balance {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+ul {
+  padding-left: 20px;
+}
+</style>
 </head>
+
 <body>
 
-  <header>
-    <div class="logo">Samaflux</div>
-    <nav class="nav">
-      <a href="#">Personal</a>
-      <a href="#">Business</a>
-      <a href="#">Login</a>
-      <a href="#">Sign Up</a>
-    </nav>
-  </header>
+<header>
+  <h2>SamaFlux Wallet</h2>
+</header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1>Fast, Secure Payments with Samaflux</h1>
-        <p>
-          Send and receive money globally with confidence.
-          Samaflux protects your transactions and gives you
-          full control over your finances.
-        </p>
-        <button>Learn More</button>
-      </div>
+<div class="container">
 
-      <div class="hero-image">
-        <img src="https://www.paypalobjects.com/marketing/web/us/en/home/hero-device.png" alt="Payments">
-      </div>
-    </div>
-  </section>
+<!-- LOGIN -->
+<div class="page active" id="loginPage">
+  <h3>Login</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p><a href="#" onclick="show('registerPage')">Create account</a></p>
+</div>
 
-  <footer>
-    © 2025 Samaflux. All rights reserved.
-  </footer>
+<!-- REGISTER -->
+<div class="page" id="registerPage">
+  <h3>Register</h3>
+  <input id="regEmail" placeholder="Email">
+  <input id="regPassword" type="password" placeholder="Password">
+  <button onclick="register()">Register</button>
+  <p><a href="#" onclick="show('loginPage')">Back to login</a></p>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashboard">
+  <div id="balance">Balance: ₦0</div>
+
+  <h4>Send Money</h4>
+  <input id="toEmail" placeholder="Recipient Email">
+  <input id="amountSend" type="number" placeholder="Amount">
+  <button onclick="sendMoney()">Send</button>
+
+  <h4>Add Money</h4>
+  <input id="amountAdd" type="number" placeholder="Amount">
+  <button onclick="addMoney()">Add Funds</button>
+
+  <h4>Withdraw</h4>
+  <input id="bank" placeholder="Bank Code">
+  <input id="account" placeholder="Account Number">
+  <input id="amountWithdraw" type="number" placeholder="Amount">
+  <button onclick="withdraw()">Withdraw</button>
+
+  <h4>Transactions</h4>
+  <button onclick="loadHistory()">Load History</button>
+  <ul id="historyList"></ul>
+
+  <h4>Refund</h4>
+  <input id="txid" placeholder="Transaction ID">
+  <input id="reason" placeholder="Reason">
+  <button onclick="requestRefund()">Request Refund</button>
+
+  <button style="background:#999" onclick="logout()">Logout</button>
+</div>
+
+<div id="msg"></div>
+
+</div>
+
+<script>
+const API = "https://samaflux-backend.onrender.com";
+let currentEmail = "";
+
+// DOM
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const regEmail = document.getElementById("regEmail");
+const regPassword = document.getElementById("regPassword");
+const balance = document.getElementById("balance");
+const msg = document.getElementById("msg");
+const toEmail = document.getElementById("toEmail");
+const amountSend = document.getElementById("amountSend");
+const amountAdd = document.getElementById("amountAdd");
+const amountWithdraw = document.getElementById("amountWithdraw");
+const bank = document.getElementById("bank");
+const account = document.getElementById("account");
+const historyList = document.getElementById("historyList");
+const txid = document.getElementById("txid");
+const reason = document.getElementById("reason");
+
+function show(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  msg.innerText = "";
+}
+
+function register() {
+  fetch(API + "/auth/register", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: regEmail.value,
+      password: regPassword.value
+    })
+  }).then(r=>r.json()).then(d=>{
+    msg.innerText = d.message || d.error;
+    if(d.message) show("loginPage");
+  });
+}
+
+function login() {
+  fetch(API + "/auth/login", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  }).then(r=>r.json()).then(d=>{
+    if(d.email){
+      currentEmail = d.email;
+      balance.innerText = "Balance: ₦" + d.balance;
+      show("dashboard");
+    } else {
+      msg.innerText = d.error;
+    }
+  });
+}
+
+function sendMoney() {
+  fetch(API + "/wallet/send", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      fromEmail: currentEmail,
+      toEmail: toEmail.value,
+      amount: Number(amountSend.value)
+    })
+  }).then(r=>r.json()).then(d=>msg.innerText=d.message||d.error);
+}
+
+function addMoney() {
+  fetch(API + "/wallet/add/init", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: currentEmail,
+      amount: amountAdd.value
+    })
+  }).then(r=>r.json()).then(d=>{
+    if(d.data) window.location = d.data.authorization_url;
+  });
+}
+
+function withdraw() {
+  fetch(API + "/wallet/withdraw", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: currentEmail,
+      amount: amountWithdraw.value,
+      bank_code: bank.value,
+      account_number: account.value
+    })
+  }).then(r=>r.json()).then(d=>msg.innerText=d.message||d.error);
+}
+
+function loadHistory() {
+  fetch(API + "/wallet/history/" + currentEmail)
+    .then(r=>r.json())
+    .then(data=>{
+      historyList.innerHTML="";
+      data.forEach(t=>{
+        const li=document.createElement("li");
+        li.innerText=`${t.type} ₦${t.amount}`;
+        historyList.appendChild(li);
+      });
+    });
+}
+
+function requestRefund() {
+  fetch(API + "/wallet/refund/request", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      transactionId: txid.value,
+      reason: reason.value
+    })
+  }).then(r=>r.json()).then(d=>msg.innerText=d.message||d.error);
+}
+
+function logout(){
+  currentEmail="";
+  show("loginPage");
+}
+</script>
 
 </body>
 </html>
