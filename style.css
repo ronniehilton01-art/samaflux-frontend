@@ -1,46 +1,51 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  text-align: center;
-  padding: 40px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  background: #f5f7fa;
 }
 
 .page {
-  display: none;
-  max-width: 400px;
-  margin: auto;
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 420px;
+  margin: 40px auto;
 }
 
-.page.active {
-  display: block;
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.balance {
+  font-size: 32px;
+  font-weight: bold;
+  color: #003087;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 button {
   width: 100%;
+  margin-top: 15px;
   padding: 12px;
-  margin-top: 10px;
-  background: #007bff;
-  color: white;
+  border-radius: 8px;
   border: none;
+  background: #0070e0;
+  color: white;
+  font-size: 16px;
   cursor: pointer;
+}
+
+button.secondary {
+  background: #444;
 }
 
 button:hover {
-  background: #0056b3;
-}
-
-.link {
-  color: #007bff;
-  cursor: pointer;
-  margin-top: 15px;
+  opacity: 0.95;
 }
