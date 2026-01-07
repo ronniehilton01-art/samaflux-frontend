@@ -8,12 +8,11 @@
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="auth" class="card">
   <h1>Samaflux</h1>
-  <p class="subtitle">Secure payments made easy</p>
+  <p class="subtitle">Pay • Send • Receive</p>
 
-  <input id="email" type="email" placeholder="Email address">
+  <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
 
   <button type="button" onclick="login()">Log In</button>
@@ -22,40 +21,38 @@
   <p id="msg" class="msg"></p>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
   <header class="topbar">
     <span>Samaflux</span>
-    <button class="logout" onclick="logout()">Log out</button>
+    <button type="button" onclick="logout()">Log out</button>
   </header>
 
   <main class="container">
+
     <div class="balance-card">
-      <span>Available balance</span>
+      <span>Balance</span>
       <h2 id="balance">₦0</h2>
     </div>
 
-    <!-- ADD MONEY -->
     <div class="action-card">
       <h3>Add money</h3>
       <input id="addAmount" type="number" placeholder="Amount (₦)">
       <button type="button" onclick="addMoney()">Add money</button>
     </div>
 
-    <!-- SEND MONEY -->
     <div class="action-card">
       <h3>Send money</h3>
       <input id="toEmail" type="email" placeholder="Recipient email">
-      <input id="amount" type="number" placeholder="Amount (₦)">
+      <input id="sendAmount" type="number" placeholder="Amount (₦)">
       <button type="button" onclick="send()">Send</button>
       <p id="dashMsg" class="msg"></p>
     </div>
 
-    <!-- HISTORY -->
     <div class="history-card">
       <h3>Transaction History</h3>
       <ul id="history"></ul>
     </div>
+
   </main>
 </div>
 
