@@ -7,8 +7,8 @@ function show(id) {
   document.getElementById(id).classList.add("active");
 }
 
-/* Safe fetch helper */
-async function apiFetch(url, data) {
+/* Safe POST helper */
+async function post(url, data) {
   const res = await fetch(API + url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -16,6 +16,7 @@ async function apiFetch(url, data) {
   });
 
   const text = await res.text();
+
   try {
     return JSON.parse(text);
   } catch {
@@ -23,13 +24,31 @@ async function apiFetch(url, data) {
   }
 }
 
-/* LOGIN */
-async function login() {
-  document.getElementById("loginMsg").innerText = "";
+/* REGISTER */
+async function register() {
+  registerMsg.innerText = "";
 
   try {
-    const data = await apiFetch("/auth/login", {
-      email: loginEmail.value,
+    const data = await post("/api/auth/register", {
+      email: regEmail.value.trim(),
+      password: regPassword.value
+    });
+
+    registerMsg.style.color = "green";
+    registerMsg.innerText = data.message || "Registered successfully. Login now.";
+  } catch (e) {
+    registerMsg.style.color = "red";
+    registerMsg.innerText = e.message;
+  }
+}
+
+/* LOGIN */
+async function login() {
+  loginMsg.innerText = "";
+
+  try {
+    const data = await post("/api/auth/login", {
+      email: loginEmail.value.trim(),
       password: loginPassword.value
     });
 
@@ -41,35 +60,21 @@ async function login() {
   }
 }
 
-/* REGISTER */
-async function register() {
-  document.getElementById("registerMsg").innerText = "";
-
-  try {
-    await apiFetch("/auth/register", {
-      email: regEmail.value,
-      password: regPassword.value
-    });
-
-    registerMsg.innerText = "Registered successfully. Login now.";
-  } catch (e) {
-    registerMsg.innerText = e.message;
-  }
-}
-
 /* SEND MONEY */
 async function sendMoney() {
-  document.getElementById("dashMsg").innerText = "";
+  dashMsg.innerText = "";
 
   try {
-    const data = await apiFetch("/wallet/send", {
+    const data = await post("/api/wallet/send", {
       fromEmail: currentUser,
-      toEmail: toEmail.value,
+      toEmail: toEmail.value.trim(),
       amount: Number(sendAmount.value)
     });
 
+    dashMsg.style.color = "green";
     dashMsg.innerText = data.message;
   } catch (e) {
+    dashMsg.style.color = "red";
     dashMsg.innerText = e.message;
   }
 }
