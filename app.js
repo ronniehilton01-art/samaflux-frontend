@@ -1,95 +1,81 @@
 const API = "https://samaflux-backend.onrender.com";
-let currentEmail = "";
+let currentUser = null;
 
-/* PAGE SWITCHER */
+/* Page switcher */
 function show(id) {
-  document.querySelectorAll(".page")
-    .forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* REGISTER */
-function register() {
-  fetch(API + "/auth/register", {
+/* Safe fetch helper */
+async function apiFetch(url, data) {
+  const res = await fetch(API + url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: regEmail.value,
-      password: regPassword.value
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    alert(d.message || d.error);
-    if (d.message) show("login");
+    body: JSON.stringify(data)
   });
+
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text);
+  }
 }
 
 /* LOGIN */
-function login() {
-  fetch(API + "/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.value,
-      password: password.value
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.email) {
-      currentEmail = d.email;
-      balance.innerText = "Balance: ₦" + d.balance;
-      show("dashboard");
-    } else {
-      alert(d.error);
-    }
-  });
+async function login() {
+  document.getElementById("loginMsg").innerText = "";
+
+  try {
+    const data = await apiFetch("/auth/login", {
+      email: loginEmail.value,
+      password: loginPassword.value
+    });
+
+    currentUser = data.email;
+    balance.innerText = "Balance: ₦" + data.balance;
+    show("dashboard");
+  } catch (e) {
+    loginMsg.innerText = e.message;
+  }
+}
+
+/* REGISTER */
+async function register() {
+  document.getElementById("registerMsg").innerText = "";
+
+  try {
+    await apiFetch("/auth/register", {
+      email: regEmail.value,
+      password: regPassword.value
+    });
+
+    registerMsg.innerText = "Registered successfully. Login now.";
+  } catch (e) {
+    registerMsg.innerText = e.message;
+  }
 }
 
 /* SEND MONEY */
-function sendMoney() {
-  fetch(API + "/wallet/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromEmail: currentEmail,
+async function sendMoney() {
+  document.getElementById("dashMsg").innerText = "";
+
+  try {
+    const data = await apiFetch("/wallet/send", {
+      fromEmail: currentUser,
       toEmail: toEmail.value,
-      amount: Number(amountSend.value)
-    })
-  })
-  .then(r => r.json())
-  .then(d => msg.innerText = d.message || d.error);
+      amount: Number(sendAmount.value)
+    });
+
+    dashMsg.innerText = data.message;
+  } catch (e) {
+    dashMsg.innerText = e.message;
+  }
 }
 
-/* ADD MONEY */
-function addMoney() {
-  fetch(API + "/wallet/add/init", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: currentEmail,
-      amount: amountAdd.value
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.data) window.location = d.data.authorization_url;
-  });
-}
-
-/* WITHDRAW */
-function withdraw() {
-  fetch(API + "/wallet/withdraw", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: currentEmail,
-      amount: amountWithdraw.value,
-      bank_code: bank.value,
-      account_number: account.value
-    })
-  })
-  .then(r => r.json())
-  .then(d => msg.innerText = d.message || d.error);
+/* LOGOUT */
+function logout() {
+  currentUser = null;
+  show("home");
 }
