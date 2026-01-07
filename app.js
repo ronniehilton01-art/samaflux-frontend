@@ -1,6 +1,7 @@
 const API = "https://samaflux-backend.onrender.com";
 let currentEmail = "";
 
+/* AUTH */
 function register() {
   msg.innerText = "Creating account...";
 
@@ -45,6 +46,29 @@ function login() {
     });
 }
 
+/* ADD MONEY */
+function addMoney() {
+  dashMsg.innerText = "Redirecting to Paystack...";
+
+  fetch(API + "/api/payment/add-money", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: currentEmail,
+      amount: Number(addAmount.value)
+    })
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d.data?.authorization_url) {
+        window.location.href = d.data.authorization_url;
+      } else {
+        dashMsg.innerText = d.message || "Payment failed";
+      }
+    });
+}
+
+/* SEND MONEY */
 function send() {
   dashMsg.innerText = "Processing...";
 
@@ -64,6 +88,7 @@ function send() {
     });
 }
 
+/* HISTORY */
 function loadHistory() {
   history.innerHTML = "<li>Loading...</li>";
 
@@ -79,16 +104,14 @@ function loadHistory() {
 
       data.forEach(tx => {
         const li = document.createElement("li");
-
         const sign = tx.from === currentEmail ? "-" : "+";
         const other = tx.from === currentEmail ? tx.to : tx.from;
 
         li.innerHTML = `
           <span>${tx.type.toUpperCase()}</span>
           <span>${sign}₦${tx.amount}</span>
-          <small>${other}</small>
+          <small>${other || "Paystack"}</small>
         `;
-
         history.appendChild(li);
       });
     });
