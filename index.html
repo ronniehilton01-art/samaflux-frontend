@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<!-- LOGIN / REGISTER -->
+<!-- AUTH -->
 <div id="auth" class="card">
   <h1>Samaflux</h1>
   <p class="subtitle">Secure payments made easy</p>
@@ -41,6 +41,11 @@
       <input id="amount" type="number" placeholder="Amount (₦)">
       <button type="button" onclick="send()">Send</button>
       <p id="dashMsg" class="msg"></p>
+    </div>
+
+    <div class="history-card">
+      <h3>Transaction History</h3>
+      <ul id="history"></ul>
     </div>
   </main>
 </div>
