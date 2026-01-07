@@ -1,104 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>SamaFlux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-    }
-
-    .page {
-      display: none;
-      padding: 20px;
-      max-width: 420px;
-      margin: auto;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    h2 {
-      text-align: center;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-
-    button {
-      background: #0a7cff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    button.secondary {
-      background: #444;
-    }
-
-    .msg {
-      margin-top: 10px;
-      text-align: center;
-      color: red;
-    }
-
-    .balance {
-      font-weight: bold;
-      margin-top: 10px;
-      text-align: center;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Samaflux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- LANDING PAGE -->
-<div id="home" class="page active">
-  <h2>Welcome to SamaFlux</h2>
-  <button type="button" onclick="show('login')">Login</button>
-  <button type="button" class="secondary" onclick="show('register')">Register</button>
-</div>
+<!-- LOGIN / REGISTER -->
+<div id="auth" class="card">
+  <h1>Samaflux</h1>
+  <p class="subtitle">Secure payments made easy</p>
 
-<!-- LOGIN -->
-<div id="login" class="page">
-  <h2>Login</h2>
-  <input id="loginEmail" placeholder="Email" />
-  <input id="loginPassword" type="password" placeholder="Password" />
-  <button type="button" onclick="login()">Login</button>
-  <button type="button" class="secondary" onclick="show('home')">Back</button>
-  <div id="loginMsg" class="msg"></div>
-</div>
+  <input id="email" type="email" placeholder="Email address">
+  <input id="password" type="password" placeholder="Password">
 
-<!-- REGISTER -->
-<div id="register" class="page">
-  <h2>Register</h2>
-  <input id="regEmail" placeholder="Email" />
-  <input id="regPassword" type="password" placeholder="Password" />
-  <button type="button" onclick="register()">Register</button>
-  <button type="button" class="secondary" onclick="show('home')">Back</button>
-  <div id="registerMsg" class="msg"></div>
+  <button type="button" onclick="login()">Log In</button>
+  <button type="button" class="secondary" onclick="register()">Create Account</button>
+
+  <p id="msg" class="msg"></p>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="page">
-  <h2>Dashboard</h2>
-  <div id="balance" class="balance"></div>
+<div id="dashboard" class="hidden">
+  <header class="topbar">
+    <span>Samaflux</span>
+    <button class="logout" onclick="logout()">Log out</button>
+  </header>
 
-  <input id="toEmail" placeholder="Send to Email" />
-  <input id="sendAmount" placeholder="Amount" type="number" />
-  <button type="button" onclick="sendMoney()">Send Money</button>
+  <main class="container">
+    <div class="balance-card">
+      <span>Available balance</span>
+      <h2 id="balance">₦0</h2>
+    </div>
 
-  <button type="button" class="secondary" onclick="logout()">Logout</button>
-  <div id="dashMsg" class="msg"></div>
+    <div class="action-card">
+      <h3>Send money</h3>
+      <input id="toEmail" type="email" placeholder="Recipient email">
+      <input id="amount" type="number" placeholder="Amount (₦)">
+      <button type="button" onclick="send()">Send</button>
+      <p id="dashMsg" class="msg"></p>
+    </div>
+  </main>
 </div>
 
 <script src="app.js"></script>
