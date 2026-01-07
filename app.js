@@ -1,86 +1,72 @@
 const API = "https://samaflux-backend.onrender.com";
-let currentUser = null;
 
-/* Page switcher */
-function show(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
+let currentEmail = "";
 
-/* Safe POST helper */
-async function post(url, data) {
-  const res = await fetch(API + url, {
+function register() {
+  msg.innerText = "Creating account...";
+
+  fetch(API + "/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-
-  const text = await res.text();
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error(text);
-  }
-}
-
-/* REGISTER */
-async function register() {
-  registerMsg.innerText = "";
-
-  try {
-    const data = await post("/api/auth/register", {
-      email: regEmail.value.trim(),
-      password: regPassword.value
+    body: JSON.stringify({
+      email: email.value.trim(),
+      password: password.value
+    })
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) {
+        msg.innerText = d.error;
+      } else {
+        msg.style.color = "green";
+        msg.innerText = "Account created. Please log in.";
+      }
     });
-
-    registerMsg.style.color = "green";
-    registerMsg.innerText = data.message || "Registered successfully. Login now.";
-  } catch (e) {
-    registerMsg.style.color = "red";
-    registerMsg.innerText = e.message;
-  }
 }
 
-/* LOGIN */
-async function login() {
-  loginMsg.innerText = "";
+function login() {
+  msg.innerText = "Logging in...";
 
-  try {
-    const data = await post("/api/auth/login", {
-      email: loginEmail.value.trim(),
-      password: loginPassword.value
+  fetch(API + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: email.value.trim(),
+      password: password.value
+    })
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) {
+        msg.innerText = d.error;
+      } else {
+        currentEmail = d.email;
+        balance.innerText = "₦" + d.balance;
+
+        auth.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+      }
     });
-
-    currentUser = data.email;
-    balance.innerText = "Balance: ₦" + data.balance;
-    show("dashboard");
-  } catch (e) {
-    loginMsg.innerText = e.message;
-  }
 }
 
-/* SEND MONEY */
-async function sendMoney() {
-  dashMsg.innerText = "";
+function send() {
+  dashMsg.innerText = "Processing...";
 
-  try {
-    const data = await post("/api/wallet/send", {
-      fromEmail: currentUser,
+  fetch(API + "/api/wallet/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromEmail: currentEmail,
       toEmail: toEmail.value.trim(),
-      amount: Number(sendAmount.value)
+      amount: Number(amount.value)
+    })
+  })
+    .then(r => r.json())
+    .then(d => {
+      dashMsg.innerText = d.message || d.error;
     });
-
-    dashMsg.style.color = "green";
-    dashMsg.innerText = data.message;
-  } catch (e) {
-    dashMsg.style.color = "red";
-    dashMsg.innerText = e.message;
-  }
 }
 
-/* LOGOUT */
 function logout() {
-  currentUser = null;
-  show("home");
+  location.reload();
 }
