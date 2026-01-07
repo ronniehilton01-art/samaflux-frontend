@@ -2,63 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Samaflux</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>SamaFlux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    .page {
+      display: none;
+      padding: 20px;
+      max-width: 420px;
+      margin: auto;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #0a7cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button.secondary {
+      background: #444;
+    }
+
+    .msg {
+      margin-top: 10px;
+      text-align: center;
+      color: red;
+    }
+
+    .balance {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<!-- LANDING -->
-<div id="landing" class="page active">
-  <h1>Welcome to Samaflux</h1>
-  <p>Send • Receive • Withdraw money securely</p>
-
-  <button onclick="show('login')">Login</button>
-  <button onclick="show('register')">Register</button>
+<!-- LANDING PAGE -->
+<div id="home" class="page active">
+  <h2>Welcome to SamaFlux</h2>
+  <button type="button" onclick="show('login')">Login</button>
+  <button type="button" class="secondary" onclick="show('register')">Register</button>
 </div>
 
 <!-- LOGIN -->
 <div id="login" class="page">
   <h2>Login</h2>
-
-  <input id="email" placeholder="Email" />
-  <input id="password" type="password" placeholder="Password" />
-
-  <button onclick="login()">Login</button>
-  <p class="link" onclick="show('landing')">← Back</p>
+  <input id="loginEmail" placeholder="Email" />
+  <input id="loginPassword" type="password" placeholder="Password" />
+  <button type="button" onclick="login()">Login</button>
+  <button type="button" class="secondary" onclick="show('home')">Back</button>
+  <div id="loginMsg" class="msg"></div>
 </div>
 
 <!-- REGISTER -->
 <div id="register" class="page">
   <h2>Register</h2>
-
   <input id="regEmail" placeholder="Email" />
   <input id="regPassword" type="password" placeholder="Password" />
-
-  <button onclick="register()">Create Account</button>
-  <p class="link" onclick="show('landing')">← Back</p>
+  <button type="button" onclick="register()">Register</button>
+  <button type="button" class="secondary" onclick="show('home')">Back</button>
+  <div id="registerMsg" class="msg"></div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page">
-  <h2 id="balance">Balance: ₦0</h2>
+  <h2>Dashboard</h2>
+  <div id="balance" class="balance"></div>
 
-  <h3>Send Money</h3>
-  <input id="toEmail" placeholder="Recipient Email" />
-  <input id="amountSend" type="number" placeholder="Amount" />
-  <button onclick="sendMoney()">Send</button>
+  <input id="toEmail" placeholder="Send to Email" />
+  <input id="sendAmount" placeholder="Amount" type="number" />
+  <button type="button" onclick="sendMoney()">Send Money</button>
 
-  <h3>Add Money</h3>
-  <input id="amountAdd" type="number" placeholder="Amount" />
-  <button onclick="addMoney()">Add Funds</button>
-
-  <h3>Withdraw</h3>
-  <input id="amountWithdraw" type="number" placeholder="Amount" />
-  <input id="bank" placeholder="Bank Code" />
-  <input id="account" placeholder="Account Number" />
-  <button onclick="withdraw()">Withdraw</button>
-
-  <p id="msg"></p>
-  <p class="link" onclick="show('landing')">Logout</p>
+  <button type="button" class="secondary" onclick="logout()">Logout</button>
+  <div id="dashMsg" class="msg"></div>
 </div>
 
 <script src="app.js"></script>
