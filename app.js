@@ -1,7 +1,6 @@
 const API = "https://samaflux-backend.onrender.com";
 let currentEmail = "";
 
-/* AUTH */
 function register() {
   msg.innerText = "Creating account...";
 
@@ -13,10 +12,10 @@ function register() {
       password: password.value
     })
   })
-    .then(r => r.json())
-    .then(d => {
-      msg.innerText = d.error || "Account created. Please log in.";
-    });
+  .then(r => r.json())
+  .then(d => {
+    msg.innerText = d.error || "Account created. Please log in.";
+  });
 }
 
 function login() {
@@ -30,47 +29,59 @@ function login() {
       password: password.value
     })
   })
-    .then(r => r.json())
-    .then(d => {
-      if (d.error) {
-        msg.innerText = d.error;
-      } else {
-        currentEmail = d.email;
-        balance.innerText = "₦" + d.balance;
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      msg.innerText = d.error;
+      return;
+    }
 
-        auth.classList.add("hidden");
-        dashboard.classList.remove("hidden");
+    currentEmail = d.email;
+    balance.innerText = "₦" + d.balance;
 
-        loadHistory();
-      }
-    });
+    auth.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+
+    loadHistory();
+  });
 }
 
-/* ADD MONEY */
 function addMoney() {
-  dashMsg.innerText = "Redirecting to Paystack...";
+  const amount = Number(document.getElementById("addAmount").value);
+
+  console.log("Add money clicked:", amount);
+
+  if (!amount || amount < 100) {
+    alert("Minimum ₦100");
+    return;
+  }
 
   fetch(API + "/api/payment/add-money", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: currentEmail,
-      amount: Number(addAmount.value)
+      amount
     })
   })
-    .then(r => r.json())
-    .then(d => {
-      if (d.data?.authorization_url) {
-        window.location.href = d.data.authorization_url;
-      } else {
-        dashMsg.innerText = d.message || "Payment failed";
-      }
-    });
+  .then(r => r.json())
+  .then(d => {
+    console.log("Paystack response:", d);
+
+    if (d.data && d.data.authorization_url) {
+      window.location.href = d.data.authorization_url;
+    } else {
+      alert("Unable to initialize payment");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Network error");
+  });
 }
 
-/* SEND MONEY */
 function send() {
-  dashMsg.innerText = "Processing...";
+  dashMsg.innerText = "Sending...";
 
   fetch(API + "/api/wallet/send", {
     method: "POST",
@@ -78,17 +89,16 @@ function send() {
     body: JSON.stringify({
       fromEmail: currentEmail,
       toEmail: toEmail.value.trim(),
-      amount: Number(amount.value)
+      amount: Number(sendAmount.value)
     })
   })
-    .then(r => r.json())
-    .then(d => {
-      dashMsg.innerText = d.message || d.error;
-      loadHistory();
-    });
+  .then(r => r.json())
+  .then(d => {
+    dashMsg.innerText = d.message || d.error;
+    loadHistory();
+  });
 }
 
-/* HISTORY */
 function loadHistory() {
   history.innerHTML = "<li>Loading...</li>";
 
@@ -98,19 +108,16 @@ function loadHistory() {
       history.innerHTML = "";
 
       if (!data.length) {
-        history.innerHTML = "<li>No transactions yet</li>";
+        history.innerHTML = "<li>No transactions</li>";
         return;
       }
 
       data.forEach(tx => {
         const li = document.createElement("li");
         const sign = tx.from === currentEmail ? "-" : "+";
-        const other = tx.from === currentEmail ? tx.to : tx.from;
-
         li.innerHTML = `
-          <span>${tx.type.toUpperCase()}</span>
+          <span>${tx.type}</span>
           <span>${sign}₦${tx.amount}</span>
-          <small>${other || "Paystack"}</small>
         `;
         history.appendChild(li);
       });
