@@ -1,5 +1,4 @@
 const API = "https://samaflux-backend.onrender.com";
-
 let currentEmail = "";
 
 function register() {
@@ -15,12 +14,7 @@ function register() {
   })
     .then(r => r.json())
     .then(d => {
-      if (d.error) {
-        msg.innerText = d.error;
-      } else {
-        msg.style.color = "green";
-        msg.innerText = "Account created. Please log in.";
-      }
+      msg.innerText = d.error || "Account created. Please log in.";
     });
 }
 
@@ -45,6 +39,8 @@ function login() {
 
         auth.classList.add("hidden");
         dashboard.classList.remove("hidden");
+
+        loadHistory();
       }
     });
 }
@@ -64,6 +60,37 @@ function send() {
     .then(r => r.json())
     .then(d => {
       dashMsg.innerText = d.message || d.error;
+      loadHistory();
+    });
+}
+
+function loadHistory() {
+  history.innerHTML = "<li>Loading...</li>";
+
+  fetch(API + "/api/wallet/history/" + currentEmail)
+    .then(r => r.json())
+    .then(data => {
+      history.innerHTML = "";
+
+      if (!data.length) {
+        history.innerHTML = "<li>No transactions yet</li>";
+        return;
+      }
+
+      data.forEach(tx => {
+        const li = document.createElement("li");
+
+        const sign = tx.from === currentEmail ? "-" : "+";
+        const other = tx.from === currentEmail ? tx.to : tx.from;
+
+        li.innerHTML = `
+          <span>${tx.type.toUpperCase()}</span>
+          <span>${sign}₦${tx.amount}</span>
+          <small>${other}</small>
+        `;
+
+        history.appendChild(li);
+      });
     });
 }
 
