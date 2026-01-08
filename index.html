@@ -4,65 +4,101 @@
   <meta charset="UTF-8" />
   <title>Samaflux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      background: #f5f7fa;
+    }
+
+    .page {
+      display: none;
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #003087;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    input {
+      border: 1px solid #ccd0d5;
+    }
+
+    button {
+      background: #0070ba;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button.secondary {
+      background: #f5f7fa;
+      color: #003087;
+      border: 1px solid #ccd0d5;
+    }
+
+    .link {
+      margin-top: 14px;
+      text-align: center;
+      color: #0070ba;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
 
-  <!-- NAV -->
-  <header class="nav">
-    <div class="logo">Samaflux</div>
-    <div class="nav-buttons">
-      <button onclick="showPage('login')">Log In</button>
-      <button onclick="showPage('register')" class="primary">Sign Up</button>
-    </div>
-  </header>
+<!-- LANDING -->
+<div id="landingPage" class="page">
+  <h1>Samaflux</h1>
+  <button onclick="show('loginPage')">Log In</button>
+  <button class="secondary" onclick="show('registerPage')">Sign Up</button>
+</div>
 
-  <!-- LANDING -->
-  <section id="landing" class="page active">
-    <h1>Send & receive money securely</h1>
-    <p>Fast. Simple. Secure.</p>
-    <button class="primary" onclick="showPage('register')">Get Started</button>
-  </section>
+<!-- LOGIN -->
+<div id="loginPage" class="page">
+  <h1>Log In</h1>
+  <input id="loginEmail" placeholder="Email">
+  <input id="loginPassword" type="password" placeholder="Password">
+  <button onclick="login()">Log In</button>
+  <div class="link" onclick="show('landingPage')">← Back</div>
+</div>
 
-  <!-- LOGIN -->
-  <section id="login" class="page">
-    <h2>Log In</h2>
-    <input id="loginEmail" type="email" placeholder="Email" />
-    <input id="loginPassword" type="password" placeholder="Password" />
-    <button class="primary" onclick="login()">Log In</button>
-    <button onclick="showPage('landing')">Back</button>
-  </section>
+<!-- REGISTER -->
+<div id="registerPage" class="page">
+  <h1>Create Account</h1>
+  <input id="regEmail" placeholder="Email">
+  <input id="regPassword" type="password" placeholder="Password">
+  <button onclick="register()">Sign Up</button>
+  <div class="link" onclick="show('landingPage')">← Back</div>
+</div>
 
-  <!-- REGISTER -->
-  <section id="register" class="page">
-    <h2>Create Account</h2>
-    <input id="regEmail" type="email" placeholder="Email" />
-    <input id="regPassword" type="password" placeholder="Password" />
-    <button class="primary" onclick="register()">Create Account</button>
-    <button onclick="showPage('landing')">Back</button>
-  </section>
+<!-- DASHBOARD -->
+<div id="dashboardPage" class="page">
+  <h1>Dashboard</h1>
+  <p>Balance: <strong id="balance">₦0</strong></p>
 
-  <!-- DASHBOARD -->
-  <section id="dashboard" class="page">
-    <h2>Dashboard</h2>
-    <p><strong>Balance:</strong> ₦<span id="balance">0</span></p>
+  <input id="addAmount" type="number" placeholder="Amount">
+  <button onclick="addMoney()">Add Money</button>
+</div>
 
-    <div class="card">
-      <h3>Add Money</h3>
-      <input id="addAmount" type="number" placeholder="Amount" />
-      <button class="primary" onclick="addMoney()">Add Money</button>
-    </div>
-
-    <div class="card">
-      <h3>Send Money</h3>
-      <input id="sendEmail" type="email" placeholder="Recipient Email" />
-      <input id="sendAmount" type="number" placeholder="Amount" />
-      <button class="primary" onclick="sendMoney()">Send</button>
-    </div>
-
-    <button onclick="logout()">Logout</button>
-  </section>
-
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
