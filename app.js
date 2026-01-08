@@ -1,75 +1,88 @@
+console.log("Frontend loaded");
+
 const API = "https://samaflux-backend.onrender.com";
 
-function showPage(pageId) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
-}
+let currentUser = null;
 
-/* AUTH */
+/* ---------------- AUTH ---------------- */
+
 async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
 
-  const res = await fetch(API + "/api/auth/register", {
+  const res = await fetch(`${API}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
 
   const data = await res.json();
-  if (res.ok) {
-    alert("Account created");
-    showPage("login");
-  } else {
-    alert(data.message || "Register failed");
+
+  if (!res.ok) {
+    alert(data.error || "Registration failed");
+    return;
   }
+
+  alert("Account created. You can now login.");
+  show("loginPage");
 }
 
 async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-  const res = await fetch(API + "/api/auth/login", {
+  const res = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
 
   const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem("token", data.token);
-    loadDashboard();
-    showPage("dashboard");
-  } else {
-    alert(data.message || "Login failed");
+
+  if (!res.ok) {
+    alert(data.error || "Login failed");
+    return;
   }
+
+  currentUser = data;
+  document.getElementById("balance").innerText = `₦${data.balance}`;
+  show("dashboardPage");
 }
 
-function logout() {
-  localStorage.removeItem("token");
-  showPage("landing");
-}
+/* ---------------- ADD MONEY ---------------- */
 
-/* DASHBOARD */
-async function loadDashboard() {
-  const res = await fetch(API + "/api/user/me", {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token")
-    }
+async function addMoney() {
+  const amount = document.getElementById("addAmount").value;
+
+  if (!amount || amount <= 0) {
+    alert("Enter a valid amount");
+    return;
+  }
+
+  const res = await fetch(`${API}/api/payment/add-money`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: currentUser.email,
+      amount: Number(amount)
+    })
   });
 
   const data = await res.json();
-  balance.textContent = data.balance || 0;
+
+  if (!data.data?.authorization_url) {
+    alert("Unable to initialize payment");
+    return;
+  }
+
+  window.location.href = data.data.authorization_url;
 }
 
-async function addMoney() {
-  alert("Add money will redirect to Paystack (backend handled)");
+/* ---------------- UI ---------------- */
+
+function show(id) {
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(id).style.display = "block";
 }
 
-async function sendMoney() {
-  alert("Send money handled by backend");
-}
-
-/* START */
-showPage("landing");
-console.log("Frontend loaded");
+show("landingPage");
