@@ -1,64 +1,105 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
+  margin: 0;
   background: #f5f7fa;
+  color: #111;
+}
+
+.topbar {
+  background: #fff;
+  padding: 16px 24px;
   display: flex;
-  justify-content: center;
-  padding: 40px;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
 }
 
-.container {
-  width: 100%;
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #003087;
+}
+
+.top-actions button {
+  margin-left: 10px;
+}
+
+main {
   max-width: 420px;
+  margin: 60px auto;
+  padding: 0 16px;
 }
 
-.card {
+.page {
   display: none;
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-.card.active {
+.page.active {
   display: block;
 }
 
-h1, h2 {
-  text-align: center;
+h1 {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+h2, h3 {
+  margin-bottom: 12px;
+}
+
+.card {
+  background: #fff;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  margin-bottom: 18px;
 }
 
 input {
   width: 100%;
   padding: 12px;
-  margin: 10px 0;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 button {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
-  background: #0070ba;
-  color: white;
+  border-radius: 999px;
   border: none;
-  border-radius: 6px;
+  font-size: 15px;
   cursor: pointer;
 }
 
-button.outline {
-  background: transparent;
-  color: #0070ba;
-  border: 2px solid #0070ba;
+button.primary {
+  background: #0070e0;
+  color: #fff;
 }
 
-button.link {
-  background: none;
-  color: #0070ba;
+button.primary:hover {
+  background: #005bb5;
 }
 
-button.danger {
-  background: #333;
+button.ghost {
+  background: #eee;
+  margin-top: 8px;
+}
+
+button.big {
+  padding: 14px;
+  font-size: 16px;
+}
+
+.balance {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.logout {
+  margin-top: 20px;
 }
