@@ -3,6 +3,113 @@
 <head>
   <meta charset="UTF-8" />
   <title>Samaflux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 50px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      background: #0070ba;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .link {
+      margin-top: 10px;
+      text-align: center;
+      color: #0070ba;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .balance {
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="container" id="loginBox">
+  <h2>Login</h2>
+  <input id="loginEmail" placeholder="Email" />
+  <input id="loginPassword" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <div class="link" onclick="showRegister()">Create account</div>
+</div>
+
+<!-- REGISTER -->
+<div class="container hidden" id="registerBox">
+  <h2>Register</h2>
+  <input id="regEmail" placeholder="Email" />
+  <input id="regPassword" type="password" placeholder="Password" />
+  <button onclick="register()">Register</button>
+  <div class="link" onclick="showLogin()">Back to login</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container hidden" id="dashboard">
+  <h2>Dashboard</h2>
+  <div class="balance">Balance: ₦<span id="balance">0</span></div>
+
+  <input id="amount" type="number" placeholder="Amount" />
+  <button onclick="addMoney()">Add Money</button>
+
+  <div class="link" onclick="logout()">Logout</div>
+</div>
+
+<!-- ✅ VERY IMPORTANT: RELATIVE PATH -->
+<script src="./app.js"></script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Samaflux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -48,3 +155,4 @@
 <script src="app.js" defer></script>
 </body>
 </html>
+
