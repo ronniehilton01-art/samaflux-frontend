@@ -1,77 +1,76 @@
-const API = "https://samaflux-backend.onrender.com/api";
+console.log("Loaded app.js");
 
-let userEmail = "";
+const API = "https://samaflux-backend.onrender.com";
 
-/* PAGE SWITCH */
-function show(id) {
-  document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+function showRegister() {
+  loginBox.classList.add("hidden");
+  registerBox.classList.remove("hidden");
 }
 
-/* REGISTER */
-async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
-
-  const res = await fetch(API + "/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-
-  const data = await res.json();
-  alert(data.message || data.error);
-
-  if (data.message) show("login");
+function showLogin() {
+  registerBox.classList.add("hidden");
+  loginBox.classList.remove("hidden");
 }
 
-/* LOGIN */
-async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
-
-  const res = await fetch(API + "/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-
-  const data = await res.json();
-
-  if (data.email) {
-    userEmail = data.email;
-    balance.innerText = "Balance: ₦" + data.balance;
-    show("dashboard");
-  } else {
-    alert(data.error);
-  }
-}
-
-/* ADD MONEY */
-async function addMoney() {
-  const amount = Number(addAmount.value);
-  if (!amount) return alert("Enter amount");
-
-  const res = await fetch(API + "/payment/add-money", {
+function login() {
+  fetch(API + "/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: userEmail,
-      amount
+      email: loginEmail.value,
+      password: loginPassword.value
     })
-  });
-
-  const data = await res.json();
-
-  if (data.data?.authorization_url) {
-    window.location.href = data.data.authorization_url;
-  } else {
-    alert("Unable to initialize payment");
-  }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.token) return alert("Login failed");
+    localStorage.setItem("token", data.token);
+    loginBox.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+  })
+  .catch(() => alert("Server error"));
 }
 
-/* LOGOUT */
+function register() {
+  fetch(API + "/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: regEmail.value,
+      password: regPassword.value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Account created, login now");
+    showLogin();
+  })
+  .catch(() => alert("Registration error"));
+}
+
+function addMoney() {
+  fetch(API + "/payment/add-money", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    },
+    body: JSON.stringify({
+      amount: amount.value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.authorization_url) {
+      alert("Unable to initialize payment");
+    } else {
+      window.location.href = data.authorization_url;
+    }
+  })
+  .catch(() => alert("Payment error"));
+}
+
 function logout() {
-  userEmail = "";
-  show("landing");
+  localStorage.clear();
+  location.reload();
 }
