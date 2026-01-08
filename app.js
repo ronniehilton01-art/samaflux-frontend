@@ -1,129 +1,77 @@
-const API = "https://samaflux-backend.onrender.com";
-let currentEmail = "";
+const API = "https://samaflux-backend.onrender.com/api";
 
-function register() {
-  msg.innerText = "Creating account...";
+let userEmail = "";
 
-  fetch(API + "/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.value.trim(),
-      password: password.value
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    msg.innerText = d.error || "Account created. Please log in.";
-  });
+/* PAGE SWITCH */
+function show(id) {
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-function login() {
-  msg.innerText = "Logging in...";
+/* REGISTER */
+async function register() {
+  const email = regEmail.value;
+  const password = regPassword.value;
 
-  fetch(API + "/auth/login", {
+  const res = await fetch(API + "/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.value.trim(),
-      password: password.value
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.error) {
-      msg.innerText = d.error;
-      return;
-    }
-
-    currentEmail = d.email;
-    balance.innerText = "₦" + d.balance;
-
-    auth.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-
-    loadHistory();
+    body: JSON.stringify({ email, password })
   });
+
+  const data = await res.json();
+  alert(data.message || data.error);
+
+  if (data.message) show("login");
 }
 
-function addMoney() {
-  const amount = Number(document.getElementById("addAmount").value);
+/* LOGIN */
+async function login() {
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
-  console.log("Add money clicked:", amount);
+  const res = await fetch(API + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-  if (!amount || amount < 100) {
-    alert("Minimum ₦100");
-    return;
+  const data = await res.json();
+
+  if (data.email) {
+    userEmail = data.email;
+    balance.innerText = "Balance: ₦" + data.balance;
+    show("dashboard");
+  } else {
+    alert(data.error);
   }
+}
 
-  fetch(API + "/api/payment/add-money", {
+/* ADD MONEY */
+async function addMoney() {
+  const amount = Number(addAmount.value);
+  if (!amount) return alert("Enter amount");
+
+  const res = await fetch(API + "/payment/add-money", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: currentEmail,
+      email: userEmail,
       amount
     })
-  })
-  .then(r => r.json())
-  .then(d => {
-    console.log("Paystack response:", d);
-
-    if (d.data && d.data.authorization_url) {
-      window.location.href = d.data.authorization_url;
-    } else {
-      alert("Unable to initialize payment");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Network error");
   });
+
+  const data = await res.json();
+
+  if (data.data?.authorization_url) {
+    window.location.href = data.data.authorization_url;
+  } else {
+    alert("Unable to initialize payment");
+  }
 }
 
-function send() {
-  dashMsg.innerText = "Sending...";
-
-  fetch(API + "/api/wallet/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromEmail: currentEmail,
-      toEmail: toEmail.value.trim(),
-      amount: Number(sendAmount.value)
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    dashMsg.innerText = d.message || d.error;
-    loadHistory();
-  });
-}
-
-function loadHistory() {
-  history.innerHTML = "<li>Loading...</li>";
-
-  fetch(API + "/api/wallet/history/" + currentEmail)
-    .then(r => r.json())
-    .then(data => {
-      history.innerHTML = "";
-
-      if (!data.length) {
-        history.innerHTML = "<li>No transactions</li>";
-        return;
-      }
-
-      data.forEach(tx => {
-        const li = document.createElement("li");
-        const sign = tx.from === currentEmail ? "-" : "+";
-        li.innerHTML = `
-          <span>${tx.type}</span>
-          <span>${sign}₦${tx.amount}</span>
-        `;
-        history.appendChild(li);
-      });
-    });
-}
-
+/* LOGOUT */
 function logout() {
-  location.reload();
+  userEmail = "";
+  show("landing");
 }
