@@ -7,21 +7,21 @@ function show(id) {
 }
 
 function showSection(id) {
-  document.getElementById("home").style.display = "none";
-  document.getElementById("history").style.display = "none";
+  ["home","send","history"].forEach(s => {
+    document.getElementById(s).style.display = "none";
+  });
   document.getElementById(id).style.display = "block";
-
   if (id === "history") loadHistory();
 }
 
 async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
-
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({
+      email: regEmail.value,
+      password: regPassword.value
+    })
   });
 
   const data = await res.json();
@@ -64,13 +64,26 @@ async function addMoney() {
   }
 }
 
+async function sendMoney() {
+  const res = await fetch(`${API}/api/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromEmail: currentUser.email,
+      toEmail: sendTo.value,
+      amount: Number(sendAmount.value)
+    })
+  });
+
+  const data = await res.json();
+  alert(data.message || data.error);
+}
+
 async function loadHistory() {
   txList.innerHTML = "Loading...";
-
   try {
     const res = await fetch(`${API}/api/payment/history/${currentUser.email}`);
     const data = await res.json();
-
     txList.innerHTML = "";
     data.forEach(t => {
       const div = document.createElement("div");
