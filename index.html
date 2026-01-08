@@ -4,93 +4,74 @@
   <meta charset="UTF-8" />
   <title>Samaflux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 420px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.1);
-    }
-    h2 {
-      text-align: center;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    button {
-      background: #0070ba;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    button.secondary {
-      background: #444;
-    }
-    .hidden {
-      display: none;
-    }
-    #message {
-      text-align: center;
-      margin-top: 10px;
-      color: red;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<div class="container" id="home">
-  <h2>Welcome to Samaflux</h2>
-  <button onclick="showLogin()">Login</button>
-  <button onclick="showRegister()">Register</button>
-</div>
+<header class="topbar">
+  <div class="logo">Samaflux</div>
+  <div class="top-actions">
+    <button onclick="showPage('login')">Log In</button>
+    <button class="primary" onclick="showPage('register')">Sign Up</button>
+  </div>
+</header>
 
-<div class="container hidden" id="login">
-  <h2>Login</h2>
-  <input id="login_email" placeholder="Email">
-  <input id="login_password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <button class="secondary" onclick="goHome()">Back</button>
-</div>
+<main>
 
-<div class="container hidden" id="register">
-  <h2>Register</h2>
-  <input id="reg_email" placeholder="Email">
-  <input id="reg_password" type="password" placeholder="Password">
-  <button onclick="register()">Create Account</button>
-  <button class="secondary" onclick="goHome()">Back</button>
-</div>
+  <!-- LANDING -->
+  <section id="landing" class="page active">
+    <h1>Send, receive, and manage money securely</h1>
+    <p>Fast payments. Real balance. Built for Africa.</p>
+    <button class="primary big" onclick="showPage('register')">Get Started</button>
+  </section>
 
-<div class="container hidden" id="dashboard">
-  <h2>Dashboard</h2>
-  <p id="balance">Balance: ₦0</p>
+  <!-- LOGIN -->
+  <section id="login" class="page">
+    <div class="card">
+      <h2>Log In</h2>
+      <input id="loginEmail" type="email" placeholder="Email" />
+      <input id="loginPassword" type="password" placeholder="Password" />
+      <button class="primary" onclick="login()">Log In</button>
+      <button class="ghost" onclick="showPage('landing')">Back</button>
+    </div>
+  </section>
 
-  <input id="send_email" placeholder="Recipient email">
-  <input id="send_amount" type="number" placeholder="Amount">
-  <button onclick="sendMoney()">Send Money</button>
+  <!-- REGISTER -->
+  <section id="register" class="page">
+    <div class="card">
+      <h2>Create Account</h2>
+      <input id="regEmail" type="email" placeholder="Email" />
+      <input id="regPassword" type="password" placeholder="Password" />
+      <button class="primary" onclick="register()">Create Account</button>
+      <button class="ghost" onclick="showPage('landing')">Back</button>
+    </div>
+  </section>
 
-  <input id="add_amount" type="number" placeholder="Add money">
-  <button onclick="addMoney()">Add Money</button>
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page">
+    <div class="card">
+      <h2>Balance</h2>
+      <div class="balance">₦<span id="balance">0</span></div>
+    </div>
 
-  <button class="secondary" onclick="logout()">Logout</button>
-</div>
+    <div class="card">
+      <h3>Add Money</h3>
+      <input id="addAmount" type="number" placeholder="Amount" />
+      <button class="primary" onclick="addMoney()">Add Money</button>
+    </div>
 
-<p id="message"></p>
+    <div class="card">
+      <h3>Send Money</h3>
+      <input id="sendEmail" type="email" placeholder="Recipient Email" />
+      <input id="sendAmount" type="number" placeholder="Amount" />
+      <button class="primary" onclick="sendMoney()">Send</button>
+    </div>
 
-<script src="./app.js"></script>
+    <button class="ghost logout" onclick="logout()">Logout</button>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
 </body>
 </html>
