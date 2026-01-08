@@ -146,20 +146,33 @@ button.secondary {
   <div class="sidebar">
     <h2>Samaflux</h2>
     <div class="nav-item" onclick="showSection('home')">Dashboard</div>
+    <div class="nav-item" onclick="showSection('send')">Send Money</div>
     <div class="nav-item" onclick="showSection('history')">Transactions</div>
   </div>
 
   <div class="main">
+
+    <!-- HOME -->
     <div id="home" class="card">
       <div class="balance">₦<span id="balance">0</span></div>
       <input id="addAmount" type="number" placeholder="Amount">
       <button onclick="addMoney()">Add Money</button>
     </div>
 
+    <!-- SEND MONEY -->
+    <div id="send" class="card" style="display:none">
+      <h3>Send Money</h3>
+      <input id="sendTo" placeholder="Recipient Email">
+      <input id="sendAmount" type="number" placeholder="Amount">
+      <button onclick="sendMoney()">Send</button>
+    </div>
+
+    <!-- HISTORY -->
     <div id="history" class="card" style="display:none">
       <h3>Transaction History</h3>
       <div id="txList"></div>
     </div>
+
   </div>
 </div>
 
