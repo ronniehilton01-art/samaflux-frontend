@@ -1,59 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Samaflux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="auth" class="card">
-  <h1>Samaflux</h1>
-  <p class="subtitle">Pay • Send • Receive</p>
+<div class="container">
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
+  <!-- LANDING -->
+  <div id="landing" class="card active">
+    <h1>Samaflux</h1>
+    <p>Send • Receive • Withdraw money securely</p>
+    <button onclick="show('login')">Login</button>
+    <button onclick="show('register')" class="outline">Register</button>
+  </div>
 
-  <button type="button" onclick="login()">Log In</button>
-  <button type="button" class="secondary" onclick="register()">Create Account</button>
+  <!-- LOGIN -->
+  <div id="login" class="card">
+    <h2>Login</h2>
+    <input id="loginEmail" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <button class="link" onclick="show('landing')">← Back</button>
+  </div>
 
-  <p id="msg" class="msg"></p>
-</div>
+  <!-- REGISTER -->
+  <div id="register" class="card">
+    <h2>Register</h2>
+    <input id="regEmail" placeholder="Email" />
+    <input id="regPassword" type="password" placeholder="Password" />
+    <button onclick="register()">Create Account</button>
+    <button class="link" onclick="show('landing')">← Back</button>
+  </div>
 
-<div id="dashboard" class="hidden">
-  <header class="topbar">
-    <span>Samaflux</span>
-    <button type="button" onclick="logout()">Log out</button>
-  </header>
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="card">
+    <h2>Dashboard</h2>
+    <p id="balance">Balance: ₦0</p>
 
-  <main class="container">
+    <h3>Add Money</h3>
+    <input id="addAmount" type="number" placeholder="Amount" />
+    <button onclick="addMoney()">Add Money</button>
 
-    <div class="balance-card">
-      <span>Balance</span>
-      <h2 id="balance">₦0</h2>
-    </div>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
 
-    <div class="action-card">
-      <h3>Add money</h3>
-      <input id="addAmount" type="number" placeholder="Amount (₦)">
-      <button type="button" onclick="addMoney()">Add money</button>
-    </div>
-
-    <div class="action-card">
-      <h3>Send money</h3>
-      <input id="toEmail" type="email" placeholder="Recipient email">
-      <input id="sendAmount" type="number" placeholder="Amount (₦)">
-      <button type="button" onclick="send()">Send</button>
-      <p id="dashMsg" class="msg"></p>
-    </div>
-
-    <div class="history-card">
-      <h3>Transaction History</h3>
-      <ul id="history"></ul>
-    </div>
-
-  </main>
 </div>
 
 <script src="app.js"></script>
