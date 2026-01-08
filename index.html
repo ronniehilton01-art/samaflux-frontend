@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Samaflux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background: #0070ba;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #444;
+    }
+    .hidden {
+      display: none;
+    }
+    #message {
+      text-align: center;
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container" id="home">
+  <h2>Welcome to Samaflux</h2>
+  <button onclick="showLogin()">Login</button>
+  <button onclick="showRegister()">Register</button>
+</div>
+
+<div class="container hidden" id="login">
+  <h2>Login</h2>
+  <input id="login_email" placeholder="Email">
+  <input id="login_password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <button class="secondary" onclick="goHome()">Back</button>
+</div>
+
+<div class="container hidden" id="register">
+  <h2>Register</h2>
+  <input id="reg_email" placeholder="Email">
+  <input id="reg_password" type="password" placeholder="Password">
+  <button onclick="register()">Create Account</button>
+  <button class="secondary" onclick="goHome()">Back</button>
+</div>
+
+<div class="container hidden" id="dashboard">
+  <h2>Dashboard</h2>
+  <p id="balance">Balance: ₦0</p>
+
+  <input id="send_email" placeholder="Recipient email">
+  <input id="send_amount" type="number" placeholder="Amount">
+  <button onclick="sendMoney()">Send Money</button>
+
+  <input id="add_amount" type="number" placeholder="Add money">
+  <button onclick="addMoney()">Add Money</button>
+
+  <button class="secondary" onclick="logout()">Logout</button>
+</div>
+
+<p id="message"></p>
+
+<script src="./app.js"></script>
+</body>
+</html>
