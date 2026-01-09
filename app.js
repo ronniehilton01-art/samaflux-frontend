@@ -1,13 +1,9 @@
-console.log("Frontend loaded");
-
 const API = "https://samaflux-backend.onrender.com";
 
-/* ======================
-   AUTH
-====================== */
+/* ================= AUTH ================= */
 async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
   const res = await fetch(`${API}/api/auth/login`, {
     method: "POST",
@@ -16,93 +12,79 @@ async function login() {
   });
 
   const data = await res.json();
+  if (!res.ok) return alert(data.error);
 
-  if (!res.ok) {
-    alert(data.error || "Login failed");
-    return;
-  }
-
-  localStorage.setItem("userEmail", data.email);
-  localStorage.setItem("balance", data.balance);
-
-  showDashboard();
+  localStorage.setItem("email", data.email);
+  loadDashboard();
 }
 
 async function register() {
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
   const res = await fetch(`${API}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({
+      email: regEmail.value,
+      password: regPassword.value
+    })
   });
 
   const data = await res.json();
-
-  if (!res.ok) {
-    alert(data.error || "Registration failed");
-    return;
-  }
-
-  alert("Account created. Please login.");
+  if (!res.ok) return alert(data.error);
+  alert("Account created. Login now.");
 }
 
-/* ======================
-   DASHBOARD
-====================== */
-function showDashboard() {
-  document.getElementById("authBox").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
-
-  document.getElementById("userEmail").innerText =
-    localStorage.getItem("userEmail");
-
-  document.getElementById("balance").innerText =
-    localStorage.getItem("balance");
+/* ================= DASHBOARD ================= */
+async function loadDashboard() {
+  authBox.style.display = "none";
+  dashboard.style.display = "block";
+  userEmail.innerText = localStorage.getItem("email");
+  refreshHistory();
 }
 
-/* ======================
-   ADD MONEY
-====================== */
+/* ================= ADD MONEY ================= */
 async function addMoney() {
-  const amount = document.getElementById("addAmount").value;
-  const email = localStorage.getItem("userEmail");
-
-  if (!amount || amount <= 0) {
-    alert("Enter valid amount");
-    return;
-  }
-
   const res = await fetch(`${API}/api/payment/add-money`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, amount })
+    body: JSON.stringify({
+      email: localStorage.getItem("email"),
+      amount: addAmount.value
+    })
   });
 
   const data = await res.json();
-
-  if (!data.data?.authorization_url) {
-    alert("Payment init failed");
-    return;
-  }
-
   window.location.href = data.data.authorization_url;
 }
 
-/* ======================
-   LOGOUT
-====================== */
-function logout() {
-  localStorage.clear();
-  location.reload();
+/* ================= SEND MONEY ================= */
+async function sendMoney() {
+  const res = await fetch(`${API}/api/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromEmail: localStorage.getItem("email"),
+      toEmail: sendTo.value,
+      amount: sendAmount.value
+    })
+  });
+
+  const data = await res.json();
+  alert(data.message || data.error);
+  refreshHistory();
 }
 
-/* ======================
-   AUTO LOAD
-====================== */
-window.onload = () => {
-  if (localStorage.getItem("userEmail")) {
-    showDashboard();
-  }
-};
+/* ================= HISTORY ================= */
+async function refreshHistory() {
+  const res = await fetch(
+    `${API}/api/payment/history/${localStorage.getItem("email")}`
+  );
+
+  const history = await res.json();
+  txList.innerHTML = "";
+
+  history.forEach(t => {
+    const li = document.createElement("li");
+    li.innerText = `${t.type.toUpperCase()} ₦${t.amount} (${t.from || ""} → ${t.to || ""})`;
+    txList.appendChild(li);
+  });
+}
