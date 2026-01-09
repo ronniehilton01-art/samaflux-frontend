@@ -1,78 +1,45 @@
-const API = "https://samaflux-backend.onrender.com";
-let currentUser = null;
+const API = "https://samaflux-backend.onrender.com/api/payment";
+let currentUser = "";
 
-function show(id) {
-  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-  document.getElementById(id).style.display = "block";
-}
+console.log("App loaded");
 
-function showSection(id) {
-  ["home","send","history"].forEach(s => {
-    document.getElementById(s).style.display = "none";
-  });
-  document.getElementById(id).style.display = "block";
-  if (id === "history") loadHistory();
-}
-
-async function register() {
-  const res = await fetch(`${API}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: regEmail.value,
-      password: regPassword.value
-    })
-  });
-
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
-  alert("Account created");
-  show("loginPage");
-}
-
-async function login() {
-  const res = await fetch(`${API}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: loginEmail.value,
-      password: loginPassword.value
-    })
-  });
-
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  currentUser = data;
-  balance.innerText = data.balance;
-  show("dashboardPage");
+function loginSuccess(email, balance) {
+  currentUser = email;
+  document.getElementById("balance").innerText = "₦" + balance;
+  document.getElementById("dashboard").style.display = "block";
+  document.getElementById("auth").style.display = "none";
 }
 
 async function addMoney() {
-  const res = await fetch(`${API}/api/payment/add-money`, {
+  const amount = document.getElementById("addAmount").value;
+
+  const res = await fetch(API + "/add", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: currentUser.email,
-      amount: Number(addAmount.value)
-    })
+    body: JSON.stringify({ email: currentUser, amount }),
   });
 
   const data = await res.json();
+
   if (data.data?.authorization_url) {
     window.location.href = data.data.authorization_url;
+  } else {
+    alert("Failed to initialize payment");
   }
 }
 
 async function sendMoney() {
-  const res = await fetch(`${API}/api/payment/send`, {
+  const to = document.getElementById("sendEmail").value;
+  const amount = document.getElementById("sendAmount").value;
+
+  const res = await fetch(API + "/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      fromEmail: currentUser.email,
-      toEmail: sendTo.value,
-      amount: Number(sendAmount.value)
-    })
+      fromEmail: currentUser,
+      toEmail: to,
+      amount: Number(amount),
+    }),
   });
 
   const data = await res.json();
@@ -80,20 +47,15 @@ async function sendMoney() {
 }
 
 async function loadHistory() {
-  txList.innerHTML = "Loading...";
-  try {
-    const res = await fetch(`${API}/api/payment/history/${currentUser.email}`);
-    const data = await res.json();
-    txList.innerHTML = "";
-    data.forEach(t => {
-      const div = document.createElement("div");
-      div.className = "tx";
-      div.innerText = `${t.type} ₦${t.amount}`;
-      txList.appendChild(div);
-    });
-  } catch {
-    txList.innerHTML = "No transactions yet";
-  }
-}
+  const res = await fetch(API + "/history/" + currentUser);
+  const data = await res.json();
 
-show("landingPage");
+  const list = document.getElementById("history");
+  list.innerHTML = "";
+
+  data.forEach(tx => {
+    const li = document.createElement("li");
+    li.innerText = `${tx.type.toUpperCase()} ₦${tx.amount}`;
+    list.appendChild(li);
+  });
+}
