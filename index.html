@@ -87,8 +87,6 @@
   <input id="regEmail" placeholder="Email" />
   <input id="regPassword" type="password" placeholder="Password" />
   <button onclick="register()">Register</button>
-
-  <p id="msg" style="text-align:center;color:red"></p>
 </div>
 
 <!-- DASHBOARD -->
@@ -100,21 +98,21 @@
   <div class="row">
     <div class="card">
       <h3>Add Money</h3>
-      <input id="addAmount" placeholder="Amount" />
+      <input id="addAmount" type="number" placeholder="Amount" />
       <button onclick="addMoney()">Add Money</button>
     </div>
 
     <div class="card">
       <h3>Send Money</h3>
-      <input id="sendEmail" placeholder="Recipient Email" />
-      <input id="sendAmount" placeholder="Amount" />
+      <input id="sendTo" placeholder="Recipient Email" />
+      <input id="sendAmount" type="number" placeholder="Amount" />
       <button onclick="sendMoney()">Send</button>
     </div>
   </div>
 
   <div class="card" style="margin-top:20px">
     <h3>Transaction History</h3>
-    <ul id="history"></ul>
+    <ul id="txList"></ul>
   </div>
 
   <button style="margin-top:20px;background:#999" onclick="logout()">Logout</button>
