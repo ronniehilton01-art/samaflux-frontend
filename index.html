@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Samaflux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,7 +16,7 @@
     .box {
       max-width: 420px;
       margin: 80px auto;
-      background: #fff;
+      background: #ffffff;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -24,13 +25,14 @@
     h2 {
       text-align: center;
       margin-bottom: 20px;
+      color: #003087;
     }
 
     input, button {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     button {
@@ -38,6 +40,7 @@
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 5px;
     }
 
     button:hover {
@@ -46,21 +49,23 @@
 
     .dashboard {
       display: none;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 40px auto;
       background: white;
-      padding: 20px;
-      border-radius: 10px;
+      padding: 25px;
+      border-radius: 12px;
     }
 
     .row {
       display: flex;
+      flex-wrap: wrap;
       gap: 20px;
       margin-top: 20px;
     }
 
     .card {
       flex: 1;
+      min-width: 280px;
       background: #f0f2f5;
       padding: 15px;
       border-radius: 8px;
@@ -69,12 +74,17 @@
     ul {
       padding-left: 20px;
     }
+
+    .logout {
+      background: #999;
+      margin-top: 20px;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
+<!-- ================= AUTH ================= -->
 <div class="box" id="authBox">
   <h2>Samaflux Login</h2>
   <input id="loginEmail" placeholder="Email" />
@@ -89,33 +99,48 @@
   <button onclick="register()">Register</button>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ================= DASHBOARD ================= -->
 <div class="dashboard" id="dashboard">
   <h2>Welcome to Samaflux</h2>
+
   <p><strong>Email:</strong> <span id="userEmail"></span></p>
   <p><strong>Balance:</strong> ₦<span id="balance">0</span></p>
 
   <div class="row">
+
+    <!-- ADD MONEY -->
     <div class="card">
       <h3>Add Money</h3>
       <input id="addAmount" type="number" placeholder="Amount" />
       <button onclick="addMoney()">Add Money</button>
     </div>
 
+    <!-- SEND MONEY -->
     <div class="card">
       <h3>Send Money</h3>
       <input id="sendTo" placeholder="Recipient Email" />
       <input id="sendAmount" type="number" placeholder="Amount" />
       <button onclick="sendMoney()">Send</button>
     </div>
+
+    <!-- WITHDRAW -->
+    <div class="card">
+      <h3>Withdraw</h3>
+      <input id="withdrawAmount" type="number" placeholder="Amount" />
+      <input id="bankCode" placeholder="Bank Code (e.g. 058)" />
+      <input id="accountNumber" placeholder="Account Number" />
+      <button onclick="withdraw()">Withdraw</button>
+    </div>
+
   </div>
 
+  <!-- TRANSACTION HISTORY -->
   <div class="card" style="margin-top:20px">
     <h3>Transaction History</h3>
     <ul id="txList"></ul>
   </div>
 
-  <button style="margin-top:20px;background:#999" onclick="logout()">Logout</button>
+  <button class="logout" onclick="logout()">Logout</button>
 </div>
 
 <script src="app.js"></script>
