@@ -1,6 +1,6 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* AUTH */
+/* ================= AUTH ================= */
 async function login() {
   const res = await fetch(`${API}/api/auth/login`, {
     method: "POST",
@@ -30,18 +30,28 @@ async function register() {
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
+
   alert("Account created. Login now.");
 }
 
-/* DASHBOARD */
-function loadDashboard() {
+/* ================= DASHBOARD ================= */
+async function loadDashboard() {
   authBox.style.display = "none";
   dashboard.style.display = "block";
-  userEmail.innerText = localStorage.getItem("email");
+
+  const email = localStorage.getItem("email");
+  userEmail.innerText = email;
+
+  // 🔴 FETCH REAL BALANCE FROM BACKEND
+  const res = await fetch(`${API}/api/auth/user/${email}`);
+  const data = await res.json();
+
+  balance.innerText = data.balance;
+
   refreshHistory();
 }
 
-/* ADD MONEY */
+/* ================= ADD MONEY ================= */
 async function addMoney() {
   const res = await fetch(`${API}/api/payment/add-money`, {
     method: "POST",
@@ -56,7 +66,7 @@ async function addMoney() {
   window.location.href = data.data.authorization_url;
 }
 
-/* SEND */
+/* ================= SEND MONEY ================= */
 async function sendMoney() {
   const res = await fetch(`${API}/api/payment/send`, {
     method: "POST",
@@ -70,10 +80,10 @@ async function sendMoney() {
 
   const data = await res.json();
   alert(data.message || data.error);
-  refreshHistory();
+  loadDashboard();
 }
 
-/* WITHDRAW */
+/* ================= WITHDRAW ================= */
 async function withdraw() {
   const res = await fetch(`${API}/api/payment/withdraw`, {
     method: "POST",
@@ -88,10 +98,10 @@ async function withdraw() {
 
   const data = await res.json();
   alert(data.message || data.error);
-  refreshHistory();
+  loadDashboard();
 }
 
-/* HISTORY */
+/* ================= HISTORY ================= */
 async function refreshHistory() {
   const res = await fetch(
     `${API}/api/payment/history/${localStorage.getItem("email")}`
@@ -107,7 +117,15 @@ async function refreshHistory() {
   });
 }
 
+/* ================= LOGOUT ================= */
 function logout() {
   localStorage.clear();
   location.reload();
 }
+
+/* ================= AUTO LOAD ================= */
+window.onload = () => {
+  if (localStorage.getItem("email")) {
+    loadDashboard();
+  }
+};
