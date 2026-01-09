@@ -1,14 +1,14 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ================= AUTH ================= */
+/* AUTH */
 async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
-
   const res = await fetch(`${API}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({
+      email: loginEmail.value,
+      password: loginPassword.value
+    })
   });
 
   const data = await res.json();
@@ -33,15 +33,15 @@ async function register() {
   alert("Account created. Login now.");
 }
 
-/* ================= DASHBOARD ================= */
-async function loadDashboard() {
+/* DASHBOARD */
+function loadDashboard() {
   authBox.style.display = "none";
   dashboard.style.display = "block";
   userEmail.innerText = localStorage.getItem("email");
   refreshHistory();
 }
 
-/* ================= ADD MONEY ================= */
+/* ADD MONEY */
 async function addMoney() {
   const res = await fetch(`${API}/api/payment/add-money`, {
     method: "POST",
@@ -56,7 +56,7 @@ async function addMoney() {
   window.location.href = data.data.authorization_url;
 }
 
-/* ================= SEND MONEY ================= */
+/* SEND */
 async function sendMoney() {
   const res = await fetch(`${API}/api/payment/send`, {
     method: "POST",
@@ -73,7 +73,25 @@ async function sendMoney() {
   refreshHistory();
 }
 
-/* ================= HISTORY ================= */
+/* WITHDRAW */
+async function withdraw() {
+  const res = await fetch(`${API}/api/payment/withdraw`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: localStorage.getItem("email"),
+      amount: withdrawAmount.value,
+      bank_code: bankCode.value,
+      account_number: accountNumber.value
+    })
+  });
+
+  const data = await res.json();
+  alert(data.message || data.error);
+  refreshHistory();
+}
+
+/* HISTORY */
 async function refreshHistory() {
   const res = await fetch(
     `${API}/api/payment/history/${localStorage.getItem("email")}`
@@ -84,7 +102,12 @@ async function refreshHistory() {
 
   history.forEach(t => {
     const li = document.createElement("li");
-    li.innerText = `${t.type.toUpperCase()} ₦${t.amount} (${t.from || ""} → ${t.to || ""})`;
+    li.innerText = `${t.type.toUpperCase()} ₦${t.amount}`;
     txList.appendChild(li);
   });
+}
+
+function logout() {
+  localStorage.clear();
+  location.reload();
 }
