@@ -1,179 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Samaflux</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Samaflux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
 
-<style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-  background: #f5f7fa;
-}
+    .box {
+      max-width: 420px;
+      margin: 80px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
 
-.page { display: none; }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-.auth-box {
-  max-width: 420px;
-  margin: 80px auto;
-  background: white;
-  padding: 28px;
-  border-radius: 14px;
-  box-shadow: 0 20px 40px rgba(0,0,0,.08);
-}
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
 
-.auth-box h1 {
-  text-align: center;
-  color: #003087;
-}
+    button {
+      background: #003087;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-}
+    button:hover {
+      background: #001f5f;
+    }
 
-button {
-  width: 100%;
-  margin-top: 16px;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #0070ba;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
+    .dashboard {
+      display: none;
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
 
-button.secondary {
-  background: #eef2ff;
-  color: #003087;
-}
+    .row {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
 
-.link {
-  text-align: center;
-  margin-top: 14px;
-  color: #0070ba;
-  cursor: pointer;
-}
+    .card {
+      flex: 1;
+      background: #f0f2f5;
+      padding: 15px;
+      border-radius: 8px;
+    }
 
-.dashboard {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 240px;
-  background: white;
-  padding: 20px;
-  border-right: 1px solid #e5e7eb;
-}
-
-.sidebar h2 {
-  color: #003087;
-}
-
-.nav-item {
-  padding: 12px;
-  margin-top: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.nav-item:hover {
-  background: #f1f5f9;
-}
-
-.main {
-  flex: 1;
-  padding: 32px;
-}
-
-.card {
-  background: white;
-  padding: 24px;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.06);
-  max-width: 600px;
-}
-
-.balance {
-  font-size: 28px;
-  font-weight: bold;
-  color: #003087;
-}
-
-.tx {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-</style>
+    ul {
+      padding-left: 20px;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- LANDING -->
-<div id="landingPage" class="page auth-box">
-  <h1>Samaflux</h1>
-  <button onclick="show('loginPage')">Log In</button>
-  <button class="secondary" onclick="show('registerPage')">Sign Up</button>
-</div>
+<!-- AUTH -->
+<div class="box" id="authBox">
+  <h2>Samaflux Login</h2>
+  <input id="loginEmail" placeholder="Email" />
+  <input id="loginPassword" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
 
-<!-- LOGIN -->
-<div id="loginPage" class="page auth-box">
-  <h1>Log In</h1>
-  <input id="loginEmail" placeholder="Email">
-  <input id="loginPassword" type="password" placeholder="Password">
-  <button onclick="login()">Log In</button>
-  <div class="link" onclick="show('landingPage')">Back</div>
-</div>
+  <hr style="margin:20px 0">
 
-<!-- REGISTER -->
-<div id="registerPage" class="page auth-box">
-  <h1>Create Account</h1>
-  <input id="regEmail" placeholder="Email">
-  <input id="regPassword" type="password" placeholder="Password">
-  <button onclick="register()">Create Account</button>
-  <div class="link" onclick="show('landingPage')">Back</div>
+  <h2>Create Account</h2>
+  <input id="regEmail" placeholder="Email" />
+  <input id="regPassword" type="password" placeholder="Password" />
+  <button onclick="register()">Register</button>
+
+  <p id="msg" style="text-align:center;color:red"></p>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboardPage" class="page dashboard">
-  <div class="sidebar">
-    <h2>Samaflux</h2>
-    <div class="nav-item" onclick="showSection('home')">Dashboard</div>
-    <div class="nav-item" onclick="showSection('send')">Send Money</div>
-    <div class="nav-item" onclick="showSection('history')">Transactions</div>
-  </div>
+<div class="dashboard" id="dashboard">
+  <h2>Welcome to Samaflux</h2>
+  <p><strong>Email:</strong> <span id="userEmail"></span></p>
+  <p><strong>Balance:</strong> ₦<span id="balance">0</span></p>
 
-  <div class="main">
-
-    <!-- HOME -->
-    <div id="home" class="card">
-      <div class="balance">₦<span id="balance">0</span></div>
-      <input id="addAmount" type="number" placeholder="Amount">
+  <div class="row">
+    <div class="card">
+      <h3>Add Money</h3>
+      <input id="addAmount" placeholder="Amount" />
       <button onclick="addMoney()">Add Money</button>
     </div>
 
-    <!-- SEND MONEY -->
-    <div id="send" class="card" style="display:none">
+    <div class="card">
       <h3>Send Money</h3>
-      <input id="sendTo" placeholder="Recipient Email">
-      <input id="sendAmount" type="number" placeholder="Amount">
+      <input id="sendEmail" placeholder="Recipient Email" />
+      <input id="sendAmount" placeholder="Amount" />
       <button onclick="sendMoney()">Send</button>
     </div>
-
-    <!-- HISTORY -->
-    <div id="history" class="card" style="display:none">
-      <h3>Transaction History</h3>
-      <div id="txList"></div>
-    </div>
-
   </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>Transaction History</h3>
+    <ul id="history"></ul>
+  </div>
+
+  <button style="margin-top:20px;background:#999" onclick="logout()">Logout</button>
 </div>
 
 <script src="app.js"></script>
