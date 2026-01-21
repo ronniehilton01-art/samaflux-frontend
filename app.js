@@ -1,4 +1,4 @@
-const API = "https://samaflux-backend.onrender.com/api";
+const API = "https://samaflux-backend.onrender.com";
 
 async function login() {
   const email = document.getElementById("loginEmail").value;
@@ -14,6 +14,7 @@ async function login() {
   if (!res.ok) return alert(data.error);
 
   localStorage.setItem("email", data.email);
+  localStorage.setItem("token", data.token);  // store token
   loadDashboard();
 }
 
@@ -29,8 +30,7 @@ async function register() {
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
-
-  alert("Registered successfully");
+  alert("Registered successfully! You can now login.");
 }
 
 async function loadDashboard() {
@@ -40,59 +40,16 @@ async function loadDashboard() {
   const email = localStorage.getItem("email");
   document.getElementById("userEmail").innerText = email;
 
+  const token = localStorage.getItem("token");
+
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") }
-  });
-  const data = await res.json();
-  document.getElementById("balance").innerText = data.balance;
-
-  loadHistory();
-}
-
-async function addMoney() {
-  const res = await fetch(`${API}/payment/add`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: localStorage.getItem("email"),
-      amount: Number(document.getElementById("amount").value)
-    })
-  });
-
-  const data = await res.json();
-  window.location.href = data.data.authorization_url;
-}
-
-async function sendMoney() {
-  const fromEmail = localStorage.getItem("email");
-  const toEmail = document.getElementById("sendEmail").value;
-  const amount = Number(document.getElementById("sendAmount").value);
-
-  const res = await fetch(`${API}/payment/send`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fromEmail, toEmail, amount })
+    headers: { Authorization: "Bearer " + token }
   });
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
 
-  alert("Sent successfully!");
-  loadDashboard();
-}
-
-async function loadHistory() {
-  const email = localStorage.getItem("email");
-  const res = await fetch(`${API}/payment/history/${email}`);
-  const data = await res.json();
-
-  const history = document.getElementById("history");
-  history.innerHTML = "";
-  data.forEach(tx => {
-    const li = document.createElement("li");
-    li.innerText = `${tx.type} ₦${tx.amount} ${tx.to ? "→ " + tx.to : ""}`;
-    history.appendChild(li);
-  });
+  document.getElementById("balance").innerText = data.balance;
 }
 
 function logout() {
@@ -101,5 +58,7 @@ function logout() {
 }
 
 window.onload = () => {
-  if (localStorage.getItem("email")) loadDashboard();
+  if (localStorage.getItem("email") && localStorage.getItem("token")) {
+    loadDashboard();
+  }
 };
