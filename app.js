@@ -1,5 +1,6 @@
-const API = "https://samaflux-backend.onrender.com";
+const API = "https://samaflux-backend.onrender.com/api";
 
+/* ----------------- LOGIN ----------------- */
 async function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
@@ -14,10 +15,10 @@ async function login() {
   if (!res.ok) return alert(data.error);
 
   localStorage.setItem("email", data.email);
-  localStorage.setItem("token", data.token);
   loadDashboard();
 }
 
+/* ----------------- REGISTER ----------------- */
 async function register() {
   const email = document.getElementById("regEmail").value;
   const password = document.getElementById("regPassword").value;
@@ -30,9 +31,11 @@ async function register() {
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
-  alert("Registered successfully!");
+
+  alert("Registered successfully! You can now log in.");
 }
 
+/* ----------------- DASHBOARD ----------------- */
 async function loadDashboard() {
   document.getElementById("auth").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
@@ -40,21 +43,21 @@ async function loadDashboard() {
   const email = localStorage.getItem("email");
   document.getElementById("userEmail").innerText = email;
 
-  const token = localStorage.getItem("token");
-
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: "Bearer " + token }
+    headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` }
   });
-
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance;
 
   loadHistory();
 }
 
+/* ----------------- ADD MONEY ----------------- */
 async function addMoney() {
   const amount = document.getElementById("amount").value;
   const email = localStorage.getItem("email");
+
+  if (!amount) return alert("Enter an amount");
 
   const res = await fetch(`${API}/payment/add`, {
     method: "POST",
@@ -67,12 +70,16 @@ async function addMoney() {
 
   document.getElementById("balance").innerText = data.balance;
   loadHistory();
+  alert("Money added successfully!");
 }
 
+/* ----------------- SEND MONEY ----------------- */
 async function sendMoney() {
   const toEmail = document.getElementById("sendEmail").value;
   const amount = document.getElementById("sendAmount").value;
   const fromEmail = localStorage.getItem("email");
+
+  if (!toEmail || !amount) return alert("Enter recipient and amount");
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
@@ -85,28 +92,31 @@ async function sendMoney() {
 
   document.getElementById("balance").innerText = data.senderBalance;
   loadHistory();
-  alert("Money sent successfully!");
+  alert(`Sent ₦${amount} to ${toEmail}`);
 }
 
+/* ----------------- TRANSACTION HISTORY ----------------- */
 async function loadHistory() {
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const data = await res.json();
 
-  const historyEl = document.getElementById("history");
-  historyEl.innerHTML = "";
+  const history = document.getElementById("history");
+  history.innerHTML = "";
   data.forEach(tx => {
     const li = document.createElement("li");
-    li.innerText = `${tx.type} ₦${tx.amount}` + (tx.to ? ` → ${tx.to}` : tx.from ? ` ← ${tx.from}` : "");
-    historyEl.appendChild(li);
+    li.innerText = `${tx.type} ₦${tx.amount} ${tx.to ? `→ ${tx.to}` : ""}`;
+    history.appendChild(li);
   });
 }
 
+/* ----------------- LOGOUT ----------------- */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
+/* ----------------- ON LOAD ----------------- */
 window.onload = () => {
-  if (localStorage.getItem("email") && localStorage.getItem("token")) loadDashboard();
+  if (localStorage.getItem("email")) loadDashboard();
 };
