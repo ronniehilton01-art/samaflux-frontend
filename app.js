@@ -1,4 +1,4 @@
-const API = "https://samaflux-backend.onrender.com/api";
+const API = "https://samaflux-backend.onrender.com";
 
 async function login() {
   const email = loginEmail.value;
@@ -14,6 +14,7 @@ async function login() {
   if (!res.ok) return alert(data.error);
 
   localStorage.setItem("email", data.email);
+  localStorage.setItem("token", data.token); // store token
   loadDashboard();
 }
 
@@ -37,9 +38,14 @@ async function loadDashboard() {
   dashboard.style.display = "block";
 
   const email = localStorage.getItem("email");
+  const token = localStorage.getItem("token");
   userEmail.innerText = email;
 
-  const res = await fetch(`${API}/auth/user/${email}`);
+  // fetch user info with token
+  const res = await fetch(`${API}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
   const data = await res.json();
   balance.innerText = data.balance;
 
