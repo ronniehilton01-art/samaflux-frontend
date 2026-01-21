@@ -1,11 +1,11 @@
-const API = "https://samaflux-backend.onrender.com";
+const API = "https://samaflux-backend.onrender.com/api";
 
-/* =========================
-   LOGIN
-========================= */
+// ======= LOGIN FUNCTION =======
 async function login() {
   const email = loginEmail.value;
   const password = loginPassword.value;
+
+  if (!email || !password) return alert("Enter email and password");
 
   try {
     const res = await fetch(`${API}/auth/login`, {
@@ -18,38 +18,38 @@ async function login() {
     if (!res.ok) return alert(data.error);
 
     localStorage.setItem("email", data.email);
-    localStorage.setItem("token", data.token); // store JWT
     loadDashboard();
   } catch (err) {
-    alert("Login failed: " + err.message);
+    console.error(err);
+    alert("Login failed");
   }
 }
 
-/* =========================
-   REGISTER
-========================= */
+// ======= REGISTER FUNCTION =======
 async function register() {
+  const email = regEmail.value;
+  const password = regPassword.value;
+
+  if (!email || !password) return alert("Enter email and password");
+
   try {
     const res = await fetch(`${API}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: regEmail.value,
-        password: regPassword.value
-      })
+      body: JSON.stringify({ email, password })
     });
 
     const data = await res.json();
     if (!res.ok) return alert(data.error);
-    alert("Registered successfully");
+
+    alert("Registered successfully. You can now login.");
   } catch (err) {
-    alert("Registration failed: " + err.message);
+    console.error(err);
+    alert("Registration failed");
   }
 }
 
-/* =========================
-   DASHBOARD
-========================= */
+// ======= LOAD DASHBOARD =======
 async function loadDashboard() {
   auth.style.display = "none";
   dashboard.style.display = "block";
@@ -57,82 +57,72 @@ async function loadDashboard() {
   const email = localStorage.getItem("email");
   userEmail.innerText = email;
 
+  // Load user balance
   try {
     const res = await fetch(`${API}/auth/me`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` }
     });
     const data = await res.json();
     balance.innerText = data.balance;
-
-    loadHistory();
   } catch (err) {
-    alert("Failed to load user data: " + err.message);
+    console.error(err);
+    balance.innerText = "0";
   }
+
+  loadHistory();
 }
 
-/* =========================
-   ADD MONEY
-========================= */
+// ======= ADD MONEY FUNCTION =======
 async function addMoney() {
-  const amountValue = parseFloat(amount.value);
-  if (!amountValue || amountValue <= 0) return alert("Enter valid amount");
+  const amt = parseFloat(amount.value);
+  if (!amt) return alert("Enter amount");
 
   try {
     const res = await fetch(`${API}/payment/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: localStorage.getItem("email"),
-        amount: amountValue
-      })
+      body: JSON.stringify({ email: localStorage.getItem("email"), amount: amt })
     });
 
     const data = await res.json();
-    if (!res.ok || !data.data) return alert(data.message || "Payment failed");
+    if (!res.ok) return alert(data.error);
 
     // Redirect to Paystack payment page
     window.location.href = data.data.authorization_url;
   } catch (err) {
-    alert("Payment failed: " + err.message);
+    console.error(err);
+    alert("Payment failed");
   }
 }
 
-/* =========================
-   SEND MONEY TO USER
-========================= */
+// ======= SEND MONEY FUNCTION =======
 async function sendMoney() {
-  const recipientEmail = sendEmail.value;
-  const sendAmount = parseFloat(sendAmountValue.value);
+  const toEmailVal = sendEmail.value;
+  const amt = parseFloat(sendAmount.value);
 
-  if (!recipientEmail || !sendAmount || sendAmount <= 0)
-    return alert("Enter valid recipient and amount");
+  if (!toEmailVal || !amt) return alert("Enter recipient email and amount");
+
+  const fromEmailVal = localStorage.getItem("email");
 
   try {
     const res = await fetch(`${API}/payment/send`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify({
-        from: localStorage.getItem("email"),
-        to: recipientEmail,
-        amount: sendAmount
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fromEmail: fromEmailVal, toEmail: toEmailVal, amount: amt })
     });
 
     const data = await res.json();
-    if (!res.ok) return alert(data.error || "Transaction failed");
-    alert("Money sent successfully!");
-    loadDashboard();
+    if (!res.ok) return alert(data.error);
+
+    alert(data.message);
+    loadDashboard(); // Refresh balance and transactions
   } catch (err) {
-    alert("Failed to send money: " + err.message);
+    console.error(err);
+    alert("Transaction failed");
   }
 }
 
-/* =========================
-   LOAD TRANSACTION HISTORY
-========================= */
+// ======= LOAD TRANSACTION HISTORY =======
 async function loadHistory() {
   const email = localStorage.getItem("email");
   try {
@@ -142,25 +132,28 @@ async function loadHistory() {
     history.innerHTML = "";
     data.forEach(tx => {
       const li = document.createElement("li");
-      li.innerText = `${tx.type} ₦${tx.amount} ${tx.to ? "to " + tx.to : ""} ${tx.from ? "from " + tx.from : ""}`;
+      if (tx.type === "send") {
+        li.innerText = `Sent ₦${tx.amount} to ${tx.to}`;
+      } else if (tx.type === "credit") {
+        li.innerText = `Added ₦${tx.amount} to wallet`;
+      } else {
+        li.innerText = `${tx.type} ₦${tx.amount}`;
+      }
       history.appendChild(li);
     });
   } catch (err) {
+    console.error(err);
     history.innerHTML = "<li>Failed to load history</li>";
   }
 }
 
-/* =========================
-   LOGOUT
-========================= */
+// ======= LOGOUT FUNCTION =======
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* =========================
-   INIT ON PAGE LOAD
-========================= */
+// ======= AUTO LOAD DASHBOARD IF LOGGED IN =======
 window.onload = () => {
   if (localStorage.getItem("email")) loadDashboard();
 };
