@@ -2,8 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Samaflux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Samaflux</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; background: #f5f7fa; margin: 0; }
+    #auth, #dashboard { max-width: 400px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    h2, h3 { color: #333; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { width: 100%; padding: 10px; margin: 10px 0; border: none; background: #0070ba; color: #fff; font-weight: bold; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #005fa3; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 5px; }
+    .send-section { margin-top: 20px; }
+  </style>
 </head>
 <body>
 
@@ -23,6 +35,20 @@
   <h2>Dashboard</h2>
   <p>Email: <span id="userEmail"></span></p>
   <p>Balance: ₦<span id="balance">0</span></p>
+
+  <input id="amount" type="number" placeholder="Add Money">
+  <button onclick="addMoney()">Add Money</button>
+
+  <div class="send-section">
+    <h3>Send Money</h3>
+    <input id="sendEmail" placeholder="Recipient Email">
+    <input id="sendAmount" type="number" placeholder="Amount">
+    <button onclick="sendMoney()">Send Money</button>
+  </div>
+
+  <h3>Transactions</h3>
+  <ul id="history"></ul>
+
   <button onclick="logout()">Logout</button>
 </div>
 
