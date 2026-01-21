@@ -14,7 +14,7 @@ async function login() {
   if (!res.ok) return alert(data.error);
 
   localStorage.setItem("email", data.email);
-  localStorage.setItem("token", data.token);  // store token
+  localStorage.setItem("token", data.token);
   loadDashboard();
 }
 
@@ -30,7 +30,7 @@ async function register() {
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
-  alert("Registered successfully! You can now login.");
+  alert("Registered successfully!");
 }
 
 async function loadDashboard() {
@@ -47,9 +47,59 @@ async function loadDashboard() {
   });
 
   const data = await res.json();
+  document.getElementById("balance").innerText = data.balance;
+
+  loadHistory();
+}
+
+async function addMoney() {
+  const amount = document.getElementById("amount").value;
+  const email = localStorage.getItem("email");
+
+  const res = await fetch(`${API}/payment/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, amount })
+  });
+
+  const data = await res.json();
   if (!res.ok) return alert(data.error);
 
   document.getElementById("balance").innerText = data.balance;
+  loadHistory();
+}
+
+async function sendMoney() {
+  const toEmail = document.getElementById("sendEmail").value;
+  const amount = document.getElementById("sendAmount").value;
+  const fromEmail = localStorage.getItem("email");
+
+  const res = await fetch(`${API}/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fromEmail, toEmail, amount })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
+
+  document.getElementById("balance").innerText = data.senderBalance;
+  loadHistory();
+  alert("Money sent successfully!");
+}
+
+async function loadHistory() {
+  const email = localStorage.getItem("email");
+  const res = await fetch(`${API}/payment/history/${email}`);
+  const data = await res.json();
+
+  const historyEl = document.getElementById("history");
+  historyEl.innerHTML = "";
+  data.forEach(tx => {
+    const li = document.createElement("li");
+    li.innerText = `${tx.type} ₦${tx.amount}` + (tx.to ? ` → ${tx.to}` : tx.from ? ` ← ${tx.from}` : "");
+    historyEl.appendChild(li);
+  });
 }
 
 function logout() {
@@ -58,7 +108,5 @@ function logout() {
 }
 
 window.onload = () => {
-  if (localStorage.getItem("email") && localStorage.getItem("token")) {
-    loadDashboard();
-  }
+  if (localStorage.getItem("email") && localStorage.getItem("token")) loadDashboard();
 };
