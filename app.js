@@ -1,9 +1,21 @@
-const API = "https://samaflux-backend.onrender.com/api";
+const API = "https://samaflux-backend.onrender.com";
 
-/* ----------------- LOGIN ----------------- */
+const loginEmail = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
+const regEmail = document.getElementById("regEmail");
+const regPassword = document.getElementById("regPassword");
+const auth = document.getElementById("auth");
+const dashboard = document.getElementById("dashboard");
+const userEmail = document.getElementById("userEmail");
+const balance = document.getElementById("balance");
+const amount = document.getElementById("amount");
+const sendEmail = document.getElementById("sendEmail");
+const sendAmount = document.getElementById("sendAmount");
+const historyEl = document.getElementById("history");
+
 async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -18,105 +30,86 @@ async function login() {
   loadDashboard();
 }
 
-/* ----------------- REGISTER ----------------- */
 async function register() {
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email: regEmail.value, password: regPassword.value })
   });
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
-
-  alert("Registered successfully! You can now log in.");
+  alert("Registered successfully");
 }
 
-/* ----------------- DASHBOARD ----------------- */
 async function loadDashboard() {
-  document.getElementById("auth").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
+  auth.style.display = "none";
+  dashboard.style.display = "block";
 
   const email = localStorage.getItem("email");
-  document.getElementById("userEmail").innerText = email;
+  userEmail.innerText = email;
 
   const res = await fetch(`${API}/auth/me`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` }
   });
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance;
+  balance.innerText = data.balance;
 
   loadHistory();
 }
 
-/* ----------------- ADD MONEY ----------------- */
 async function addMoney() {
-  const amount = document.getElementById("amount").value;
-  const email = localStorage.getItem("email");
-
-  if (!amount) return alert("Enter an amount");
-
   const res = await fetch(`${API}/payment/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, amount })
+    body: JSON.stringify({ email: localStorage.getItem("email"), amount: Number(amount.value) })
   });
 
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  document.getElementById("balance").innerText = data.balance;
-  loadHistory();
-  alert("Money added successfully!");
+  if (data.status === "success" && data.data?.authorization_url) {
+    window.location.href = data.data.authorization_url;
+  } else {
+    alert("Failed to initialize payment");
+  }
 }
 
-/* ----------------- SEND MONEY ----------------- */
 async function sendMoney() {
-  const toEmail = document.getElementById("sendEmail").value;
-  const amount = document.getElementById("sendAmount").value;
-  const fromEmail = localStorage.getItem("email");
-
-  if (!toEmail || !amount) return alert("Enter recipient and amount");
+  const email = sendEmail.value;
+  const amt = Number(sendAmount.value);
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fromEmail, toEmail, amount })
+    body: JSON.stringify({ from: localStorage.getItem("email"), to: email, amount: amt })
   });
 
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  document.getElementById("balance").innerText = data.senderBalance;
-  loadHistory();
-  alert(`Sent ₦${amount} to ${toEmail}`);
+  if (data.success) {
+    alert(`Sent ₦${amt} to ${email}`);
+    loadDashboard();
+  } else {
+    alert(data.error || "Failed to send money");
+  }
 }
 
-/* ----------------- TRANSACTION HISTORY ----------------- */
 async function loadHistory() {
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const data = await res.json();
 
-  const history = document.getElementById("history");
-  history.innerHTML = "";
+  historyEl.innerHTML = "";
   data.forEach(tx => {
     const li = document.createElement("li");
-    li.innerText = `${tx.type} ₦${tx.amount} ${tx.to ? `→ ${tx.to}` : ""}`;
-    history.appendChild(li);
+    li.innerText = `${tx.type} ₦${tx.amount}`;
+    historyEl.appendChild(li);
   });
 }
 
-/* ----------------- LOGOUT ----------------- */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* ----------------- ON LOAD ----------------- */
 window.onload = () => {
   if (localStorage.getItem("email")) loadDashboard();
 };
