@@ -1,90 +1,100 @@
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f3f4f6;
   margin: 0;
-  background: #f5f7fa;
-  color: #111;
-}
-
-/* NAV */
-.nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 15px 30px;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.card {
   background: white;
-  border-bottom: 1px solid #ddd;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
 }
 
-.logo {
-  font-weight: bold;
-  font-size: 20px;
+h2 {
+  text-align: center;
+  color: #003087;
 }
 
-.nav-buttons button {
-  margin-left: 10px;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
-/* PAGES */
-.page {
-  display: none;
-  padding: 40px;
-  max-width: 420px;
-  margin: auto;
-  background: white;
-  margin-top: 40px;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-.page.active {
-  display: block;
-}
-
-/* INPUTS */
 input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 6px;
+  padding: 0.75rem 1rem;
   border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
 }
 
-/* BUTTONS */
 button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 6px;
+  padding: 0.75rem 1rem;
   border: none;
+  border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
-  background: #e0e0e0;
-  font-size: 15px;
+  transition: all 0.2s;
 }
 
-button.primary {
+.btn-primary {
+  background: #003087;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #001f5b;
+}
+
+.btn-secondary {
   background: #0070ba;
   color: white;
 }
 
-button:hover {
-  opacity: 0.9;
+.btn-secondary:hover {
+  background: #005ea6;
 }
 
-/* CARDS */
-.card {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.btn-logout {
+  background: #ff4d4f;
+  color: white;
+  float: right;
 }
 
-/* 🔒 CLICK SAFETY (VERY IMPORTANT) */
-button {
-  pointer-events: auto;
-  position: relative;
-  z-index: 10;
+.btn-logout:hover {
+  background: #d9363e;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info p {
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.transactions {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.transactions li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
 }
