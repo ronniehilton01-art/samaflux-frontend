@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Samaflux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
 <body>
+
 <div id="auth">
   <h2>Login</h2>
   <input id="loginEmail" placeholder="Email">
@@ -22,19 +23,6 @@
   <h2>Dashboard</h2>
   <p>Email: <span id="userEmail"></span></p>
   <p>Balance: ₦<span id="balance">0</span></p>
-
-  <h3>Add Money</h3>
-  <input id="amount" type="number" placeholder="Amount">
-  <button onclick="addMoney()">Add Money</button>
-
-  <h3>Send Money</h3>
-  <input id="sendEmail" placeholder="Recipient Email">
-  <input id="sendAmount" type="number" placeholder="Amount">
-  <button onclick="sendMoney()">Send Money</button>
-
-  <h3>Transactions</h3>
-  <ul id="history"></ul>
-
   <button onclick="logout()">Logout</button>
 </div>
 
