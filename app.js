@@ -1,159 +1,105 @@
 const API = "https://samaflux-backend.onrender.com/api";
 
-// ======= LOGIN FUNCTION =======
 async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-  if (!email || !password) return alert("Enter email and password");
+  const res = await fetch(`${API}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-  try {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
 
-    const data = await res.json();
-    if (!res.ok) return alert(data.error);
-
-    localStorage.setItem("email", data.email);
-    loadDashboard();
-  } catch (err) {
-    console.error(err);
-    alert("Login failed");
-  }
+  localStorage.setItem("email", data.email);
+  loadDashboard();
 }
 
-// ======= REGISTER FUNCTION =======
 async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
 
-  if (!email || !password) return alert("Enter email and password");
+  const res = await fetch(`${API}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-  try {
-    const res = await fetch(`${API}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
 
-    const data = await res.json();
-    if (!res.ok) return alert(data.error);
-
-    alert("Registered successfully. You can now login.");
-  } catch (err) {
-    console.error(err);
-    alert("Registration failed");
-  }
+  alert("Registered successfully");
 }
 
-// ======= LOAD DASHBOARD =======
 async function loadDashboard() {
-  auth.style.display = "none";
-  dashboard.style.display = "block";
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
 
   const email = localStorage.getItem("email");
-  userEmail.innerText = email;
+  document.getElementById("userEmail").innerText = email;
 
-  // Load user balance
-  try {
-    const res = await fetch(`${API}/auth/me`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` }
-    });
-    const data = await res.json();
-    balance.innerText = data.balance;
-  } catch (err) {
-    console.error(err);
-    balance.innerText = "0";
-  }
+  const res = await fetch(`${API}/auth/me`, {
+    headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+  });
+  const data = await res.json();
+  document.getElementById("balance").innerText = data.balance;
 
   loadHistory();
 }
 
-// ======= ADD MONEY FUNCTION =======
 async function addMoney() {
-  const amt = parseFloat(amount.value);
-  if (!amt) return alert("Enter amount");
+  const res = await fetch(`${API}/payment/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: localStorage.getItem("email"),
+      amount: Number(document.getElementById("amount").value)
+    })
+  });
 
-  try {
-    const res = await fetch(`${API}/payment/add`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: localStorage.getItem("email"), amount: amt })
-    });
-
-    const data = await res.json();
-    if (!res.ok) return alert(data.error);
-
-    // Redirect to Paystack payment page
-    window.location.href = data.data.authorization_url;
-  } catch (err) {
-    console.error(err);
-    alert("Payment failed");
-  }
+  const data = await res.json();
+  window.location.href = data.data.authorization_url;
 }
 
-// ======= SEND MONEY FUNCTION =======
 async function sendMoney() {
-  const toEmailVal = sendEmail.value;
-  const amt = parseFloat(sendAmount.value);
+  const fromEmail = localStorage.getItem("email");
+  const toEmail = document.getElementById("sendEmail").value;
+  const amount = Number(document.getElementById("sendAmount").value);
 
-  if (!toEmailVal || !amt) return alert("Enter recipient email and amount");
+  const res = await fetch(`${API}/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fromEmail, toEmail, amount })
+  });
 
-  const fromEmailVal = localStorage.getItem("email");
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
 
-  try {
-    const res = await fetch(`${API}/payment/send`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fromEmail: fromEmailVal, toEmail: toEmailVal, amount: amt })
-    });
-
-    const data = await res.json();
-    if (!res.ok) return alert(data.error);
-
-    alert(data.message);
-    loadDashboard(); // Refresh balance and transactions
-  } catch (err) {
-    console.error(err);
-    alert("Transaction failed");
-  }
+  alert("Sent successfully!");
+  loadDashboard();
 }
 
-// ======= LOAD TRANSACTION HISTORY =======
 async function loadHistory() {
   const email = localStorage.getItem("email");
-  try {
-    const res = await fetch(`${API}/payment/history/${email}`);
-    const data = await res.json();
+  const res = await fetch(`${API}/payment/history/${email}`);
+  const data = await res.json();
 
-    history.innerHTML = "";
-    data.forEach(tx => {
-      const li = document.createElement("li");
-      if (tx.type === "send") {
-        li.innerText = `Sent ₦${tx.amount} to ${tx.to}`;
-      } else if (tx.type === "credit") {
-        li.innerText = `Added ₦${tx.amount} to wallet`;
-      } else {
-        li.innerText = `${tx.type} ₦${tx.amount}`;
-      }
-      history.appendChild(li);
-    });
-  } catch (err) {
-    console.error(err);
-    history.innerHTML = "<li>Failed to load history</li>";
-  }
+  const history = document.getElementById("history");
+  history.innerHTML = "";
+  data.forEach(tx => {
+    const li = document.createElement("li");
+    li.innerText = `${tx.type} ₦${tx.amount} ${tx.to ? "→ " + tx.to : ""}`;
+    history.appendChild(li);
+  });
 }
 
-// ======= LOGOUT FUNCTION =======
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-// ======= AUTO LOAD DASHBOARD IF LOGGED IN =======
 window.onload = () => {
   if (localStorage.getItem("email")) loadDashboard();
 };
