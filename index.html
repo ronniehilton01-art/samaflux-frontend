@@ -1,57 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Samaflux</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Samaflux 2026</title>
   <style>
-    body { font-family: 'Roboto', sans-serif; background: #f5f7fa; margin: 0; }
-    #auth, #dashboard { max-width: 400px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    h2, h3 { color: #333; }
-    input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { width: 100%; padding: 10px; margin: 10px 0; border: none; background: #0070ba; color: #fff; font-weight: bold; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #005fa3; }
-    ul { padding-left: 20px; }
-    li { margin-bottom: 5px; }
-    .send-section { margin-top: 20px; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+      color: #333;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 16px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #0070f3;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056c1;
+    }
+
+    #dashboard {
+      display: none;
+    }
+
+    .flex {
+      display: flex;
+      gap: 10px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .section {
+      margin-top: 20px;
+    }
+
+    .inline-input {
+      flex: 1;
+    }
   </style>
 </head>
+
 <body>
 
-<div id="auth">
-  <h2>Login</h2>
-  <input id="loginEmail" placeholder="Email">
-  <input id="loginPassword" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
+  <div class="container" id="auth">
+    <h2>Login</h2>
+    <input id="loginEmail" placeholder="Email" type="email">
+    <input id="loginPassword" placeholder="Password" type="password">
+    <button onclick="login()">Login</button>
 
-  <h3>Register</h3>
-  <input id="regEmail" placeholder="Email">
-  <input id="regPassword" type="password" placeholder="Password">
-  <button onclick="register()">Register</button>
-</div>
-
-<div id="dashboard" style="display:none">
-  <h2>Dashboard</h2>
-  <p>Email: <span id="userEmail"></span></p>
-  <p>Balance: ₦<span id="balance">0</span></p>
-
-  <input id="amount" type="number" placeholder="Add Money">
-  <button onclick="addMoney()">Add Money</button>
-
-  <div class="send-section">
-    <h3>Send Money</h3>
-    <input id="sendEmail" placeholder="Recipient Email">
-    <input id="sendAmount" type="number" placeholder="Amount">
-    <button onclick="sendMoney()">Send Money</button>
+    <h3>Register</h3>
+    <input id="regEmail" placeholder="Email" type="email">
+    <input id="regPassword" placeholder="Password" type="password">
+    <button onclick="register()">Register</button>
   </div>
 
-  <h3>Transactions</h3>
-  <ul id="history"></ul>
+  <div class="container" id="dashboard">
+    <h2>Dashboard</h2>
+    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+    <p><strong>Balance:</strong> ₦<span id="balance">0</span></p>
 
-  <button onclick="logout()">Logout</button>
-</div>
+    <div class="section">
+      <h3>Add Money</h3>
+      <div class="flex">
+        <input id="amount" type="number" placeholder="Amount" class="inline-input">
+        <button onclick="addMoney()">Add</button>
+      </div>
+    </div>
 
-<script src="app.js"></script>
+    <div class="section">
+      <h3>Send Money</h3>
+      <div class="flex">
+        <input id="sendEmail" type="email" placeholder="Recipient Email" class="inline-input">
+      </div>
+      <div class="flex">
+        <input id="sendAmount" type="number" placeholder="Amount" class="inline-input">
+        <button onclick="sendMoney()">Send</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Transaction History</h3>
+      <ul id="history"></ul>
+    </div>
+
+    <button style="background-color:#ff4d4f" onclick="logout()">Logout</button>
+  </div>
+
+  <script src="app.js"></script>
 </body>
+
 </html>
