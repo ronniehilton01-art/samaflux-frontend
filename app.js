@@ -5,17 +5,18 @@ const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
+const profile = document.getElementById("profile-container");
 const historyList = document.getElementById("history");
 
-/* NAV BUTTONS (SAFE) */
-if (loginBtn) loginBtn.onclick = login;
-if (goSignup) goSignup.onclick = () => switchView(auth, step1);
-if (goLogin1) goLogin1.onclick = () => switchView(step1, auth);
-if (nextSignup) nextSignup.onclick = () => switchView(step1, step2);
-if (logoutBtn) logoutBtn.onclick = logout;
-if (signupBtn) signupBtn.onclick = register;
-if (addMoneyBtn) addMoneyBtn.onclick = addMoney;
-if (sendMoneyBtn) sendMoneyBtn.onclick = sendMoney;
+/* NAV */
+loginBtn.onclick = login;
+goSignup.onclick = () => switchView(auth, step1);
+goLogin1.onclick = () => switchView(step1, auth);
+nextSignup.onclick = () => switchView(step1, step2);
+signupBtn.onclick = register;
+logoutBtn.onclick = logout;
+profileBtn.onclick = loadProfile;
+backDashboard.onclick = () => switchView(profile, dashboard);
 
 function switchView(hide, show) {
   hide.style.display = "none";
@@ -69,15 +70,12 @@ async function register() {
 
 /* DASHBOARD */
 async function loadDashboard() {
-  if (!dashboard) return;
-
   auth.style.display = step1.style.display = step2.style.display = "none";
   dashboard.style.display = "block";
+  profile.style.display = "none";
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
 
   const data = await res.json();
@@ -86,18 +84,35 @@ async function loadDashboard() {
   loadHistory();
 }
 
+/* PROFILE */
+async function loadProfile() {
+  dashboard.style.display = "none";
+  profile.style.display = "flex";
+
+  const res = await fetch(`${API}/auth/me`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+  });
+
+  const u = await res.json();
+
+  pName.innerText = u.fullName || "-";
+  pEmail.innerText = u.email || "-";
+  pPhone.innerText = u.phone || "-";
+  pAddress.innerText = u.address || "-";
+  pCity.innerText = u.city || "-";
+  pState.innerText = u.state || "-";
+  pCountry.innerText = u.country || "-";
+  pZip.innerText = u.zip || "-";
+}
+
 /* HISTORY */
 async function loadHistory() {
-  if (!historyList) return;
-
   historyList.innerHTML = "<li>Loading...</li>";
-
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
   historyList.innerHTML = "";
-
   if (!tx || !tx.length) {
     historyList.innerHTML = "<li>No transactions</li>";
     return;
@@ -110,25 +125,13 @@ async function loadHistory() {
   });
 }
 
-/* ADD MONEY */
-async function addMoney() {
-  alert("Add money logic already handled by backend");
-}
-
-/* SEND MONEY */
-async function sendMoney() {
-  alert("Send money logic already handled by backend");
-}
-
 /* LOGOUT */
 function logout() {
   localStorage.clear();
-  location.href = "index.html";
+  location.reload();
 }
 
 /* AUTO LOGIN */
 window.onload = () => {
-  if (localStorage.getItem("token")) {
-    loadDashboard();
-  }
+  if (localStorage.getItem("token")) loadDashboard();
 };
