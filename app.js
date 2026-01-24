@@ -1,7 +1,7 @@
 const API = "https://samaflux-backend.onrender.com";
 
 /* ELEMENTS */
-const auth = authContainer;
+const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard");
@@ -9,40 +9,39 @@ const sendPage = document.getElementById("send-page");
 const addPage = document.getElementById("add-page");
 const historyList = document.getElementById("history");
 
-/* NAV */
-goSignup.onclick = () => show(step1);
-goLogin1.onclick = () => show(auth);
-nextSignup.onclick = () => show(step2);
-logoutBtn.onclick = logout;
+/* BUTTONS */
+document.getElementById("loginBtn").onclick = login;
+document.getElementById("signupBtn").onclick = register;
+document.getElementById("goSignup").onclick = () => show(step1);
+document.getElementById("goLogin1").onclick = () => show(auth);
+document.getElementById("nextSignup").onclick = () => show(step2);
+document.getElementById("logoutBtn").onclick = logout;
 
-sendMoneyBtn.onclick = () => show(sendPage);
-addMoneyBtn.onclick = () => show(addPage);
-backDash1.onclick = backDashboard;
-backDash2.onclick = backDashboard;
+document.getElementById("sendMoneyBtn").onclick = () => show(sendPage);
+document.getElementById("addMoneyBtn").onclick = () => show(addPage);
+document.getElementById("backDash1").onclick = () => show(dashboard);
+document.getElementById("backDash2").onclick = () => show(dashboard);
 
-loginBtn.onclick = login;
-signupBtn.onclick = register;
-confirmSendBtn.onclick = sendMoney;
-paystackBtn.onclick = payWithPaystack;
+document.getElementById("confirmSendBtn").onclick = sendMoney;
+document.getElementById("paystackBtn").onclick = payWithPaystack;
 
+/* VIEW SWITCHER */
 function show(el) {
-  [auth, step1, step2, dashboard, sendPage, addPage].forEach(e => e.classList.add("hidden"));
+  [auth, step1, step2, dashboard, sendPage, addPage].forEach(e =>
+    e.classList.add("hidden")
+  );
   el.classList.remove("hidden");
-}
-
-function backDashboard() {
-  show(dashboard);
 }
 
 /* LOGIN */
 async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: loginEmail.value,
-      password: loginPassword.value
-    })
+    body: JSON.stringify({ email, password })
   });
 
   const data = await res.json();
@@ -50,6 +49,7 @@ async function login() {
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
+
   loadDashboard();
 }
 
@@ -74,6 +74,7 @@ async function register() {
   });
 
   if (!res.ok) return alert("Signup failed");
+
   alert("Account created");
   show(auth);
 }
@@ -83,54 +84,67 @@ async function loadDashboard() {
   show(dashboard);
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
   });
 
   const data = await res.json();
-  balance.innerText = data.balance || 0;
+  document.getElementById("balance").innerText = data.balance || 0;
+
   loadHistory();
 }
 
-/* HISTORY */
+/* TRANSACTIONS */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
+
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
   historyList.innerHTML = "";
-  if (!tx.length) return historyList.innerHTML = "<li>No transactions</li>";
+  if (!tx.length) {
+    historyList.innerHTML = "<li>No transactions</li>";
+    return;
+  }
 
-  tx.slice(0,5).forEach(t => {
+  tx.slice(0, 5).forEach(t => {
     const li = document.createElement("li");
-    li.innerText = `${t.type} ₦${t.amount}`;
+    li.textContent = `${t.type} ₦${t.amount}`;
     historyList.appendChild(li);
   });
 }
 
 /* SEND MONEY */
 async function sendMoney() {
+  const toEmail = document.getElementById("sendToEmail").value;
+  const amount = document.getElementById("sendAmount").value;
+
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       fromEmail: localStorage.getItem("email"),
-      toEmail: sendToEmail.value,
-      amount: sendAmount.value
+      toEmail,
+      amount
     })
   });
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
+
   loadDashboard();
 }
 
 /* PAYSTACK */
 function payWithPaystack() {
+  const amount = document.getElementById("addAmount").value;
+
   const handler = PaystackPop.setup({
-    key: "pk_test_xxxxxxxxxxxxx", // replace
+    key: "pk_test_xxxxxxxxxxxxx", // replace with real key
     email: localStorage.getItem("email"),
-    amount: addAmount.value * 100,
+    amount: amount * 100,
     currency: "NGN",
     callback: async () => {
       await fetch(`${API}/payment/add`, {
@@ -138,12 +152,13 @@ function payWithPaystack() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: localStorage.getItem("email"),
-          amount: addAmount.value
+          amount
         })
       });
       loadDashboard();
     }
   });
+
   handler.openIframe();
 }
 
