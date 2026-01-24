@@ -1,14 +1,17 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ===== ELEMENTS ===== */
+/* =====================
+   ELEMENTS
+===================== */
 const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-
 const historyList = document.getElementById("history");
 
-/* ===== NAV BUTTONS ===== */
+/* =====================
+   NAVIGATION
+===================== */
 loginBtn.onclick = login;
 goSignup.onclick = () => switchView(auth, step1);
 goLogin1.onclick = () => switchView(step1, auth);
@@ -16,13 +19,14 @@ nextSignup.onclick = () => switchView(step1, step2);
 signupBtn.onclick = register;
 logoutBtn.onclick = logout;
 
-/* ===== VIEW SWITCH ===== */
 function switchView(hide, show) {
   hide.style.display = "none";
   show.style.display = "flex";
 }
 
-/* ===== LOGIN ===== */
+/* =====================
+   LOGIN
+===================== */
 async function login() {
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -42,7 +46,9 @@ async function login() {
   loadDashboard();
 }
 
-/* ===== REGISTER ===== */
+/* =====================
+   REGISTER (2 STEP)
+===================== */
 async function register() {
   const payload = {
     email: regEmail.value,
@@ -62,24 +68,17 @@ async function register() {
     body: JSON.stringify(payload)
   });
 
-  const data = await res.json();
-  if (!res.ok) return alert(data.error || "Signup failed");
+  if (!res.ok) return alert("Signup failed");
 
   alert("Account created");
   switchView(step2, auth);
 }
 
-/* ===== LOGOUT ===== */
-function logout() {
-  localStorage.clear();
-  location.reload();
-}
-
-/* ===== DASHBOARD ===== */
+/* =====================
+   DASHBOARD
+===================== */
 async function loadDashboard() {
-  auth.style.display = "none";
-  step1.style.display = "none";
-  step2.style.display = "none";
+  auth.style.display = step1.style.display = step2.style.display = "none";
   dashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
@@ -94,42 +93,53 @@ async function loadDashboard() {
   loadHistory();
 }
 
-/* ===== SEND MONEY ===== */
-async function sendMoney(sendEmail, sendAmount) {
-  if (!sendEmail || !sendAmount) {
-    alert("Missing fields");
-    return;
-  }
-
-  const payload = {
-    to: sendEmail,
-    email: sendEmail,
-    receiverEmail: sendEmail,
-    amount: Number(sendAmount)
-  };
+/* =====================
+   SEND MONEY (FIXED)
+===================== */
+async function sendMoney(toEmail, amount) {
+  const fromEmail = localStorage.getItem("email");
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    },
-    body: JSON.stringify(payload)
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromEmail,
+      toEmail,
+      amount: Number(amount)
+    })
   });
 
   const data = await res.json();
+  if (!res.ok) return alert(data.error);
 
-  if (!res.ok) {
-    console.error(data);
-    alert(data.error || "Send failed");
-    return;
-  }
-
-  alert("Money sent");
+  alert("Money sent successfully");
   loadDashboard();
 }
 
-/* ===== HISTORY ===== */
+/* =====================
+   ADD MONEY (FIXED)
+===================== */
+async function addMoney(amount) {
+  const email = localStorage.getItem("email");
+
+  const res = await fetch(`${API}/payment/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      amount: Number(amount)
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
+
+  loadDashboard();
+}
+
+/* =====================
+   HISTORY
+===================== */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
 
@@ -139,19 +149,29 @@ async function loadHistory() {
 
   historyList.innerHTML = "";
 
-  if (!tx || !tx.length) {
+  if (!tx.length) {
     historyList.innerHTML = "<li>No transactions</li>";
     return;
   }
 
-  tx.slice(-5).reverse().forEach(t => {
+  tx.slice(0, 5).forEach(t => {
     const li = document.createElement("li");
-    li.innerText = `${t.type} ₦${t.amount}`;
+    li.innerText = `${t.type.toUpperCase()} ₦${t.amount}`;
     historyList.appendChild(li);
   });
 }
 
-/* ===== AUTO LOGIN ===== */
+/* =====================
+   LOGOUT
+===================== */
+function logout() {
+  localStorage.clear();
+  location.reload();
+}
+
+/* =====================
+   AUTO LOGIN
+===================== */
 window.onload = () => {
   if (localStorage.getItem("token")) {
     loadDashboard();
