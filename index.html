@@ -9,34 +9,33 @@
 <body>
 
 <!-- LOGIN -->
-<div id="auth-container" class="center">
+<div id="auth-container">
   <div class="card auth-card">
     <h2>Log in to SamaFlux</h2>
 
     <input id="loginEmail" type="email" placeholder="Email" />
     <input id="loginPassword" type="password" placeholder="Password" />
 
-    <button id="loginBtn" class="primary">Log in</button>
-
+    <button id="loginBtn">Log in</button>
     <button id="goSignup" class="link-btn">Create account</button>
   </div>
 </div>
 
 <!-- SIGNUP STEP 1 -->
-<div id="signup-step1" class="center hidden">
+<div id="signup-step1" style="display:none">
   <div class="card auth-card">
     <h2>Create account</h2>
 
     <input id="regEmail" type="email" placeholder="Email" />
     <input id="regPassword" type="password" placeholder="Password" />
 
-    <button id="nextSignup" class="primary">Next</button>
+    <button id="nextSignup">Next</button>
     <button id="goLogin1" class="link-btn">Back to login</button>
   </div>
 </div>
 
 <!-- SIGNUP STEP 2 -->
-<div id="signup-step2" class="center hidden">
+<div id="signup-step2" style="display:none">
   <div class="card auth-card">
     <h2>Your details</h2>
 
@@ -48,26 +47,56 @@
     <input id="regCountry" placeholder="Country" />
     <input id="regZip" placeholder="Zip code" />
 
-    <button id="signupBtn" class="primary">Create account</button>
+    <button id="signupBtn">Create account</button>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard-container" class="hidden">
+<div id="dashboard-container" style="display:none">
   <header class="dash-header">
     <h1>SamaFlux</h1>
-
     <div class="header-actions">
       <button id="profileBtn">Profile</button>
       <button id="logoutBtn">Logout</button>
     </div>
   </header>
 
+  <!-- BALANCE -->
   <div class="card">
-    <p class="label">Balance</p>
+    <p class="muted">Balance</p>
     <h2>₦<span id="balance">0</span></h2>
   </div>
 
+  <!-- ACTIONS -->
+  <div class="cards-grid">
+    <div class="card">
+      <h3>Add Money</h3>
+      <input id="addAmount" type="number" placeholder="Amount" />
+      <button id="addMoneyBtn">Add</button>
+    </div>
+
+    <div class="card">
+      <h3>Send Money</h3>
+      <input id="sendEmail" type="email" placeholder="Recipient email" />
+      <input id="sendAmount" type="number" placeholder="Amount" />
+      <button id="sendMoneyBtn">Send</button>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profile-container" class="card" style="display:none">
+    <h3>Profile</h3>
+    <p><b>Name:</b> <span id="p-name"></span></p>
+    <p><b>Email:</b> <span id="p-email"></span></p>
+    <p><b>Phone:</b> <span id="p-phone"></span></p>
+    <p><b>Address:</b> <span id="p-address"></span></p>
+    <p><b>City:</b> <span id="p-city"></span></p>
+    <p><b>State:</b> <span id="p-state"></span></p>
+    <p><b>Country:</b> <span id="p-country"></span></p>
+    <p><b>Zip:</b> <span id="p-zip"></span></p>
+  </div>
+
+  <!-- HISTORY -->
   <div class="card">
     <h3>Recent activity</h3>
     <ul id="history"></ul>
