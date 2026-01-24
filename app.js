@@ -5,18 +5,18 @@ const auth = document.getElementById("auth-container");
 const signup = document.getElementById("signup-container");
 const dashboard = document.getElementById("dashboard-container");
 const loader = document.getElementById("page-loader");
-const toast = document.getElementById("toast");
 const historyList = document.getElementById("history");
 
-/* EVENTS */
+/* BUTTONS */
 loginBtn.onclick = login;
 signupBtn.onclick = register;
-goSignup.onclick = () => toggle(auth, signup);
-goLogin.onclick = () => toggle(signup, auth);
+goSignup.onclick = () => switchPage(auth, signup);
+goLogin.onclick = () => switchPage(signup, auth);
 logoutBtn.onclick = logout;
+profileBtn.onclick = showProfile;
 
 /* HELPERS */
-function toggle(hide, show) {
+function switchPage(hide, show) {
   hide.style.display = "none";
   show.style.display = "flex";
 }
@@ -26,9 +26,7 @@ function showLoader(show = true) {
 }
 
 function notify(msg) {
-  toast.innerText = msg;
-  toast.style.display = "block";
-  setTimeout(() => (toast.style.display = "none"), 3000);
+  alert(msg); // still safe; we can replace later
 }
 
 /* LOGIN */
@@ -55,17 +53,25 @@ async function login() {
   loadDashboard();
 }
 
-/* REGISTER */
+/* REGISTER (EXTENDED FIELDS — SAFE) */
 async function register() {
   showLoader(true);
+
+  const payload = {
+    fullName: regFullName.value,
+    email: regEmail.value,
+    password: regPassword.value,
+    address: regAddress.value,
+    city: regCity.value,
+    state: regState.value,
+    country: regCountry.value,
+    zip: regZip.value
+  };
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: regEmail.value,
-      password: regPassword.value
-    })
+    body: JSON.stringify(payload)
   });
 
   showLoader(false);
@@ -73,7 +79,7 @@ async function register() {
   if (!res.ok) return notify("Registration failed");
 
   notify("Account created. Please login.");
-  toggle(signup, auth);
+  switchPage(signup, auth);
 }
 
 /* DASHBOARD */
@@ -93,7 +99,7 @@ async function loadDashboard() {
   loadHistory();
 }
 
-/* REAL TRANSACTION HISTORY */
+/* HISTORY */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading…</li>";
 
@@ -128,7 +134,7 @@ function openPage(type) {
     page.innerHTML = `
       <h3>Add Money</h3>
       <input placeholder="Amount">
-      <button onclick="notify('Payment flow coming soon')">Continue</button>
+      <button>Continue</button>
     `;
   }
 
@@ -137,7 +143,7 @@ function openPage(type) {
       <h3>Send Money</h3>
       <input placeholder="Recipient Email">
       <input placeholder="Amount">
-      <button onclick="notify('Money sent')">Send</button>
+      <button>Send</button>
     `;
   }
 
@@ -146,9 +152,14 @@ function openPage(type) {
       <h3>Request Money</h3>
       <input placeholder="User Email">
       <input placeholder="Amount">
-      <button onclick="notify('Request sent')">Request</button>
+      <button>Request</button>
     `;
   }
+}
+
+/* PROFILE (UI ONLY FOR NOW) */
+function showProfile() {
+  notify("Profile details will appear here after backend update");
 }
 
 /* LOGOUT */
