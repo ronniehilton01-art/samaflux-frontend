@@ -1,47 +1,38 @@
-/* ===============================
-   RESET (SAFE & MINIMAL)
-================================ */
+/* RESET */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* ===============================
-   BASE
-================================ */
+/* BASE */
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f5f7;
+  background: #f5f5f7;
   color: #1c1e21;
   min-height: 100vh;
-  line-height: 1.4;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ===============================
-   LOADER
-================================ */
+/* LOADER (CANNOT BLOCK CLICKS) */
 #page-loader {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,0.85);
   display: none;
   align-items: center;
   justify-content: center;
+  pointer-events: none; /* 🔑 FIX */
   z-index: 9999;
 }
 
-#page-loader::after {
-  content: "SamaFlux";
+#page-loader span {
   font-size: 22px;
   font-weight: 600;
   color: #003087;
 }
 
-/* ===============================
-   AUTH LAYOUT
-================================ */
+/* AUTH */
 #auth-container,
 #signup-container {
   min-height: 100vh;
@@ -51,78 +42,49 @@ body {
 }
 
 #auth {
-  background: #ffffff;
+  background: #fff;
   width: 340px;
   padding: 32px;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
 }
 
-/* ===============================
-   AUTH CONTENT
-================================ */
 #auth h2 {
   text-align: center;
   color: #003087;
   margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: 600;
 }
 
 #auth input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px;
   margin-bottom: 14px;
   border-radius: 8px;
   border: 1px solid #ccd0d5;
-  font-size: 14px;
 }
 
-#auth input:focus {
-  outline: none;
-  border-color: #0070ba;
-}
-
-/* ===============================
-   BUTTONS
-================================ */
 button {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
   border-radius: 999px;
   border: none;
   background: #0070ba;
-  color: #ffffff;
-  font-size: 15px;
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
 }
 
-button:hover {
-  background: #005ea6;
-}
-
 button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  opacity: .6;
 }
 
-/* Link-style buttons */
 .link-btn {
   background: none;
   color: #0070ba;
-  font-weight: 600;
   margin-top: 14px;
 }
 
-.link-btn:hover {
-  text-decoration: underline;
-}
-
-/* ===============================
-   DASHBOARD
-================================ */
+/* DASHBOARD */
 #dashboard-container {
   max-width: 960px;
   margin: 40px auto;
@@ -130,28 +92,22 @@ button:disabled {
   text-align: center;
 }
 
-#dashboard-container h1 {
-  font-size: 26px;
-  color: #003087;
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.actions button {
+  width: auto;
+  padding: 10px 18px;
+}
+
+.card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
   margin-bottom: 20px;
-}
-
-#dashboard-container p {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-#logoutBtn {
-  max-width: 220px;
-  margin: 0 auto;
-}
-
-/* ===============================
-   MOBILE
-================================ */
-@media (max-width: 480px) {
-  #auth {
-    width: 90%;
-    padding: 26px;
-  }
 }
