@@ -4,50 +4,64 @@
   <meta charset="UTF-8">
   <title>SamaFlux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- CACHE BUSTER -->
-  <link rel="stylesheet" href="style.css?v=1.0.3">
+  <link rel="stylesheet" href="style.css?v=2.0">
 </head>
 <body>
 
-<div id="page-loader"></div>
+<!-- LOADER -->
+<div id="page-loader">
+  <div class="spinner">
+    <div class="circle"></div>
+    <p>SamaFlux</p>
+  </div>
+</div>
 
+<!-- NOTIFICATION -->
+<div id="toast"></div>
+
+<!-- LOGIN -->
 <div id="auth-container">
   <div id="auth">
     <h2>Log in to SamaFlux</h2>
-
     <input id="loginEmail" type="email" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
-
     <button id="loginBtn">Log in</button>
-
-    <button id="goSignup" class="link-btn">
-      Create account
-    </button>
+    <button id="goSignup" class="link-btn">Create account</button>
   </div>
 </div>
 
+<!-- SIGNUP -->
 <div id="signup-container" style="display:none">
   <div id="auth">
     <h2>Create account</h2>
-
     <input id="regEmail" type="email" placeholder="Email">
     <input id="regPassword" type="password" placeholder="Password">
-
     <button id="signupBtn">Sign up</button>
-
-    <button id="goLogin" class="link-btn">
-      Back to login
-    </button>
+    <button id="goLogin" class="link-btn">Back to login</button>
   </div>
 </div>
 
+<!-- DASHBOARD -->
 <div id="dashboard-container" style="display:none">
-  <h1>SamaFlux Dashboard</h1>
-  <p>Balance: ₦<span id="balance">0</span></p>
-  <button id="logoutBtn">Logout</button>
+  <header>
+    <h1>SamaFlux</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <div class="card">
+    <h3>Balance</h3>
+    <p>₦<span id="balance">0</span></p>
+  </div>
+
+  <div class="actions">
+    <button onclick="openPage('add')">Add Money</button>
+    <button onclick="openPage('send')">Send Money</button>
+    <button onclick="openPage('request')">Request Money</button>
+  </div>
+
+  <div id="sub-page" class="card" style="display:none"></div>
 </div>
 
-<script src="app.js?v=1.0.3" defer></script>
+<script src="app.js?v=2.0" defer></script>
 </body>
 </html>
