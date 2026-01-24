@@ -1,9 +1,15 @@
 const API = "https://samaflux-backend.onrender.com";
 
+/* ELEMENTS */
+const authContainer = document.getElementById("auth-container");
+const dashboardContainer = document.getElementById("dashboard-container");
+const balanceEl = document.getElementById("balance");
+const historyEl = document.getElementById("history");
+
 /* ---------- LOGIN ---------- */
 async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -16,13 +22,14 @@ async function login() {
 
   localStorage.setItem("email", data.email);
   localStorage.setItem("token", data.token);
+
   loadDashboard();
 }
 
 /* ---------- REGISTER ---------- */
 async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
@@ -48,7 +55,7 @@ async function loadDashboard() {
   });
 
   const data = await res.json();
-  balance.innerText = data.balance;
+  balanceEl.innerText = data.balance;
 
   loadHistory();
 }
@@ -67,17 +74,18 @@ async function addMoney() {
   });
 
   const data = await res.json();
+
   if (data.status === "success") {
     window.location.href = data.data.authorization_url;
   } else {
-    alert("Failed to initialize payment");
+    alert("Payment initialization failed");
   }
 }
 
 /* ---------- SEND MONEY ---------- */
 async function sendMoney() {
-  const to = sendEmail.value;
-  const amount = sendAmount.value;
+  const to = document.getElementById("sendEmail").value;
+  const amount = document.getElementById("sendAmount").value;
   const from = localStorage.getItem("email");
 
   if (!to || !amount) return alert("Fill all fields");
@@ -98,18 +106,19 @@ async function sendMoney() {
 /* ---------- HISTORY ---------- */
 async function loadHistory() {
   const email = localStorage.getItem("email");
+
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
-  history.innerHTML = "";
+  historyEl.innerHTML = "";
   tx.forEach(t => {
     const li = document.createElement("li");
     li.innerHTML = `<span>${t.type}</span><strong>₦${t.amount}</strong>`;
-    history.appendChild(li);
+    historyEl.appendChild(li);
   });
 }
 
-/* ---------- TOP ACTION HANDLERS ---------- */
+/* ---------- TOP ACTIONS ---------- */
 function openAdd() {
   addMoney();
 }
@@ -134,5 +143,7 @@ function logout() {
 
 /* ---------- AUTO LOAD ---------- */
 window.onload = () => {
-  if (localStorage.getItem("email")) loadDashboard();
+  if (localStorage.getItem("token")) {
+    loadDashboard();
+  }
 };
