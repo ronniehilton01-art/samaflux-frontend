@@ -1,9 +1,9 @@
-const API = "https://samaflux-backend.onrender.com"; // Correct backend
+const API = "https://samaflux-backend.onrender.com";
 
 /* ---------- LOGIN ---------- */
 async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -21,8 +21,8 @@ async function login() {
 
 /* ---------- REGISTER ---------- */
 async function register() {
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
+  const email = regEmail.value;
+  const password = regPassword.value;
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
@@ -38,16 +38,17 @@ async function register() {
 
 /* ---------- DASHBOARD ---------- */
 async function loadDashboard() {
-  document.getElementById("auth-container").style.display = "none";
-  document.getElementById("dashboard-container").style.display = "block";
+  authContainer.style.display = "none";
+  dashboardContainer.style.display = "block";
 
-  const email = localStorage.getItem("email");
   const res = await fetch(`${API}/auth/me`, {
-    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
   });
 
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance;
+  balance.innerText = data.balance;
 
   loadHistory();
 }
@@ -57,6 +58,8 @@ async function addMoney() {
   const amount = document.getElementById("amount").value;
   const email = localStorage.getItem("email");
 
+  if (!amount) return alert("Enter amount");
+
   const res = await fetch(`${API}/payment/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -65,7 +68,6 @@ async function addMoney() {
 
   const data = await res.json();
   if (data.status === "success") {
-    alert("Payment initialized. Complete in the new window.");
     window.location.href = data.data.authorization_url;
   } else {
     alert("Failed to initialize payment");
@@ -74,38 +76,54 @@ async function addMoney() {
 
 /* ---------- SEND MONEY ---------- */
 async function sendMoney() {
-  const toEmail = document.getElementById("sendEmail").value;
-  const amount = document.getElementById("sendAmount").value;
-  const fromEmail = localStorage.getItem("email");
+  const to = sendEmail.value;
+  const amount = sendAmount.value;
+  const from = localStorage.getItem("email");
+
+  if (!to || !amount) return alert("Fill all fields");
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ from: fromEmail, to: toEmail, amount })
+    body: JSON.stringify({ from, to, amount })
   });
 
   const data = await res.json();
-  if (res.ok) {
-    alert(`Sent ₦${amount} to ${toEmail}`);
-    loadDashboard();
-  } else {
-    alert(data.error || "Failed to send money");
-  }
+  if (!res.ok) return alert(data.error);
+
+  alert(`Sent ₦${amount} to ${to}`);
+  loadDashboard();
 }
 
-/* ---------- TRANSACTION HISTORY ---------- */
+/* ---------- HISTORY ---------- */
 async function loadHistory() {
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
-  const historyEl = document.getElementById("history");
-  historyEl.innerHTML = "";
+  history.innerHTML = "";
   tx.forEach(t => {
     const li = document.createElement("li");
-    li.innerText = `${t.type} ₦${t.amount}`;
-    historyEl.appendChild(li);
+    li.innerHTML = `<span>${t.type}</span><strong>₦${t.amount}</strong>`;
+    history.appendChild(li);
   });
+}
+
+/* ---------- TOP ACTION HANDLERS ---------- */
+function openAdd() {
+  addMoney();
+}
+
+function openSend() {
+  sendMoney();
+}
+
+function openReceive() {
+  const from = prompt("Request money from (email):");
+  const amount = prompt("Amount:");
+
+  if (!from || !amount) return;
+  alert(`Request sent: ₦${amount} from ${from}`);
 }
 
 /* ---------- LOGOUT ---------- */
