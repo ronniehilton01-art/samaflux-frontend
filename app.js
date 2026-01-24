@@ -1,39 +1,29 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ELEMENTS */
+/* ===== ELEMENTS (MATCH HTML IDS) ===== */
 const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
-const dashboard = document.getElementById("dashboard");
-const sendPage = document.getElementById("send-page");
-const addPage = document.getElementById("add-page");
+const dashboard = document.getElementById("dashboard-container");
 const historyList = document.getElementById("history");
 
-/* BUTTONS */
+/* ===== BUTTONS ===== */
 document.getElementById("loginBtn").onclick = login;
-document.getElementById("signupBtn").onclick = register;
 document.getElementById("goSignup").onclick = () => show(step1);
 document.getElementById("goLogin1").onclick = () => show(auth);
 document.getElementById("nextSignup").onclick = () => show(step2);
+document.getElementById("signupBtn").onclick = register;
 document.getElementById("logoutBtn").onclick = logout;
 
-document.getElementById("sendMoneyBtn").onclick = () => show(sendPage);
-document.getElementById("addMoneyBtn").onclick = () => show(addPage);
-document.getElementById("backDash1").onclick = () => show(dashboard);
-document.getElementById("backDash2").onclick = () => show(dashboard);
-
-document.getElementById("confirmSendBtn").onclick = sendMoney;
-document.getElementById("paystackBtn").onclick = payWithPaystack;
-
-/* VIEW SWITCHER */
+/* ===== VIEW SWITCHER ===== */
 function show(el) {
-  [auth, step1, step2, dashboard, sendPage, addPage].forEach(e =>
-    e.classList.add("hidden")
-  );
-  el.classList.remove("hidden");
+  [auth, step1, step2, dashboard].forEach(v => {
+    if (v) v.style.display = "none";
+  });
+  el.style.display = "flex";
 }
 
-/* LOGIN */
+/* ===== LOGIN ===== */
 async function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
@@ -53,7 +43,7 @@ async function login() {
   loadDashboard();
 }
 
-/* REGISTER */
+/* ===== REGISTER (2 STEP) ===== */
 async function register() {
   const payload = {
     email: regEmail.value,
@@ -79,7 +69,7 @@ async function register() {
   show(auth);
 }
 
-/* DASHBOARD */
+/* ===== DASHBOARD ===== */
 async function loadDashboard() {
   show(dashboard);
 
@@ -95,7 +85,7 @@ async function loadDashboard() {
   loadHistory();
 }
 
-/* TRANSACTIONS */
+/* ===== HISTORY ===== */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
 
@@ -104,7 +94,8 @@ async function loadHistory() {
   const tx = await res.json();
 
   historyList.innerHTML = "";
-  if (!tx.length) {
+
+  if (!tx || !tx.length) {
     historyList.innerHTML = "<li>No transactions</li>";
     return;
   }
@@ -116,59 +107,15 @@ async function loadHistory() {
   });
 }
 
-/* SEND MONEY */
-async function sendMoney() {
-  const toEmail = document.getElementById("sendToEmail").value;
-  const amount = document.getElementById("sendAmount").value;
-
-  const res = await fetch(`${API}/payment/send`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromEmail: localStorage.getItem("email"),
-      toEmail,
-      amount
-    })
-  });
-
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  loadDashboard();
-}
-
-/* PAYSTACK */
-function payWithPaystack() {
-  const amount = document.getElementById("addAmount").value;
-
-  const handler = PaystackPop.setup({
-    key: "pk_test_xxxxxxxxxxxxx", // replace with real key
-    email: localStorage.getItem("email"),
-    amount: amount * 100,
-    currency: "NGN",
-    callback: async () => {
-      await fetch(`${API}/payment/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: localStorage.getItem("email"),
-          amount
-        })
-      });
-      loadDashboard();
-    }
-  });
-
-  handler.openIframe();
-}
-
-/* LOGOUT */
+/* ===== LOGOUT ===== */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* AUTO LOGIN */
-if (localStorage.getItem("token")) {
-  loadDashboard();
-}
+/* ===== AUTO LOGIN ===== */
+window.onload = () => {
+  if (localStorage.getItem("token")) {
+    loadDashboard();
+  }
+};
