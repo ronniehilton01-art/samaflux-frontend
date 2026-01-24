@@ -1,49 +1,152 @@
+/* ===============================
+   GLOBAL RESET (SAFE)
+================================ */
 * {
   box-sizing: border-box;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
-}
-
-body {
   margin: 0;
-  background: #f5f7fa;
+  padding: 0;
 }
 
-/* LOADER FIX */
+/* ===============================
+   BASE TYPOGRAPHY (FIXED)
+================================ */
+body {
+  font-family:
+    "Segoe UI",
+    Tahoma,
+    Geneva,
+    Verdana,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: #f5f5f7;
+  color: #1c1e21;
+  min-height: 100vh;
+  line-height: 1.4;
+}
+
+/* ===============================
+   LOADER (CLICK SAFE)
+================================ */
 #page-loader {
   position: fixed;
   inset: 0;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.85);
   display: none;
-  pointer-events: none; /* 🔥 CRITICAL */
+  pointer-events: none; /* IMPORTANT */
+  z-index: 9999;
 }
 
-/* AUTH */
+/* ===============================
+   AUTH CONTAINERS
+================================ */
+#auth-container,
+#signup-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===============================
+   AUTH CARD
+================================ */
 #auth {
-  background: #fff;
-  padding: 30px;
-  width: 320px;
-  margin: 100px auto;
+  background: #ffffff;
+  width: 340px;
+  padding: 32px;
   border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
+/* Headings */
+#auth h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #003087; /* PayPal blue */
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Inputs */
+#auth input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccd0d5;
+  font-size: 14px;
+}
+
+#auth input:focus {
+  outline: none;
+  border-color: #0070ba;
+}
+
+/* Buttons */
 button {
   width: 100%;
   padding: 12px;
+  margin-top: 10px;
   border-radius: 999px;
   border: none;
   background: #0070ba;
-  color: #fff;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
 }
 
+button:hover {
+  background: #005ea6;
+}
+
+/* Link-style buttons */
 .link-btn {
   background: none;
   color: #0070ba;
+  font-weight: 600;
+  margin-top: 14px;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   DASHBOARD
+================================ */
+#dashboard-container {
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Header */
+#dashboard-container h1 {
+  font-size: 26px;
+  color: #003087;
+  margin-bottom: 20px;
+}
+
+/* Balance card */
+#dashboard-container p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+/* Logout button */
+#logoutBtn {
+  max-width: 200px;
+}
+
+/* ===============================
+   MOBILE POLISH
+================================ */
+@media (max-width: 480px) {
+  #auth {
+    width: 90%;
+    padding: 26px;
+  }
 }
