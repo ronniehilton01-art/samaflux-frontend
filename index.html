@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>SamaFlux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css?v=4.2">
-  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="style.css?v=5.0" />
+
+  <!-- PAYSTACK (must load BEFORE app.js) -->
+  <script src="https://js.paystack.co/v1/inline.js" defer></script>
 </head>
 <body>
 
@@ -13,9 +16,12 @@
 <div id="auth-container">
   <div class="card auth-card">
     <h2>Log in</h2>
-    <input id="loginEmail" type="email" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
+
+    <input id="loginEmail" type="email" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+
     <button id="loginBtn">Log in</button>
+
     <button id="goSignup" class="link-btn">Create account</button>
   </div>
 </div>
@@ -24,8 +30,10 @@
 <div id="signup-step1" style="display:none">
   <div class="card auth-card">
     <h2>Create account</h2>
-    <input id="regEmail" type="email" placeholder="Email">
-    <input id="regPassword" type="password" placeholder="Password">
+
+    <input id="regEmail" type="email" placeholder="Email" />
+    <input id="regPassword" type="password" placeholder="Password" />
+
     <button id="nextSignup">Next</button>
     <button id="goLogin1" class="link-btn">Back to login</button>
   </div>
@@ -35,13 +43,15 @@
 <div id="signup-step2" style="display:none">
   <div class="card auth-card">
     <h2>Your details</h2>
-    <input id="regFullName" placeholder="Full name">
-    <input id="regPhone" placeholder="Phone number">
-    <input id="regAddress" placeholder="Home address">
-    <input id="regCity" placeholder="City">
-    <input id="regState" placeholder="State">
-    <input id="regCountry" placeholder="Country">
-    <input id="regZip" placeholder="Zip code">
+
+    <input id="regFullName" placeholder="Full name" />
+    <input id="regPhone" placeholder="Phone number" />
+    <input id="regAddress" placeholder="Home address" />
+    <input id="regCity" placeholder="City" />
+    <input id="regState" placeholder="State" />
+    <input id="regCountry" placeholder="Country" />
+    <input id="regZip" placeholder="Zip code" />
+
     <button id="signupBtn">Create account</button>
   </div>
 </div>
@@ -50,16 +60,27 @@
 <div id="dashboard-container" style="display:none">
   <header class="dash-header">
     <h1>SamaFlux</h1>
-    <div>
-      <button id="addMoneyBtn">Add Money</button>
-      <button id="sendMoneyBtn">Send Money</button>
-      <button id="logoutBtn">Logout</button>
-    </div>
+    <button id="logoutBtn">Logout</button>
   </header>
 
   <div class="card">
     <p>Balance</p>
     <h2>₦<span id="balance">0</span></h2>
+  </div>
+
+  <!-- ADD FUNDS -->
+  <div class="card">
+    <h3>Add Funds</h3>
+    <input id="addAmount" type="number" placeholder="Amount (NGN)" />
+    <button id="addFundsBtn">Add Funds</button>
+  </div>
+
+  <!-- SEND MONEY -->
+  <div class="card">
+    <h3>Send Money</h3>
+    <input id="sendTo" placeholder="Recipient email" />
+    <input id="sendAmount" type="number" placeholder="Amount (NGN)" />
+    <button id="sendBtn">Send</button>
   </div>
 
   <div class="card">
@@ -68,27 +89,6 @@
   </div>
 </div>
 
-<!-- SEND MONEY -->
-<div id="send-page" style="display:none">
-  <div class="card auth-card">
-    <h2>Send Money</h2>
-    <input id="sendToEmail" placeholder="Receiver email">
-    <input id="sendAmount" type="number" placeholder="Amount">
-    <button id="confirmSendBtn">Send</button>
-    <button id="backDash1" class="link-btn">Back</button>
-  </div>
-</div>
-
-<!-- ADD MONEY -->
-<div id="add-page" style="display:none">
-  <div class="card auth-card">
-    <h2>Add Money</h2>
-    <input id="addAmount" type="number" placeholder="Amount">
-    <button id="paystackBtn">Pay with Paystack</button>
-    <button id="backDash2" class="link-btn">Back</button>
-  </div>
-</div>
-
-<script src="app.js?v=4.2" defer></script>
+<script src="app.js?v=5.0" defer></script>
 </body>
 </html>
