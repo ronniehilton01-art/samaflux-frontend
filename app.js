@@ -1,55 +1,97 @@
 const API = "https://samaflux-backend.onrender.com";
 
+/* ELEMENTS */
 const auth = document.getElementById("auth-container");
 const signup = document.getElementById("signup-container");
 const dashboard = document.getElementById("dashboard-container");
+const loader = document.getElementById("page-loader");
 
 /* BUTTONS */
-document.getElementById("loginBtn").addEventListener("click", login);
-document.getElementById("signupBtn").addEventListener("click", register);
-document.getElementById("goSignup").addEventListener("click", () => {
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+const goSignup = document.getElementById("goSignup");
+const goLogin = document.getElementById("goLogin");
+const logoutBtn = document.getElementById("logoutBtn");
+
+/* SAFE UI HELPERS */
+function showLoader(show = true) {
+  loader.style.display = show ? "flex" : "none";
+}
+
+function notify(msg) {
+  // keeping alert for now for stability
+  alert(msg);
+}
+
+/* NAV */
+goSignup.addEventListener("click", () => {
   auth.style.display = "none";
-  signup.style.display = "block";
+  signup.style.display = "flex";
 });
-document.getElementById("goLogin").addEventListener("click", () => {
+
+goLogin.addEventListener("click", () => {
   signup.style.display = "none";
-  auth.style.display = "block";
+  auth.style.display = "flex";
 });
-document.getElementById("logoutBtn").addEventListener("click", logout);
+
+logoutBtn.addEventListener("click", logout);
 
 /* LOGIN */
-async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+loginBtn.addEventListener("click", async () => {
+  showLoader(true);
+  loginBtn.disabled = true;
 
-  const res = await fetch(`${API}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  try {
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
 
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
+    const res = await fetch(`${API}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("email", data.email);
-  loadDashboard();
-}
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Login failed");
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("email", data.email);
+    loadDashboard();
+  } catch (err) {
+    notify(err.message);
+  } finally {
+    loginBtn.disabled = false;
+    showLoader(false);
+  }
+});
 
 /* REGISTER */
-async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
+signupBtn.addEventListener("click", async () => {
+  showLoader(true);
+  signupBtn.disabled = true;
 
-  const res = await fetch(`${API}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  try {
+    const email = regEmail.value.trim();
+    const password = regPassword.value;
 
-  if (!res.ok) return alert("Registration failed");
-  alert("Account created");
-}
+    const res = await fetch(`${API}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!res.ok) throw new Error("Registration failed");
+
+    notify("Account created. Please log in.");
+    signup.style.display = "none";
+    auth.style.display = "flex";
+  } catch (err) {
+    notify(err.message);
+  } finally {
+    signupBtn.disabled = false;
+    showLoader(false);
+  }
+});
 
 /* DASHBOARD */
 async function loadDashboard() {
@@ -57,14 +99,25 @@ async function loadDashboard() {
   signup.style.display = "none";
   dashboard.style.display = "block";
 
-  const res = await fetch(`${API}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
-  });
+  showLoader(true);
 
-  const data = await res.json();
-  balance.innerText = data.balance;
+  try {
+    const res = await fetch(`${API}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error("Session expired");
+
+    balance.innerText = data.balance;
+  } catch (err) {
+    notify(err.message);
+    logout();
+  } finally {
+    showLoader(false);
+  }
 }
 
 /* LOGOUT */
