@@ -2,38 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Samaflux</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="auth-container">
   <div id="auth">
     <h2>Log in to Samaflux</h2>
 
-    <input id="loginEmail" type="email" placeholder="Email address" />
-    <input id="loginPassword" type="password" placeholder="Password" />
-    <button onclick="login()">Log In</button>
+    <input id="loginEmail" type="email" placeholder="Email address"/>
+    <input id="loginPassword" type="password" placeholder="Password"/>
+
+    <button id="loginBtn" onclick="login()">
+      <span class="btn-text">Log In</span>
+      <span class="spinner"></span>
+    </button>
 
     <div class="divider">or</div>
 
     <h3>Create an account</h3>
-    <input id="regEmail" type="email" placeholder="Email address" />
-    <input id="regPassword" type="password" placeholder="Password" />
-    <button class="secondary" onclick="register()">Sign Up</button>
+    <input id="regEmail" type="email" placeholder="Email address"/>
+    <input id="regPassword" type="password" placeholder="Password"/>
+
+    <button id="registerBtn" class="secondary" onclick="register()">
+      <span class="btn-text">Sign Up</span>
+      <span class="spinner"></span>
+    </button>
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard-container" style="display:none">
 
   <header class="topbar">
     <h1>Samaflux</h1>
     <div class="top-actions">
-      <button class="ghost" onclick="addMoney()">Add money</button>
-      <button class="ghost" onclick="sendMoney()">Send</button>
+      <button id="addBtn" class="ghost" onclick="addMoney()">Add money</button>
+      <button id="sendBtn" class="ghost" onclick="sendMoney()">Send</button>
       <button class="ghost" onclick="receiveMoney()">Request</button>
       <button class="logout" onclick="logout()">Log out</button>
     </div>
@@ -47,13 +53,13 @@
   <section class="cards">
     <div class="card">
       <h3>Add money</h3>
-      <input id="amount" type="number" placeholder="Amount (₦)" />
+      <input id="amount" type="number" placeholder="Amount (₦)"/>
     </div>
 
     <div class="card">
       <h3>Send money</h3>
-      <input id="sendEmail" type="email" placeholder="Recipient email" />
-      <input id="sendAmount" type="number" placeholder="Amount (₦)" />
+      <input id="sendEmail" type="email" placeholder="Recipient email"/>
+      <input id="sendAmount" type="number" placeholder="Amount (₦)"/>
     </div>
   </section>
 
@@ -64,7 +70,6 @@
 
 </div>
 
-<!-- TOASTS -->
 <div id="toast-container"></div>
 
 <script src="app.js"></script>
