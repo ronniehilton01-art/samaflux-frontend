@@ -4,26 +4,26 @@
   <meta charset="UTF-8">
   <title>SamaFlux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css?v=2.1">
+  <link rel="stylesheet" href="style.css?v=2.2">
 </head>
 <body>
 
 <div id="page-loader">
   <div class="spinner">
-    <div class="circle"></div>
     <p>SamaFlux</p>
   </div>
 </div>
-
-<div id="toast"></div>
 
 <!-- LOGIN -->
 <div id="auth-container">
   <div id="auth">
     <h2>Log in to SamaFlux</h2>
+
     <input id="loginEmail" type="email" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
+
     <button id="loginBtn">Log in</button>
+
     <button id="goSignup" class="link-btn">Create account</button>
   </div>
 </div>
@@ -32,9 +32,19 @@
 <div id="signup-container" style="display:none">
   <div id="auth">
     <h2>Create account</h2>
+
+    <input id="regFullName" placeholder="Full name">
     <input id="regEmail" type="email" placeholder="Email">
     <input id="regPassword" type="password" placeholder="Password">
+
+    <input id="regAddress" placeholder="Home address">
+    <input id="regCity" placeholder="City">
+    <input id="regState" placeholder="State">
+    <input id="regCountry" placeholder="Country">
+    <input id="regZip" placeholder="Zip code">
+
     <button id="signupBtn">Sign up</button>
+
     <button id="goLogin" class="link-btn">Back to login</button>
   </div>
 </div>
@@ -43,7 +53,10 @@
 <div id="dashboard-container" style="display:none">
   <header>
     <h1>SamaFlux</h1>
-    <button id="logoutBtn">Logout</button>
+    <div class="top-actions">
+      <button id="profileBtn">Profile</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
   </header>
 
   <div class="card">
@@ -59,13 +72,12 @@
 
   <div id="sub-page" class="card" style="display:none"></div>
 
-  <!-- REAL TRANSACTIONS -->
   <div class="card">
     <h3>Recent activity</h3>
     <ul id="history"></ul>
   </div>
 </div>
 
-<script src="app.js?v=2.1" defer></script>
+<script src="app.js?v=2.2" defer></script>
 </body>
 </html>
