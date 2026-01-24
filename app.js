@@ -6,6 +6,7 @@ const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
 const profile = document.getElementById("profile-container");
+const sendPage = document.getElementById("send-container");
 const historyList = document.getElementById("history");
 
 /* NAV */
@@ -16,7 +17,10 @@ nextSignup.onclick = () => switchView(step1, step2);
 signupBtn.onclick = register;
 logoutBtn.onclick = logout;
 profileBtn.onclick = loadProfile;
-backDashboard.onclick = () => switchView(profile, dashboard);
+sendBtn.onclick = () => switchView(dashboard, sendPage);
+backDashboard1.onclick = () => switchView(sendPage, dashboard);
+backDashboard2.onclick = () => switchView(profile, dashboard);
+sendMoneyBtn.onclick = sendMoney;
 
 function switchView(hide, show) {
   hide.style.display = "none";
@@ -71,8 +75,8 @@ async function register() {
 /* DASHBOARD */
 async function loadDashboard() {
   auth.style.display = step1.style.display = step2.style.display = "none";
+  profile.style.display = sendPage.style.display = "none";
   dashboard.style.display = "block";
-  profile.style.display = "none";
 
   const res = await fetch(`${API}/auth/me`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -82,6 +86,26 @@ async function loadDashboard() {
   balance.innerText = data.balance || 0;
 
   loadHistory();
+}
+
+/* SEND MONEY */
+async function sendMoney() {
+  const res = await fetch(`${API}/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: localStorage.getItem("email"),
+      to: sendEmail.value,
+      amount: sendAmount.value
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.error || "Failed");
+
+  alert("Money sent successfully");
+  switchView(sendPage, dashboard);
+  loadDashboard();
 }
 
 /* PROFILE */
@@ -108,8 +132,10 @@ async function loadProfile() {
 /* HISTORY */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
-  const email = localStorage.getItem("email");
-  const res = await fetch(`${API}/payment/history/${email}`);
+
+  const res = await fetch(
+    `${API}/payment/history/${localStorage.getItem("email")}`
+  );
   const tx = await res.json();
 
   historyList.innerHTML = "";
