@@ -2,37 +2,25 @@ const API = "https://samaflux-backend.onrender.com";
 
 /* ELEMENTS */
 const auth = document.getElementById("auth-container");
-const signup = document.getElementById("signup-container");
+const step1 = document.getElementById("signup-step1");
+const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-const loader = document.getElementById("page-loader");
 const historyList = document.getElementById("history");
 
-/* BUTTONS */
+/* NAV */
 loginBtn.onclick = login;
-signupBtn.onclick = register;
-goSignup.onclick = () => switchPage(auth, signup);
-goLogin.onclick = () => switchPage(signup, auth);
+goSignup.onclick = () => switchView(auth, step1);
+goLogin1.onclick = () => switchView(step1, auth);
+nextSignup.onclick = () => switchView(step1, step2);
 logoutBtn.onclick = logout;
-profileBtn.onclick = showProfile;
 
-/* HELPERS */
-function switchPage(hide, show) {
+function switchView(hide, show) {
   hide.style.display = "none";
   show.style.display = "flex";
 }
 
-function showLoader(show = true) {
-  loader.style.display = show ? "flex" : "none";
-}
-
-function notify(msg) {
-  alert(msg); // still safe; we can replace later
-}
-
 /* LOGIN */
 async function login() {
-  showLoader(true);
-
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -43,24 +31,20 @@ async function login() {
   });
 
   const data = await res.json();
-  showLoader(false);
-
-  if (!res.ok) return notify(data.error || "Login failed");
+  if (!res.ok) return alert(data.error);
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
-
   loadDashboard();
 }
 
-/* REGISTER (EXTENDED FIELDS — SAFE) */
+/* REGISTER (2 STEP SAFE) */
 async function register() {
-  showLoader(true);
-
   const payload = {
-    fullName: regFullName.value,
     email: regEmail.value,
     password: regPassword.value,
+    fullName: regFullName.value,
+    phone: regPhone.value,
     address: regAddress.value,
     city: regCity.value,
     state: regState.value,
@@ -74,17 +58,17 @@ async function register() {
     body: JSON.stringify(payload)
   });
 
-  showLoader(false);
+  if (!res.ok) return alert("Signup failed");
 
-  if (!res.ok) return notify("Registration failed");
-
-  notify("Account created. Please login.");
-  switchPage(signup, auth);
+  alert("Account created");
+  switchView(step2, auth);
 }
+
+signupBtn.onclick = register;
 
 /* DASHBOARD */
 async function loadDashboard() {
-  auth.style.display = signup.style.display = "none";
+  auth.style.display = step1.style.display = step2.style.display = "none";
   dashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
@@ -101,71 +85,24 @@ async function loadDashboard() {
 
 /* HISTORY */
 async function loadHistory() {
-  historyList.innerHTML = "<li>Loading…</li>";
+  historyList.innerHTML = "<li>Loading...</li>";
 
-  try {
-    const email = localStorage.getItem("email");
-    const res = await fetch(`${API}/payment/history/${email}`);
-    const tx = await res.json();
+  const email = localStorage.getItem("email");
+  const res = await fetch(`${API}/payment/history/${email}`);
+  const tx = await res.json();
 
-    historyList.innerHTML = "";
+  historyList.innerHTML = "";
 
-    if (!Array.isArray(tx) || tx.length === 0) {
-      historyList.innerHTML = "<li>No transactions yet</li>";
-      return;
-    }
-
-    tx.reverse().slice(0, 5).forEach(t => {
-      const li = document.createElement("li");
-      li.innerText = `${t.type} ₦${t.amount}`;
-      historyList.appendChild(li);
-    });
-  } catch {
-    historyList.innerHTML = "<li>Unable to load history</li>";
-  }
-}
-
-/* ACTION PAGES */
-function openPage(type) {
-  const page = document.getElementById("sub-page");
-  page.style.display = "block";
-
-  if (type === "add") {
-    page.innerHTML = `
-      <h3>Add Money</h3>
-      <input placeholder="Amount">
-      <button>Continue</button>
-    `;
+  if (!tx || !tx.length) {
+    historyList.innerHTML = "<li>No transactions</li>";
+    return;
   }
 
-  if (type === "send") {
-    page.innerHTML = `
-      <h3>Send Money</h3>
-      <input placeholder="Recipient Email">
-      <input placeholder="Amount">
-      <button>Send</button>
-    `;
-  }
-
-  if (type === "request") {
-    page.innerHTML = `
-      <h3>Request Money</h3>
-      <input placeholder="User Email">
-      <input placeholder="Amount">
-      <button>Request</button>
-    `;
-  }
-}
-
-/* PROFILE (UI ONLY FOR NOW) */
-function showProfile() {
-  notify("Profile details will appear here after backend update");
-}
-
-/* LOGOUT */
-function logout() {
-  localStorage.clear();
-  location.reload();
+  tx.slice(-5).reverse().forEach(t => {
+    const li = document.createElement("li");
+    li.innerText = `${t.type} ₦${t.amount}`;
+    historyList.appendChild(li);
+  });
 }
 
 /* AUTO LOGIN */
