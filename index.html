@@ -12,6 +12,7 @@
 <div id="auth-container">
   <div id="auth">
     <h2>Log in to Samaflux</h2>
+
     <input id="loginEmail" type="email" placeholder="Email address" />
     <input id="loginPassword" type="password" placeholder="Password" />
     <button onclick="login()">Log In</button>
@@ -28,7 +29,6 @@
 <!-- DASHBOARD -->
 <div id="dashboard-container" style="display:none">
 
-  <!-- TOP BAR -->
   <header class="topbar">
     <h1>Samaflux</h1>
     <div class="top-actions">
@@ -39,13 +39,11 @@
     </div>
   </header>
 
-  <!-- BALANCE -->
   <section class="balance-card">
     <p class="label">Available balance</p>
     <h2>₦<span id="balance">0</span></h2>
   </section>
 
-  <!-- ACTION INPUTS -->
   <section class="cards">
     <div class="card">
       <h3>Add money</h3>
@@ -59,13 +57,15 @@
     </div>
   </section>
 
-  <!-- TRANSACTIONS -->
   <section class="transactions">
     <h3>Recent activity</h3>
     <ul id="history"></ul>
   </section>
 
 </div>
+
+<!-- TOASTS -->
+<div id="toast-container"></div>
 
 <script src="app.js"></script>
 </body>
