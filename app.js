@@ -1,11 +1,5 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ELEMENTS */
-const authContainer = document.getElementById("auth-container");
-const dashboardContainer = document.getElementById("dashboard-container");
-const balanceEl = document.getElementById("balance");
-const historyEl = document.getElementById("history");
-
 /* ---------- LOGIN ---------- */
 async function login() {
   const email = document.getElementById("loginEmail").value;
@@ -45,6 +39,10 @@ async function register() {
 
 /* ---------- DASHBOARD ---------- */
 async function loadDashboard() {
+  const authContainer = document.getElementById("auth-container");
+  const dashboardContainer = document.getElementById("dashboard-container");
+  const balanceEl = document.getElementById("balance");
+
   authContainer.style.display = "none";
   dashboardContainer.style.display = "block";
 
@@ -78,7 +76,7 @@ async function addMoney() {
   if (data.status === "success") {
     window.location.href = data.data.authorization_url;
   } else {
-    alert("Payment initialization failed");
+    alert("Payment failed");
   }
 }
 
@@ -103,9 +101,10 @@ async function sendMoney() {
   loadDashboard();
 }
 
-/* ---------- HISTORY ---------- */
+/* ---------- TRANSACTIONS ---------- */
 async function loadHistory() {
   const email = localStorage.getItem("email");
+  const historyEl = document.getElementById("history");
 
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
@@ -113,26 +112,18 @@ async function loadHistory() {
   historyEl.innerHTML = "";
   tx.forEach(t => {
     const li = document.createElement("li");
-    li.innerHTML = `<span>${t.type}</span><strong>₦${t.amount}</strong>`;
+    li.innerHTML = `<span>${t.type}</span> <strong>₦${t.amount}</strong>`;
     historyEl.appendChild(li);
   });
 }
 
-/* ---------- TOP ACTIONS ---------- */
-function openAdd() {
-  addMoney();
-}
-
-function openSend() {
-  sendMoney();
-}
-
-function openReceive() {
-  const from = prompt("Request money from (email):");
-  const amount = prompt("Amount:");
+/* ---------- RECEIVE MONEY ---------- */
+function receiveMoney() {
+  const from = prompt("Request money from (email)");
+  const amount = prompt("Amount");
 
   if (!from || !amount) return;
-  alert(`Request sent: ₦${amount} from ${from}`);
+  alert(`Money request sent to ${from} for ₦${amount}`);
 }
 
 /* ---------- LOGOUT ---------- */
@@ -142,8 +133,8 @@ function logout() {
 }
 
 /* ---------- AUTO LOAD ---------- */
-window.onload = () => {
+window.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("token")) {
     loadDashboard();
   }
-};
+});
