@@ -2,52 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SamaFlux</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- TOP PROGRESS BAR -->
 <div id="top-loader"></div>
 
-<!-- FULLSCREEN LOADER -->
+<!-- PAGE LOADER -->
 <div id="page-loader">
   <div class="loader-card">
     <div class="logo">Sama<span>Flux</span></div>
-    <div class="bar">
-      <div class="bar-fill"></div>
-    </div>
+    <div class="bar"><div class="bar-fill"></div></div>
     <p>Processing…</p>
   </div>
 </div>
 
+<!-- AUTH -->
 <div id="auth-container">
   <div id="auth">
     <h2>Log in to SamaFlux</h2>
-
-    <input id="loginEmail" type="email" placeholder="Email"/>
-    <input id="loginPassword" type="password" placeholder="Password"/>
-
-    <button onclick="login()">Log In</button>
+    <input id="loginEmail" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button onclick="login()">Log in</button>
 
     <h3>Create account</h3>
-    <input id="regEmail" type="email" placeholder="Email"/>
-    <input id="regPassword" type="password" placeholder="Password"/>
-
-    <button class="secondary" onclick="register()">Sign Up</button>
+    <input id="regEmail" placeholder="Email" />
+    <input id="regPassword" type="password" placeholder="Password" />
+    <button class="secondary" onclick="register()">Sign up</button>
   </div>
 </div>
 
-<div id="dashboard-container" style="display:none">
+<!-- DASHBOARD -->
+<div id="dashboard-container" class="page hidden">
 
   <header class="topbar">
     <h1>SamaFlux</h1>
     <div class="top-actions">
-      <button onclick="addMoney()">Add money</button>
-      <button onclick="sendMoney()">Send</button>
-      <button onclick="requestMoney()">Request</button>
-      <button class="logout" onclick="logout()">Log out</button>
+      <button onclick="go('add')">Add</button>
+      <button onclick="go('send')">Send</button>
+      <button onclick="go('request')">Request</button>
+      <button class="logout" onclick="logout()">Logout</button>
     </div>
   </header>
 
@@ -56,24 +52,51 @@
     <h2>₦<span id="balance">0</span></h2>
   </section>
 
-  <section class="cards">
-    <div class="card">
-      <h3>Add money</h3>
-      <input id="amount" type="number" placeholder="Amount"/>
-    </div>
-
-    <div class="card">
-      <h3>Send money</h3>
-      <input id="sendEmail" type="email" placeholder="Recipient email"/>
-      <input id="sendAmount" type="number" placeholder="Amount"/>
-    </div>
-  </section>
-
   <section class="transactions">
     <h3>Recent activity</h3>
     <ul id="history"></ul>
   </section>
+</div>
 
+<!-- ADD MONEY PAGE -->
+<div id="add-page" class="page hidden">
+  <header class="subbar">
+    <button onclick="go('dashboard')">← Back</button>
+    <h2>Add money</h2>
+  </header>
+
+  <div class="form-card">
+    <input id="amount" type="number" placeholder="Amount" />
+    <button onclick="addMoney()">Continue</button>
+  </div>
+</div>
+
+<!-- SEND MONEY PAGE -->
+<div id="send-page" class="page hidden">
+  <header class="subbar">
+    <button onclick="go('dashboard')">← Back</button>
+    <h2>Send money</h2>
+  </header>
+
+  <div class="form-card">
+    <input id="sendEmail" placeholder="Recipient email" />
+    <input id="sendAmount" type="number" placeholder="Amount" />
+    <button onclick="sendMoney()">Send</button>
+  </div>
+</div>
+
+<!-- REQUEST MONEY PAGE -->
+<div id="request-page" class="page hidden">
+  <header class="subbar">
+    <button onclick="go('dashboard')">← Back</button>
+    <h2>Request money</h2>
+  </header>
+
+  <div class="form-card">
+    <input id="requestEmail" placeholder="User email" />
+    <input id="requestAmount" type="number" placeholder="Amount" />
+    <button onclick="requestMoney()">Request</button>
+  </div>
 </div>
 
 <div id="toast-container"></div>
