@@ -1,9 +1,22 @@
 const API = "https://samaflux-backend.onrender.com";
 
+/* ---------- HELPERS ---------- */
+function showAuth() {
+  document.getElementById("auth-container").style.display = "flex";
+  document.getElementById("dashboard-container").style.display = "none";
+}
+
+function showDashboard() {
+  document.getElementById("auth-container").style.display = "none";
+  document.getElementById("dashboard-container").style.display = "block";
+}
+
 /* ---------- LOGIN ---------- */
 async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  if (!email || !password) return alert("Enter email and password");
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -12,18 +25,24 @@ async function login() {
   });
 
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
 
-  localStorage.setItem("email", data.email);
+  if (!res.ok) {
+    alert(data.error || "Login failed");
+    return;
+  }
+
   localStorage.setItem("token", data.token);
+  localStorage.setItem("email", data.email);
 
-  loadDashboard();
+  await loadDashboard();
 }
 
 /* ---------- REGISTER ---------- */
 async function register() {
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
+
+  if (!email || !password) return alert("Fill all fields");
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
@@ -39,22 +58,23 @@ async function register() {
 
 /* ---------- DASHBOARD ---------- */
 async function loadDashboard() {
-  const authContainer = document.getElementById("auth-container");
-  const dashboardContainer = document.getElementById("dashboard-container");
-  const balanceEl = document.getElementById("balance");
-
-  authContainer.style.display = "none";
-  dashboardContainer.style.display = "block";
+  const token = localStorage.getItem("token");
+  if (!token) return showAuth();
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
+    headers: { Authorization: `Bearer ${token}` }
   });
 
-  const data = await res.json();
-  balanceEl.innerText = data.balance;
+  if (!res.ok) {
+    localStorage.clear();
+    showAuth();
+    return;
+  }
 
+  const data = await res.json();
+  document.getElementById("balance").innerText = data.balance;
+
+  showDashboard();
   loadHistory();
 }
 
@@ -72,7 +92,6 @@ async function addMoney() {
   });
 
   const data = await res.json();
-
   if (data.status === "success") {
     window.location.href = data.data.authorization_url;
   } else {
@@ -112,29 +131,28 @@ async function loadHistory() {
   historyEl.innerHTML = "";
   tx.forEach(t => {
     const li = document.createElement("li");
-    li.innerHTML = `<span>${t.type}</span> <strong>₦${t.amount}</strong>`;
+    li.innerHTML = `<strong>${t.type}</strong> — ₦${t.amount}`;
     historyEl.appendChild(li);
   });
 }
 
 /* ---------- RECEIVE MONEY ---------- */
 function receiveMoney() {
-  const from = prompt("Request money from (email)");
+  const email = prompt("Request money from (email)");
   const amount = prompt("Amount");
 
-  if (!from || !amount) return;
-  alert(`Money request sent to ${from} for ₦${amount}`);
+  if (!email || !amount) return;
+  alert(`Request sent to ${email} for ₦${amount}`);
 }
 
 /* ---------- LOGOUT ---------- */
 function logout() {
   localStorage.clear();
-  location.reload();
+  showAuth();
 }
 
-/* ---------- AUTO LOAD ---------- */
-window.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("token")) {
-    loadDashboard();
-  }
+/* ---------- INIT ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  showAuth();
+  loadDashboard();
 });
