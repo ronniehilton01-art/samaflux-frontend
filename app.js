@@ -1,7 +1,7 @@
 const API = "https://samaflux-backend.onrender.com";
 
 /* TOAST */
-function toast(msg, type = "info") {
+function toast(msg, type="info") {
   const c = document.getElementById("toast-container");
   const t = document.createElement("div");
   t.className = `toast ${type}`;
@@ -10,61 +10,83 @@ function toast(msg, type = "info") {
   setTimeout(() => t.remove(), 3500);
 }
 
+/* BUTTON STATE */
+function setLoading(btn, state) {
+  btn.classList.toggle("loading", state);
+  btn.disabled = state;
+}
+
 /* UI */
 function showAuth() {
-  document.getElementById("auth-container").style.display = "flex";
-  document.getElementById("dashboard-container").style.display = "none";
+  auth-container.style.display = "flex";
+  dashboard-container.style.display = "none";
 }
 
 function showDashboard() {
-  document.getElementById("auth-container").style.display = "none";
-  document.getElementById("dashboard-container").style.display = "block";
+  auth-container.style.display = "none";
+  dashboard-container.style.display = "block";
 }
 
 /* LOGIN */
 async function login() {
-  const email = loginEmail.value.trim();
-  const password = loginPassword.value.trim();
-  if (!email || !password) return toast("Enter email and password", "error");
+  const btn = loginBtn;
+  setLoading(btn, true);
 
-  const res = await fetch(`${API}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: loginEmail.value,
+        password: loginPassword.value
+      })
+    });
 
-  const data = await res.json();
-  if (!res.ok) return toast(data.error, "error");
+    const data = await res.json();
+    if (!res.ok) throw data.error;
 
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("email", data.email);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("email", data.email);
 
-  toast("Logged in successfully", "success");
-  loadDashboard();
+    toast("Logged in", "success");
+    loadDashboard();
+  } catch (e) {
+    toast(e, "error");
+  }
+
+  setLoading(btn, false);
 }
 
 /* REGISTER */
 async function register() {
-  const email = regEmail.value.trim();
-  const password = regPassword.value.trim();
-  if (!email || !password) return toast("Fill all fields", "error");
+  const btn = registerBtn;
+  setLoading(btn, true);
 
-  const res = await fetch(`${API}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  try {
+    const res = await fetch(`${API}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: regEmail.value,
+        password: regPassword.value
+      })
+    });
 
-  const data = await res.json();
-  if (!res.ok) return toast(data.error, "error");
+    const data = await res.json();
+    if (!res.ok) throw data.error;
 
-  toast("Account created. Log in now.", "success");
+    toast("Account created", "success");
+  } catch (e) {
+    toast(e, "error");
+  }
+
+  setLoading(btn, false);
 }
 
 /* DASHBOARD */
 async function loadDashboard() {
   const token = localStorage.getItem("token");
-  if (!token) return showAuth();
+  if (!token) return;
 
   const res = await fetch(`${API}/auth/me`, {
     headers: { Authorization: `Bearer ${token}` }
@@ -72,7 +94,6 @@ async function loadDashboard() {
 
   if (!res.ok) {
     localStorage.clear();
-    showAuth();
     return;
   }
 
@@ -84,25 +105,30 @@ async function loadDashboard() {
 
 /* ADD MONEY */
 async function addMoney() {
-  if (!amount.value) return toast("Enter amount", "error");
+  const btn = addBtn;
+  setLoading(btn, true);
 
   const res = await fetch(`${API}/payment/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: localStorage.getItem("email"), amount: amount.value })
+    body: JSON.stringify({
+      email: localStorage.getItem("email"),
+      amount: amount.value
+    })
   });
 
   const data = await res.json();
+  setLoading(btn, false);
+
   if (data.status === "success") {
-    toast("Redirecting to payment…", "info");
     window.location.href = data.data.authorization_url;
   } else toast("Payment failed", "error");
 }
 
-/* SEND */
+/* SEND MONEY */
 async function sendMoney() {
-  if (!sendEmail.value || !sendAmount.value)
-    return toast("Fill all fields", "error");
+  const btn = sendBtn;
+  setLoading(btn, true);
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
@@ -115,10 +141,13 @@ async function sendMoney() {
   });
 
   const data = await res.json();
-  if (!res.ok) return toast(data.error, "error");
+  setLoading(btn, false);
 
-  toast("Money sent successfully", "success");
-  loadDashboard();
+  if (!res.ok) toast(data.error, "error");
+  else {
+    toast("Money sent", "success");
+    loadDashboard();
+  }
 }
 
 /* HISTORY */
@@ -135,17 +164,13 @@ async function loadHistory() {
 
 /* REQUEST */
 function receiveMoney() {
-  const email = prompt("Request money from (email)");
-  const amount = prompt("Amount");
-  if (!email || !amount) return;
-  toast(`Request sent to ${email}`, "info");
+  toast("Request feature coming soon", "info");
 }
 
 /* LOGOUT */
 function logout() {
   localStorage.clear();
-  toast("Logged out", "info");
-  showAuth();
+  location.reload();
 }
 
 /* INIT */
