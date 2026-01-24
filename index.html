@@ -1,54 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Samaflux Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="auth-container">
-  <div id="auth">
-    <h2>Login</h2>
-    <input id="loginEmail" type="email" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+  <!-- AUTH / LOGIN -->
+  <div id="auth-container">
+    <div id="auth">
+      <h2>Login</h2>
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="Email"
+        autocomplete="email"
+      />
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      />
+      <button onclick="login()">Login</button>
 
-    <h3>Register</h3>
-    <input id="regEmail" type="email" placeholder="Email">
-    <input id="regPassword" type="password" placeholder="Password">
-    <button onclick="register()">Register</button>
+      <h3>Register</h3>
+      <input
+        id="regEmail"
+        type="email"
+        placeholder="Email"
+        autocomplete="email"
+      />
+      <input
+        id="regPassword"
+        type="password"
+        placeholder="Password"
+        autocomplete="new-password"
+      />
+      <button onclick="register()">Register</button>
+    </div>
   </div>
-</div>
 
-<div id="dashboard-container" style="display:none">
-  <header>
-    <h1>Samaflux Dashboard</h1>
-    <button id="logoutBtn" onclick="logout()">Logout</button>
-  </header>
+  <!-- DASHBOARD -->
+  <div id="dashboard-container" style="display:none">
 
-  <section class="cards">
-    <div class="card">
-      <h3>Balance</h3>
-      <p>₦<span id="balance">0</span></p>
-    </div>
-    <div class="card">
-      <h3>Actions</h3>
-      <input id="amount" type="number" placeholder="Amount">
-      <button onclick="addMoney()">Add Money</button>
-      <input id="sendEmail" type="email" placeholder="Recipient Email">
-      <input id="sendAmount" type="number" placeholder="Amount">
-      <button onclick="sendMoney()">Send Money</button>
-    </div>
-  </section>
+    <header>
+      <h1>Samaflux Dashboard</h1>
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+    </header>
 
-  <section class="transactions">
-    <h3>Transaction History</h3>
-    <ul id="history"></ul>
-  </section>
-</div>
+    <!-- BALANCE + ACTIONS -->
+    <section class="cards">
 
-<script src="app.js"></script>
+      <!-- BALANCE CARD -->
+      <div class="card">
+        <h3>Balance</h3>
+        <p style="font-size: 24px; font-weight: bold;">
+          ₦<span id="balance">0</span>
+        </p>
+      </div>
+
+      <!-- ACTIONS CARD -->
+      <div class="card">
+        <h3>Actions</h3>
+
+        <input
+          id="amount"
+          type="number"
+          placeholder="Amount"
+        />
+        <button onclick="addMoney()">Add Money</button>
+
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid #eee;" />
+
+        <input
+          id="sendEmail"
+          type="email"
+          placeholder="Recipient Email"
+        />
+        <input
+          id="sendAmount"
+          type="number"
+          placeholder="Amount"
+        />
+        <button onclick="sendMoney()">Send Money</button>
+      </div>
+
+    </section>
+
+    <!-- TRANSACTIONS -->
+    <section class="transactions">
+      <h3>Transaction History</h3>
+      <ul id="history">
+        <!-- JS injects transactions here -->
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="app.js"></script>
 </body>
 </html>
