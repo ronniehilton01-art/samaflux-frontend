@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>SamaFlux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css?v=3.0">
+  <link rel="stylesheet" href="style.css?v=4.0">
 </head>
 <body>
 
@@ -12,15 +12,10 @@
 <div id="auth-container">
   <div class="card auth-card">
     <h2>Log in</h2>
-
     <input id="loginEmail" type="email" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
-
     <button id="loginBtn">Log in</button>
-
-    <button id="goSignup" class="link-btn">
-      Create account
-    </button>
+    <button id="goSignup" class="link-btn">Create account</button>
   </div>
 </div>
 
@@ -28,15 +23,10 @@
 <div id="signup-step1" style="display:none">
   <div class="card auth-card">
     <h2>Create account</h2>
-
     <input id="regEmail" type="email" placeholder="Email">
     <input id="regPassword" type="password" placeholder="Password">
-
     <button id="nextSignup">Next</button>
-
-    <button id="goLogin1" class="link-btn">
-      Back to login
-    </button>
+    <button id="goLogin1" class="link-btn">Back to login</button>
   </div>
 </div>
 
@@ -44,7 +34,6 @@
 <div id="signup-step2" style="display:none">
   <div class="card auth-card">
     <h2>Your details</h2>
-
     <input id="regFullName" placeholder="Full name">
     <input id="regPhone" placeholder="Phone number">
     <input id="regAddress" placeholder="Home address">
@@ -52,7 +41,6 @@
     <input id="regState" placeholder="State">
     <input id="regCountry" placeholder="Country">
     <input id="regZip" placeholder="Zip code">
-
     <button id="signupBtn">Create account</button>
   </div>
 </div>
@@ -62,8 +50,7 @@
   <header class="dash-header">
     <h1>SamaFlux</h1>
     <div>
-      <button onclick="location.href='add.html'">Add Money</button>
-      <button onclick="location.href='send.html'">Send Money</button>
+      <button id="profileBtn">Profile</button>
       <button id="logoutBtn">Logout</button>
     </div>
   </header>
@@ -79,6 +66,23 @@
   </div>
 </div>
 
-<script src="app.js?v=3.0" defer></script>
+<!-- PROFILE PAGE -->
+<div id="profile-container" style="display:none">
+  <div class="card">
+    <h2>Your Profile</h2>
+    <p><strong>Name:</strong> <span id="pName"></span></p>
+    <p><strong>Email:</strong> <span id="pEmail"></span></p>
+    <p><strong>Phone:</strong> <span id="pPhone"></span></p>
+    <p><strong>Address:</strong> <span id="pAddress"></span></p>
+    <p><strong>City:</strong> <span id="pCity"></span></p>
+    <p><strong>State:</strong> <span id="pState"></span></p>
+    <p><strong>Country:</strong> <span id="pCountry"></span></p>
+    <p><strong>Zip:</strong> <span id="pZip"></span></p>
+
+    <button id="backDashboard">Back</button>
+  </div>
+</div>
+
+<script src="app.js?v=4.0" defer></script>
 </body>
 </html>
