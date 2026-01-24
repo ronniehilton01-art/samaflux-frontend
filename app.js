@@ -1,27 +1,33 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* TOAST */
-function toast(msg, type="info") {
-  const c = document.getElementById("toast-container");
-  const t = document.createElement("div");
-  t.className = `toast ${type}`;
-  t.innerText = msg;
-  c.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
+/* LOADERS */
+function showLoader() {
+  document.getElementById("page-loader").style.display = "flex";
+  document.getElementById("top-loader").style.width = "80%";
 }
 
-/* BUTTON STATE */
-function setLoading(btn, state) {
-  btn.classList.toggle("loading", state);
-  btn.disabled = state;
+function hideLoader() {
+  document.getElementById("top-loader").style.width = "100%";
+  setTimeout(() => {
+    document.getElementById("page-loader").style.display = "none";
+    document.getElementById("top-loader").style.width = "0%";
+  }, 400);
+}
+
+/* TOAST */
+function toast(msg) {
+  const t = document.createElement("div");
+  t.style.background = "#0070ba";
+  t.style.color = "#fff";
+  t.style.padding = "12px 16px";
+  t.style.borderRadius = "12px";
+  t.style.marginBottom = "10px";
+  t.innerText = msg;
+  document.getElementById("toast-container").appendChild(t);
+  setTimeout(() => t.remove(), 3000);
 }
 
 /* UI */
-function showAuth() {
-  auth-container.style.display = "flex";
-  dashboard-container.style.display = "none";
-}
-
 function showDashboard() {
   auth-container.style.display = "none";
   dashboard-container.style.display = "block";
@@ -29,13 +35,11 @@ function showDashboard() {
 
 /* LOGIN */
 async function login() {
-  const btn = loginBtn;
-  setLoading(btn, true);
-
+  showLoader();
   try {
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
         email: loginEmail.value,
         password: loginPassword.value
@@ -48,24 +52,21 @@ async function login() {
     localStorage.setItem("token", data.token);
     localStorage.setItem("email", data.email);
 
-    toast("Logged in", "success");
+    toast("Welcome to SamaFlux");
     loadDashboard();
   } catch (e) {
-    toast(e, "error");
+    toast(e);
   }
-
-  setLoading(btn, false);
+  hideLoader();
 }
 
 /* REGISTER */
 async function register() {
-  const btn = registerBtn;
-  setLoading(btn, true);
-
+  showLoader();
   try {
     const res = await fetch(`${API}/auth/register`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
         email: regEmail.value,
         password: regPassword.value
@@ -74,83 +75,62 @@ async function register() {
 
     const data = await res.json();
     if (!res.ok) throw data.error;
-
-    toast("Account created", "success");
+    toast("Account created");
   } catch (e) {
-    toast(e, "error");
+    toast(e);
   }
-
-  setLoading(btn, false);
+  hideLoader();
 }
 
 /* DASHBOARD */
 async function loadDashboard() {
-  const token = localStorage.getItem("token");
-  if (!token) return;
-
+  showLoader();
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
 
-  if (!res.ok) {
-    localStorage.clear();
-    return;
-  }
+  if (!res.ok) return;
 
   const data = await res.json();
   balance.innerText = data.balance;
   showDashboard();
   loadHistory();
+  hideLoader();
 }
 
-/* ADD MONEY */
+/* PAYMENTS */
 async function addMoney() {
-  const btn = addBtn;
-  setLoading(btn, true);
-
+  showLoader();
   const res = await fetch(`${API}/payment/add`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type":"application/json"},
     body: JSON.stringify({
       email: localStorage.getItem("email"),
       amount: amount.value
     })
   });
-
   const data = await res.json();
-  setLoading(btn, false);
-
-  if (data.status === "success") {
-    window.location.href = data.data.authorization_url;
-  } else toast("Payment failed", "error");
+  hideLoader();
+  if (data.data) window.location.href = data.data.authorization_url;
 }
 
-/* SEND MONEY */
 async function sendMoney() {
-  const btn = sendBtn;
-  setLoading(btn, true);
-
+  showLoader();
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type":"application/json"},
     body: JSON.stringify({
       from: localStorage.getItem("email"),
       to: sendEmail.value,
       amount: sendAmount.value
     })
   });
-
   const data = await res.json();
-  setLoading(btn, false);
-
-  if (!res.ok) toast(data.error, "error");
-  else {
-    toast("Money sent", "success");
-    loadDashboard();
-  }
+  hideLoader();
+  toast(data.status || data.error);
+  loadDashboard();
 }
 
-/* HISTORY */
 async function loadHistory() {
   const res = await fetch(`${API}/payment/history/${localStorage.getItem("email")}`);
   const tx = await res.json();
@@ -162,16 +142,13 @@ async function loadHistory() {
   });
 }
 
-/* REQUEST */
-function receiveMoney() {
-  toast("Request feature coming soon", "info");
+function requestMoney() {
+  toast("Request money coming soon");
 }
 
-/* LOGOUT */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* INIT */
 document.addEventListener("DOMContentLoaded", loadDashboard);
