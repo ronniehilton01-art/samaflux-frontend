@@ -6,92 +6,77 @@ const signup = document.getElementById("signup-container");
 const dashboard = document.getElementById("dashboard-container");
 const loader = document.getElementById("page-loader");
 
-/* BUTTONS */
-const loginBtn = document.getElementById("loginBtn");
-const signupBtn = document.getElementById("signupBtn");
-const goSignup = document.getElementById("goSignup");
-const goLogin = document.getElementById("goLogin");
-const logoutBtn = document.getElementById("logoutBtn");
-
-/* SAFE UI HELPERS */
-function showLoader(show = true) {
+/* SAFE LOADER */
+function showLoader(show) {
   loader.style.display = show ? "flex" : "none";
 }
 
-function notify(msg) {
-  // keeping alert for now for stability
-  alert(msg);
-}
+/* NEVER STICK LOADER */
+window.addEventListener("error", () => showLoader(false));
+window.addEventListener("unhandledrejection", () => showLoader(false));
 
 /* NAV */
-goSignup.addEventListener("click", () => {
+goSignup.onclick = () => {
   auth.style.display = "none";
   signup.style.display = "flex";
-});
+};
 
-goLogin.addEventListener("click", () => {
+goLogin.onclick = () => {
   signup.style.display = "none";
   auth.style.display = "flex";
-});
+};
 
-logoutBtn.addEventListener("click", logout);
+logoutBtn.onclick = logout;
 
 /* LOGIN */
-loginBtn.addEventListener("click", async () => {
+loginBtn.onclick = async () => {
   showLoader(true);
-  loginBtn.disabled = true;
-
   try {
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value;
-
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        email: loginEmail.value,
+        password: loginPassword.value
+      })
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Login failed");
+    if (!res.ok) throw new Error(data.error);
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("email", data.email);
     loadDashboard();
-  } catch (err) {
-    notify(err.message);
+  } catch (e) {
+    alert(e.message);
   } finally {
-    loginBtn.disabled = false;
     showLoader(false);
   }
-});
+};
 
 /* REGISTER */
-signupBtn.addEventListener("click", async () => {
+signupBtn.onclick = async () => {
   showLoader(true);
-  signupBtn.disabled = true;
-
   try {
-    const email = regEmail.value.trim();
-    const password = regPassword.value;
-
     const res = await fetch(`${API}/auth/register`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        email: regEmail.value,
+        password: regPassword.value
+      })
     });
 
     if (!res.ok) throw new Error("Registration failed");
-
-    notify("Account created. Please log in.");
+    alert("Account created");
     signup.style.display = "none";
     auth.style.display = "flex";
-  } catch (err) {
-    notify(err.message);
+  } catch (e) {
+    alert(e.message);
   } finally {
-    signupBtn.disabled = false;
     showLoader(false);
   }
-});
+};
 
 /* DASHBOARD */
 async function loadDashboard() {
@@ -100,24 +85,42 @@ async function loadDashboard() {
   dashboard.style.display = "block";
 
   showLoader(true);
-
   try {
     const res = await fetch(`${API}/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error("Session expired");
-
     balance.innerText = data.balance;
-  } catch (err) {
-    notify(err.message);
+  } catch {
     logout();
   } finally {
     showLoader(false);
   }
+}
+
+/* PAYMENTS */
+async function addMoney(amount) {
+  const res = await fetch(`${API}/payment/add`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ email: localStorage.getItem("email"), amount })
+  });
+  const data = await res.json();
+  window.location.href = data.data.authorization_url;
+}
+
+async function sendMoney(to, amount) {
+  await fetch(`${API}/payment/send`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ from: localStorage.getItem("email"), to, amount })
+  });
+  loadDashboard();
+}
+
+async function requestMoney(to, amount) {
+  alert(`Request sent to ${to} for ₦${amount}`);
 }
 
 /* LOGOUT */
@@ -126,9 +129,7 @@ function logout() {
   location.reload();
 }
 
-/* AUTO LOGIN */
-window.addEventListener("load", () => {
-  if (localStorage.getItem("token")) {
-    loadDashboard();
-  }
-});
+/* AUTO */
+window.onload = () => {
+  if (localStorage.getItem("token")) loadDashboard();
+};
