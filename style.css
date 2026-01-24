@@ -1,4 +1,3 @@
-/* RESET */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -24,8 +23,8 @@ body {
   width: 340px;
   background: #fff;
   padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.1);
 }
 
 #auth h2 {
@@ -54,7 +53,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   background: #0070ba;
-  color: white;
+  color: #fff;
 }
 
 #auth button.secondary {
@@ -108,15 +107,15 @@ button.ghost {
 
 button.logout {
   background: #ef4444;
-  color: white;
+  color: #fff;
 }
 
 /* BALANCE */
 .balance-card {
   background: linear-gradient(135deg, #003087, #0070ba);
-  color: white;
+  color: #fff;
   padding: 30px;
-  border-radius: 16px;
+  border-radius: 18px;
   margin-bottom: 30px;
 }
 
@@ -127,7 +126,7 @@ button.logout {
 
 .balance-card h2 {
   font-size: 36px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 /* CARDS */
@@ -139,10 +138,10 @@ button.logout {
 }
 
 .card {
-  background: white;
+  background: #fff;
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
 .card h3 {
@@ -159,10 +158,10 @@ button.logout {
 
 /* TRANSACTIONS */
 .transactions {
-  background: white;
+  background: #fff;
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
 .transactions ul {
@@ -176,6 +175,36 @@ button.logout {
   justify-content: space-between;
 }
 
-.transactions li:last-child {
-  border-bottom: none;
+/* TOASTS */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  min-width: 260px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+  animation: slideIn .3s ease, fadeOut .3s ease 3s forwards;
+}
+
+.toast.success { background: #16a34a; }
+.toast.error { background: #dc2626; }
+.toast.info { background: #0070ba; }
+
+@keyframes slideIn {
+  from { transform: translateX(120%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(120%); }
 }
