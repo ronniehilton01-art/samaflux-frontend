@@ -8,99 +8,62 @@
 </head>
 <body>
 
-  <!-- AUTH / LOGIN -->
-  <div id="auth-container">
-    <div id="auth">
-      <h2>Login</h2>
-      <input
-        id="loginEmail"
-        type="email"
-        placeholder="Email"
-        autocomplete="email"
-      />
-      <input
-        id="loginPassword"
-        type="password"
-        placeholder="Password"
-        autocomplete="current-password"
-      />
-      <button onclick="login()">Login</button>
+<!-- AUTH -->
+<div id="auth-container">
+  <div id="auth">
+    <h2>Login</h2>
+    <input id="loginEmail" type="email" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
 
-      <h3>Register</h3>
-      <input
-        id="regEmail"
-        type="email"
-        placeholder="Email"
-        autocomplete="email"
-      />
-      <input
-        id="regPassword"
-        type="password"
-        placeholder="Password"
-        autocomplete="new-password"
-      />
-      <button onclick="register()">Register</button>
+    <h3>Register</h3>
+    <input id="regEmail" type="email" placeholder="Email" />
+    <input id="regPassword" type="password" placeholder="Password" />
+    <button onclick="register()">Register</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-container" style="display:none">
+
+  <header class="top-bar">
+    <h1>Samaflux</h1>
+
+    <div class="top-actions">
+      <button class="ghost-btn" onclick="openReceive()">Receive</button>
+      <button class="ghost-btn" onclick="openSend()">Send</button>
+      <button class="primary-btn" onclick="openAdd()">Add Money</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
-  </div>
+  </header>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard-container" style="display:none">
+  <section class="cards">
 
-    <header>
-      <h1>Samaflux Dashboard</h1>
-      <button id="logoutBtn" onclick="logout()">Logout</button>
-    </header>
+    <div class="card balance-card">
+      <h3>Balance</h3>
+      <p class="balance-amount">₦<span id="balance">0</span></p>
+    </div>
 
-    <!-- BALANCE + ACTIONS -->
-    <section class="cards">
+    <div class="card">
+      <h3>Quick Actions</h3>
 
-      <!-- BALANCE CARD -->
-      <div class="card">
-        <h3>Balance</h3>
-        <p style="font-size: 24px; font-weight: bold;">
-          ₦<span id="balance">0</span>
-        </p>
-      </div>
+      <input id="amount" type="number" placeholder="Amount to add" />
 
-      <!-- ACTIONS CARD -->
-      <div class="card">
-        <h3>Actions</h3>
+      <hr />
 
-        <input
-          id="amount"
-          type="number"
-          placeholder="Amount"
-        />
-        <button onclick="addMoney()">Add Money</button>
+      <input id="sendEmail" type="email" placeholder="Recipient Email" />
+      <input id="sendAmount" type="number" placeholder="Amount to send" />
+    </div>
 
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid #eee;" />
+  </section>
 
-        <input
-          id="sendEmail"
-          type="email"
-          placeholder="Recipient Email"
-        />
-        <input
-          id="sendAmount"
-          type="number"
-          placeholder="Amount"
-        />
-        <button onclick="sendMoney()">Send Money</button>
-      </div>
+  <section class="transactions">
+    <h3>Transaction History</h3>
+    <ul id="history"></ul>
+  </section>
 
-    </section>
+</div>
 
-    <!-- TRANSACTIONS -->
-    <section class="transactions">
-      <h3>Transaction History</h3>
-      <ul id="history">
-        <!-- JS injects transactions here -->
-      </ul>
-    </section>
-
-  </div>
-
-  <!-- SCRIPT -->
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
