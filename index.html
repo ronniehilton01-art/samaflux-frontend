@@ -52,15 +52,34 @@
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard-container" style="display:none">
+
   <header class="dash-header">
     <h1>SamaFlux</h1>
     <div class="dash-actions">
+      <button id="addFundsBtn">Add Funds</button>
+      <button id="sendMoneyBtn">Send Money</button>
       <button id="profileBtn">Profile</button>
       <button id="logoutBtn">Logout</button>
     </div>
   </header>
+
+  <section class="dashboard-cards">
+
+    <div class="card balance-card">
+      <h3>Balance</h3>
+      <p>₦<span id="balance">0</span></p>
+    </div>
+
+    <div class="card activity-card">
+      <h3>Recent Activity</h3>
+      <ul id="transactionList"></ul>
+    </div>
+
+  </section>
+
+</div>
+
 
   <div class="card">
     <p>Balance</p>
