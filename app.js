@@ -5,9 +5,8 @@ const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-
+const profile = document.getElementById("profile-container");
 const historyList = document.getElementById("history");
-const balanceEl = document.getElementById("balance");
 
 /* NAV */
 loginBtn.onclick = login;
@@ -16,11 +15,9 @@ goLogin1.onclick = () => switchView(step1, auth);
 nextSignup.onclick = () => switchView(step1, step2);
 signupBtn.onclick = register;
 logoutBtn.onclick = logout;
+profileBtn.onclick = openProfile;
+backDashboard.onclick = closeProfile;
 
-addFundsBtn.onclick = paystackAddFunds;
-sendBtn.onclick = sendMoney;
-
-/* VIEW SWITCH */
 function switchView(hide, show) {
   hide.style.display = "none";
   show.style.display = "flex";
@@ -71,12 +68,6 @@ async function register() {
   switchView(step2, auth);
 }
 
-/* LOGOUT */
-function logout() {
-  localStorage.clear();
-  location.reload();
-}
-
 /* DASHBOARD */
 async function loadDashboard() {
   auth.style.display = step1.style.display = step2.style.display = "none";
@@ -89,70 +80,50 @@ async function loadDashboard() {
   });
 
   const data = await res.json();
-  balanceEl.innerText = data.balance || 0;
+  balance.innerText = data.balance || 0;
+
   loadHistory();
 }
 
-/* ADD FUNDS (PAYSTACK) */
-function paystackAddFunds() {
-  const amount = Number(addAmount.value);
-  if (!amount || amount < 100) return alert("Enter valid amount");
+/* PROFILE (READ ONLY) */
+async function openProfile() {
+  dashboard.style.display = "none";
+  profile.style.display = "flex";
 
-  const handler = PaystackPop.setup({
-    key: "pk_live_7d47fef7f517ff8d28c728af308dd275828733f3",
-    email: localStorage.getItem("email"),
-    amount: amount * 100,
-    currency: "NGN",
-    ref: "SAMAF_" + Date.now(),
-    callback: function () {
-      fetch(`${API}/payment/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: localStorage.getItem("email"),
-          amount
-        })
-      }).then(() => loadDashboard());
-    },
-    onClose: function () {
-      alert("Payment cancelled");
+  const res = await fetch(`${API}/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     }
   });
 
-  handler.openIframe();
+  const user = await res.json();
+
+  document.getElementById("p-email").innerText = user.email || "-";
+  document.getElementById("p-name").innerText = user.fullName || "-";
+  document.getElementById("p-phone").innerText = user.phone || "-";
+  document.getElementById("p-address").innerText = user.address || "-";
+  document.getElementById("p-city").innerText = user.city || "-";
+  document.getElementById("p-state").innerText = user.state || "-";
+  document.getElementById("p-country").innerText = user.country || "-";
+  document.getElementById("p-zip").innerText = user.zip || "-";
 }
 
-/* SEND MONEY */
-async function sendMoney() {
-  const res = await fetch(`${API}/payment/send`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromEmail: localStorage.getItem("email"),
-      toEmail: sendTo.value,
-      amount: sendAmount.value
-    })
-  });
-
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  alert("Money sent");
-  loadDashboard();
+function closeProfile() {
+  profile.style.display = "none";
+  dashboard.style.display = "block";
 }
 
 /* HISTORY */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
 
-  const res = await fetch(
-    `${API}/payment/history/${localStorage.getItem("email")}`
-  );
+  const email = localStorage.getItem("email");
+  const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
   historyList.innerHTML = "";
 
-  if (!tx.length) {
+  if (!tx || !tx.length) {
     historyList.innerHTML = "<li>No transactions</li>";
     return;
   }
@@ -162,6 +133,12 @@ async function loadHistory() {
     li.innerText = `${t.type} ₦${t.amount}`;
     historyList.appendChild(li);
   });
+}
+
+/* LOGOUT */
+function logout() {
+  localStorage.clear();
+  location.reload();
 }
 
 /* AUTO LOGIN */
