@@ -6,6 +6,7 @@ const signup = document.getElementById("signup-container");
 const dashboard = document.getElementById("dashboard-container");
 const loader = document.getElementById("page-loader");
 const toast = document.getElementById("toast");
+const historyList = document.getElementById("history");
 
 /* EVENTS */
 loginBtn.onclick = login;
@@ -20,22 +21,23 @@ function toggle(hide, show) {
   show.style.display = "flex";
 }
 
-function showLoader(show=true) {
+function showLoader(show = true) {
   loader.style.display = show ? "flex" : "none";
 }
 
 function notify(msg) {
   toast.innerText = msg;
   toast.style.display = "block";
-  setTimeout(() => toast.style.display = "none", 3000);
+  setTimeout(() => (toast.style.display = "none"), 3000);
 }
 
 /* LOGIN */
 async function login() {
   showLoader(true);
+
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: loginEmail.value,
       password: loginPassword.value
@@ -48,15 +50,18 @@ async function login() {
   if (!res.ok) return notify(data.error || "Login failed");
 
   localStorage.setItem("token", data.token);
+  localStorage.setItem("email", data.email);
+
   loadDashboard();
 }
 
 /* REGISTER */
 async function register() {
   showLoader(true);
+
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: regEmail.value,
       password: regPassword.value
@@ -66,6 +71,7 @@ async function register() {
   showLoader(false);
 
   if (!res.ok) return notify("Registration failed");
+
   notify("Account created. Please login.");
   toggle(signup, auth);
 }
@@ -76,11 +82,41 @@ async function loadDashboard() {
   dashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
   });
 
   const data = await res.json();
   balance.innerText = data.balance || 0;
+
+  loadHistory();
+}
+
+/* REAL TRANSACTION HISTORY */
+async function loadHistory() {
+  historyList.innerHTML = "<li>Loading…</li>";
+
+  try {
+    const email = localStorage.getItem("email");
+    const res = await fetch(`${API}/payment/history/${email}`);
+    const tx = await res.json();
+
+    historyList.innerHTML = "";
+
+    if (!Array.isArray(tx) || tx.length === 0) {
+      historyList.innerHTML = "<li>No transactions yet</li>";
+      return;
+    }
+
+    tx.reverse().slice(0, 5).forEach(t => {
+      const li = document.createElement("li");
+      li.innerText = `${t.type} ₦${t.amount}`;
+      historyList.appendChild(li);
+    });
+  } catch {
+    historyList.innerHTML = "<li>Unable to load history</li>";
+  }
 }
 
 /* ACTION PAGES */
@@ -91,7 +127,7 @@ function openPage(type) {
   if (type === "add") {
     page.innerHTML = `
       <h3>Add Money</h3>
-      <input id="amount" placeholder="Amount">
+      <input placeholder="Amount">
       <button onclick="notify('Payment flow coming soon')">Continue</button>
     `;
   }
@@ -99,8 +135,8 @@ function openPage(type) {
   if (type === "send") {
     page.innerHTML = `
       <h3>Send Money</h3>
-      <input id="to" placeholder="Email">
-      <input id="amount" placeholder="Amount">
+      <input placeholder="Recipient Email">
+      <input placeholder="Amount">
       <button onclick="notify('Money sent')">Send</button>
     `;
   }
@@ -108,8 +144,8 @@ function openPage(type) {
   if (type === "request") {
     page.innerHTML = `
       <h3>Request Money</h3>
-      <input id="to" placeholder="Email">
-      <input id="amount" placeholder="Amount">
+      <input placeholder="User Email">
+      <input placeholder="Amount">
       <button onclick="notify('Request sent')">Request</button>
     `;
   }
@@ -123,5 +159,7 @@ function logout() {
 
 /* AUTO LOGIN */
 window.onload = () => {
-  if (localStorage.getItem("token")) loadDashboard();
+  if (localStorage.getItem("token")) {
+    loadDashboard();
+  }
 };
