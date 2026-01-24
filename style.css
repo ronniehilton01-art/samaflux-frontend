@@ -1,85 +1,35 @@
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
   font-family:
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     Roboto,
-    Helvetica,
     Arial,
     sans-serif;
 }
 
 body {
+  margin: 0;
   background: #f5f7fa;
-  color: #2c2e2f;
 }
 
-/* LOADERS */
-#top-loader {
-  height: 3px;
-  width: 0;
-  background: linear-gradient(90deg,#003087,#0070ba);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  transition: width .3s;
-}
-
+/* LOADER FIX */
 #page-loader {
   position: fixed;
   inset: 0;
+  background: transparent;
   display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(245,247,250,.95);
-  z-index: 9998;
+  pointer-events: none; /* 🔥 CRITICAL */
 }
-
-.loader-card {
-  background: #fff;
-  padding: 30px;
-  border-radius: 18px;
-  width: 280px;
-  text-align: center;
-}
-
-.logo {
-  font-size: 26px;
-  font-weight: 700;
-  color: #003087;
-}
-.logo span { color:#0070ba }
 
 /* AUTH */
-.auth-page {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.auth-card {
+#auth {
   background: #fff;
-  padding: 32px;
-  width: 360px;
-  border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.12);
-}
-
-.auth-card h2 {
-  margin-bottom: 20px;
-}
-
-.auth-card input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
+  padding: 30px;
+  width: 320px;
+  margin: 100px auto;
+  border-radius: 12px;
 }
 
 button {
@@ -87,74 +37,13 @@ button {
   padding: 12px;
   border-radius: 999px;
   border: none;
-  font-weight: 600;
   background: #0070ba;
   color: #fff;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .link-btn {
-  margin-top: 14px;
   background: none;
   color: #0070ba;
-}
-
-/* DASHBOARD */
-.page {
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 0 20px;
-}
-.hidden { display:none }
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
-}
-
-.top-actions { display: flex; gap: 10px }
-
-button.logout {
-  background: #dc2626;
-}
-
-.balance-card {
-  background: linear-gradient(135deg,#003087,#0070ba);
-  color: #fff;
-  padding: 30px;
-  border-radius: 18px;
-  margin-bottom: 30px;
-}
-
-.form-card {
-  background: #fff;
-  padding: 25px;
-  border-radius: 18px;
-}
-
-.transactions {
-  background: #fff;
-  padding: 20px;
-  border-radius: 14px;
-}
-
-.transactions li {
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-/* SUB */
-.subbar {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-/* TOAST */
-#toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
 }
