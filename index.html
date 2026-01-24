@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <title>SamaFlux</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css?v=4.0">
+  <link rel="stylesheet" href="style.css?v=4.2">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="auth-container" class="center">
-  <div class="card">
+<div id="auth-container">
+  <div class="card auth-card">
     <h2>Log in</h2>
     <input id="loginEmail" type="email" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
@@ -20,8 +21,8 @@
 </div>
 
 <!-- SIGNUP STEP 1 -->
-<div id="signup-step1" class="center hidden">
-  <div class="card">
+<div id="signup-step1" style="display:none">
+  <div class="card auth-card">
     <h2>Create account</h2>
     <input id="regEmail" type="email" placeholder="Email">
     <input id="regPassword" type="password" placeholder="Password">
@@ -31,8 +32,8 @@
 </div>
 
 <!-- SIGNUP STEP 2 -->
-<div id="signup-step2" class="center hidden">
-  <div class="card">
+<div id="signup-step2" style="display:none">
+  <div class="card auth-card">
     <h2>Your details</h2>
     <input id="regFullName" placeholder="Full name">
     <input id="regPhone" placeholder="Phone number">
@@ -46,20 +47,19 @@
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-  <header>
+<div id="dashboard-container" style="display:none">
+  <header class="dash-header">
     <h1>SamaFlux</h1>
-    <button id="logoutBtn">Logout</button>
+    <div>
+      <button id="addMoneyBtn">Add Money</button>
+      <button id="sendMoneyBtn">Send Money</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
   </header>
 
   <div class="card">
     <p>Balance</p>
     <h2>₦<span id="balance">0</span></h2>
-  </div>
-
-  <div class="actions">
-    <button id="addMoneyBtn">Add Money</button>
-    <button id="sendMoneyBtn">Send Money</button>
   </div>
 
   <div class="card">
@@ -68,9 +68,9 @@
   </div>
 </div>
 
-<!-- SEND MONEY PAGE -->
-<div id="send-page" class="center hidden">
-  <div class="card">
+<!-- SEND MONEY -->
+<div id="send-page" style="display:none">
+  <div class="card auth-card">
     <h2>Send Money</h2>
     <input id="sendToEmail" placeholder="Receiver email">
     <input id="sendAmount" type="number" placeholder="Amount">
@@ -79,9 +79,9 @@
   </div>
 </div>
 
-<!-- ADD MONEY PAGE -->
-<div id="add-page" class="center hidden">
-  <div class="card">
+<!-- ADD MONEY -->
+<div id="add-page" style="display:none">
+  <div class="card auth-card">
     <h2>Add Money</h2>
     <input id="addAmount" type="number" placeholder="Amount">
     <button id="paystackBtn">Pay with Paystack</button>
@@ -89,7 +89,6 @@
   </div>
 </div>
 
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<script src="app.js?v=4.0"></script>
+<script src="app.js?v=4.2" defer></script>
 </body>
 </html>
