@@ -1,6 +1,16 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ---------- HELPERS ---------- */
+/* TOAST */
+function toast(msg, type = "info") {
+  const c = document.getElementById("toast-container");
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  t.innerText = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+/* UI */
 function showAuth() {
   document.getElementById("auth-container").style.display = "flex";
   document.getElementById("dashboard-container").style.display = "none";
@@ -11,12 +21,11 @@ function showDashboard() {
   document.getElementById("dashboard-container").style.display = "block";
 }
 
-/* ---------- LOGIN ---------- */
+/* LOGIN */
 async function login() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-
-  if (!email || !password) return alert("Enter email and password");
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+  if (!email || !password) return toast("Enter email and password", "error");
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -25,24 +34,20 @@ async function login() {
   });
 
   const data = await res.json();
-
-  if (!res.ok) {
-    alert(data.error || "Login failed");
-    return;
-  }
+  if (!res.ok) return toast(data.error, "error");
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
 
-  await loadDashboard();
+  toast("Logged in successfully", "success");
+  loadDashboard();
 }
 
-/* ---------- REGISTER ---------- */
+/* REGISTER */
 async function register() {
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value.trim();
-
-  if (!email || !password) return alert("Fill all fields");
+  const email = regEmail.value.trim();
+  const password = regPassword.value.trim();
+  if (!email || !password) return toast("Fill all fields", "error");
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
@@ -51,12 +56,12 @@ async function register() {
   });
 
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
+  if (!res.ok) return toast(data.error, "error");
 
-  alert("Registered successfully. You can now login.");
+  toast("Account created. Log in now.", "success");
 }
 
-/* ---------- DASHBOARD ---------- */
+/* DASHBOARD */
 async function loadDashboard() {
   const token = localStorage.getItem("token");
   if (!token) return showAuth();
@@ -72,87 +77,76 @@ async function loadDashboard() {
   }
 
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance;
-
+  balance.innerText = data.balance;
   showDashboard();
   loadHistory();
 }
 
-/* ---------- ADD MONEY ---------- */
+/* ADD MONEY */
 async function addMoney() {
-  const amount = document.getElementById("amount").value;
-  const email = localStorage.getItem("email");
-
-  if (!amount) return alert("Enter amount");
+  if (!amount.value) return toast("Enter amount", "error");
 
   const res = await fetch(`${API}/payment/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, amount })
+    body: JSON.stringify({ email: localStorage.getItem("email"), amount: amount.value })
   });
 
   const data = await res.json();
   if (data.status === "success") {
+    toast("Redirecting to payment…", "info");
     window.location.href = data.data.authorization_url;
-  } else {
-    alert("Payment failed");
-  }
+  } else toast("Payment failed", "error");
 }
 
-/* ---------- SEND MONEY ---------- */
+/* SEND */
 async function sendMoney() {
-  const to = document.getElementById("sendEmail").value;
-  const amount = document.getElementById("sendAmount").value;
-  const from = localStorage.getItem("email");
-
-  if (!to || !amount) return alert("Fill all fields");
+  if (!sendEmail.value || !sendAmount.value)
+    return toast("Fill all fields", "error");
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to, amount })
+    body: JSON.stringify({
+      from: localStorage.getItem("email"),
+      to: sendEmail.value,
+      amount: sendAmount.value
+    })
   });
 
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
+  if (!res.ok) return toast(data.error, "error");
 
-  alert(`Sent ₦${amount} to ${to}`);
+  toast("Money sent successfully", "success");
   loadDashboard();
 }
 
-/* ---------- TRANSACTIONS ---------- */
+/* HISTORY */
 async function loadHistory() {
-  const email = localStorage.getItem("email");
-  const historyEl = document.getElementById("history");
-
-  const res = await fetch(`${API}/payment/history/${email}`);
+  const res = await fetch(`${API}/payment/history/${localStorage.getItem("email")}`);
   const tx = await res.json();
-
-  historyEl.innerHTML = "";
+  history.innerHTML = "";
   tx.forEach(t => {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>${t.type}</strong> — ₦${t.amount}`;
-    historyEl.appendChild(li);
+    li.innerHTML = `<span>${t.type}</span><strong>₦${t.amount}</strong>`;
+    history.appendChild(li);
   });
 }
 
-/* ---------- RECEIVE MONEY ---------- */
+/* REQUEST */
 function receiveMoney() {
   const email = prompt("Request money from (email)");
   const amount = prompt("Amount");
-
   if (!email || !amount) return;
-  alert(`Request sent to ${email} for ₦${amount}`);
+  toast(`Request sent to ${email}`, "info");
 }
 
-/* ---------- LOGOUT ---------- */
+/* LOGOUT */
 function logout() {
   localStorage.clear();
+  toast("Logged out", "info");
   showAuth();
 }
 
-/* ---------- INIT ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  showAuth();
-  loadDashboard();
-});
+/* INIT */
+document.addEventListener("DOMContentLoaded", loadDashboard);
