@@ -1,18 +1,26 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ---------- ELEMENTS ---------- */
-const authContainer = document.getElementById("auth-container");
-const dashboardContainer = document.getElementById("dashboard-container");
+const auth = document.getElementById("auth-container");
+const signup = document.getElementById("signup-container");
+const dashboard = document.getElementById("dashboard-container");
 
-/* ---------- LOGIN ---------- */
+/* BUTTONS */
+document.getElementById("loginBtn").addEventListener("click", login);
+document.getElementById("signupBtn").addEventListener("click", register);
+document.getElementById("goSignup").addEventListener("click", () => {
+  auth.style.display = "none";
+  signup.style.display = "block";
+});
+document.getElementById("goLogin").addEventListener("click", () => {
+  signup.style.display = "none";
+  auth.style.display = "block";
+});
+document.getElementById("logoutBtn").addEventListener("click", logout);
+
+/* LOGIN */
 async function login() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-
-  if (!email || !password) {
-    alert("Email and password required");
-    return;
-  }
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -21,22 +29,17 @@ async function login() {
   });
 
   const data = await res.json();
-
-  if (!res.ok) {
-    alert(data.error || "Login failed");
-    return;
-  }
+  if (!res.ok) return alert(data.error);
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
-
   loadDashboard();
 }
 
-/* ---------- REGISTER ---------- */
+/* REGISTER */
 async function register() {
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value.trim();
+  const email = regEmail.value;
+  const password = regPassword.value;
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
@@ -44,20 +47,15 @@ async function register() {
     body: JSON.stringify({ email, password })
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    alert(data.error || "Registration failed");
-    return;
-  }
-
-  alert("Registered successfully. Please login.");
+  if (!res.ok) return alert("Registration failed");
+  alert("Account created");
 }
 
-/* ---------- DASHBOARD ---------- */
+/* DASHBOARD */
 async function loadDashboard() {
-  authContainer.style.display = "none";
-  dashboardContainer.style.display = "block";
+  auth.style.display = "none";
+  signup.style.display = "none";
+  dashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
     headers: {
@@ -65,42 +63,19 @@ async function loadDashboard() {
     }
   });
 
-  if (!res.ok) {
-    logout();
-    return;
-  }
-
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance;
-
-  loadHistory();
+  balance.innerText = data.balance;
 }
 
-/* ---------- HISTORY ---------- */
-async function loadHistory() {
-  const email = localStorage.getItem("email");
-  const res = await fetch(`${API}/payment/history/${email}`);
-  const tx = await res.json();
-
-  const history = document.getElementById("history");
-  history.innerHTML = "";
-
-  tx.forEach(t => {
-    const li = document.createElement("li");
-    li.innerText = `${t.type} ₦${t.amount}`;
-    history.appendChild(li);
-  });
-}
-
-/* ---------- LOGOUT ---------- */
+/* LOGOUT */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* ---------- AUTO LOGIN ---------- */
-window.onload = () => {
+/* AUTO LOGIN */
+window.addEventListener("load", () => {
   if (localStorage.getItem("token")) {
     loadDashboard();
   }
-};
+});
