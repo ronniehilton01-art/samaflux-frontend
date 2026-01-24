@@ -1,32 +1,40 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* =====================
-   ELEMENTS
-===================== */
-const auth = document.getElementById("auth-container");
+/* ELEMENTS */
+const auth = authContainer;
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
-const dashboard = document.getElementById("dashboard-container");
+const dashboard = document.getElementById("dashboard");
+const sendPage = document.getElementById("send-page");
+const addPage = document.getElementById("add-page");
 const historyList = document.getElementById("history");
 
-/* =====================
-   NAVIGATION
-===================== */
-loginBtn.onclick = login;
-goSignup.onclick = () => switchView(auth, step1);
-goLogin1.onclick = () => switchView(step1, auth);
-nextSignup.onclick = () => switchView(step1, step2);
-signupBtn.onclick = register;
+/* NAV */
+goSignup.onclick = () => show(step1);
+goLogin1.onclick = () => show(auth);
+nextSignup.onclick = () => show(step2);
 logoutBtn.onclick = logout;
 
-function switchView(hide, show) {
-  hide.style.display = "none";
-  show.style.display = "flex";
+sendMoneyBtn.onclick = () => show(sendPage);
+addMoneyBtn.onclick = () => show(addPage);
+backDash1.onclick = backDashboard;
+backDash2.onclick = backDashboard;
+
+loginBtn.onclick = login;
+signupBtn.onclick = register;
+confirmSendBtn.onclick = sendMoney;
+paystackBtn.onclick = payWithPaystack;
+
+function show(el) {
+  [auth, step1, step2, dashboard, sendPage, addPage].forEach(e => e.classList.add("hidden"));
+  el.classList.remove("hidden");
 }
 
-/* =====================
-   LOGIN
-===================== */
+function backDashboard() {
+  show(dashboard);
+}
+
+/* LOGIN */
 async function login() {
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -42,13 +50,10 @@ async function login() {
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
-
   loadDashboard();
 }
 
-/* =====================
-   REGISTER (2 STEP)
-===================== */
+/* REGISTER */
 async function register() {
   const payload = {
     email: regEmail.value,
@@ -69,111 +74,86 @@ async function register() {
   });
 
   if (!res.ok) return alert("Signup failed");
-
   alert("Account created");
-  switchView(step2, auth);
+  show(auth);
 }
 
-/* =====================
-   DASHBOARD
-===================== */
+/* DASHBOARD */
 async function loadDashboard() {
-  auth.style.display = step1.style.display = step2.style.display = "none";
-  dashboard.style.display = "block";
+  show(dashboard);
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
 
   const data = await res.json();
   balance.innerText = data.balance || 0;
-
   loadHistory();
 }
 
-/* =====================
-   SEND MONEY (FIXED)
-===================== */
-async function sendMoney(toEmail, amount) {
-  const fromEmail = localStorage.getItem("email");
-
-  const res = await fetch(`${API}/payment/send`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromEmail,
-      toEmail,
-      amount: Number(amount)
-    })
-  });
-
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  alert("Money sent successfully");
-  loadDashboard();
-}
-
-/* =====================
-   ADD MONEY (FIXED)
-===================== */
-async function addMoney(amount) {
-  const email = localStorage.getItem("email");
-
-  const res = await fetch(`${API}/payment/add`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email,
-      amount: Number(amount)
-    })
-  });
-
-  const data = await res.json();
-  if (!res.ok) return alert(data.error);
-
-  loadDashboard();
-}
-
-/* =====================
-   HISTORY
-===================== */
+/* HISTORY */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
-
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
   historyList.innerHTML = "";
+  if (!tx.length) return historyList.innerHTML = "<li>No transactions</li>";
 
-  if (!tx.length) {
-    historyList.innerHTML = "<li>No transactions</li>";
-    return;
-  }
-
-  tx.slice(0, 5).forEach(t => {
+  tx.slice(0,5).forEach(t => {
     const li = document.createElement("li");
-    li.innerText = `${t.type.toUpperCase()} ₦${t.amount}`;
+    li.innerText = `${t.type} ₦${t.amount}`;
     historyList.appendChild(li);
   });
 }
 
-/* =====================
-   LOGOUT
-===================== */
+/* SEND MONEY */
+async function sendMoney() {
+  const res = await fetch(`${API}/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromEmail: localStorage.getItem("email"),
+      toEmail: sendToEmail.value,
+      amount: sendAmount.value
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
+  loadDashboard();
+}
+
+/* PAYSTACK */
+function payWithPaystack() {
+  const handler = PaystackPop.setup({
+    key: "pk_test_xxxxxxxxxxxxx", // replace
+    email: localStorage.getItem("email"),
+    amount: addAmount.value * 100,
+    currency: "NGN",
+    callback: async () => {
+      await fetch(`${API}/payment/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: localStorage.getItem("email"),
+          amount: addAmount.value
+        })
+      });
+      loadDashboard();
+    }
+  });
+  handler.openIframe();
+}
+
+/* LOGOUT */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* =====================
-   AUTO LOGIN
-===================== */
-window.onload = () => {
-  if (localStorage.getItem("token")) {
-    loadDashboard();
-  }
-};
+/* AUTO LOGIN */
+if (localStorage.getItem("token")) {
+  loadDashboard();
+}
