@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>SamaFlux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css?v=4.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="auth-container">
   <div class="card auth-card">
-    <h2>Log in to SamaFlux</h2>
+    <h2>Log in</h2>
 
-    <input id="loginEmail" type="email" placeholder="Email" />
-    <input id="loginPassword" type="password" placeholder="Password" />
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
 
     <button id="loginBtn">Log in</button>
-    <button id="goSignup" class="link-btn">Create account</button>
+
+    <button id="goSignup" class="link-btn">
+      Create account
+    </button>
   </div>
 </div>
 
@@ -26,11 +29,14 @@
   <div class="card auth-card">
     <h2>Create account</h2>
 
-    <input id="regEmail" type="email" placeholder="Email" />
-    <input id="regPassword" type="password" placeholder="Password" />
+    <input id="regEmail" type="email" placeholder="Email">
+    <input id="regPassword" type="password" placeholder="Password">
 
     <button id="nextSignup">Next</button>
-    <button id="goLogin1" class="link-btn">Back to login</button>
+
+    <button id="goLogin1" class="link-btn">
+      Back to login
+    </button>
   </div>
 </div>
 
@@ -39,13 +45,13 @@
   <div class="card auth-card">
     <h2>Your details</h2>
 
-    <input id="regFullName" placeholder="Full name" />
-    <input id="regPhone" placeholder="Phone number" />
-    <input id="regAddress" placeholder="Home address" />
-    <input id="regCity" placeholder="City" />
-    <input id="regState" placeholder="State" />
-    <input id="regCountry" placeholder="Country" />
-    <input id="regZip" placeholder="Zip code" />
+    <input id="regFullName" placeholder="Full name">
+    <input id="regPhone" placeholder="Phone number">
+    <input id="regAddress" placeholder="Home address">
+    <input id="regCity" placeholder="City">
+    <input id="regState" placeholder="State">
+    <input id="regCountry" placeholder="Country">
+    <input id="regZip" placeholder="Zip code">
 
     <button id="signupBtn">Create account</button>
   </div>
@@ -55,54 +61,24 @@
 <div id="dashboard-container" style="display:none">
   <header class="dash-header">
     <h1>SamaFlux</h1>
-    <div class="header-actions">
-      <button id="profileBtn">Profile</button>
+    <div>
+      <button onclick="location.href='add.html'">Add Money</button>
+      <button onclick="location.href='send.html'">Send Money</button>
       <button id="logoutBtn">Logout</button>
     </div>
   </header>
 
-  <!-- BALANCE -->
   <div class="card">
-    <p class="muted">Balance</p>
+    <p>Balance</p>
     <h2>₦<span id="balance">0</span></h2>
   </div>
 
-  <!-- ACTIONS -->
-  <div class="cards-grid">
-    <div class="card">
-      <h3>Add Money</h3>
-      <input id="addAmount" type="number" placeholder="Amount" />
-      <button id="addMoneyBtn">Add</button>
-    </div>
-
-    <div class="card">
-      <h3>Send Money</h3>
-      <input id="sendEmail" type="email" placeholder="Recipient email" />
-      <input id="sendAmount" type="number" placeholder="Amount" />
-      <button id="sendMoneyBtn">Send</button>
-    </div>
-  </div>
-
-  <!-- PROFILE -->
-  <div id="profile-container" class="card" style="display:none">
-    <h3>Profile</h3>
-    <p><b>Name:</b> <span id="p-name"></span></p>
-    <p><b>Email:</b> <span id="p-email"></span></p>
-    <p><b>Phone:</b> <span id="p-phone"></span></p>
-    <p><b>Address:</b> <span id="p-address"></span></p>
-    <p><b>City:</b> <span id="p-city"></span></p>
-    <p><b>State:</b> <span id="p-state"></span></p>
-    <p><b>Country:</b> <span id="p-country"></span></p>
-    <p><b>Zip:</b> <span id="p-zip"></span></p>
-  </div>
-
-  <!-- HISTORY -->
   <div class="card">
     <h3>Recent activity</h3>
     <ul id="history"></ul>
   </div>
 </div>
 
-<script src="app.js?v=4.0" defer></script>
+<script src="app.js?v=3.0" defer></script>
 </body>
 </html>
