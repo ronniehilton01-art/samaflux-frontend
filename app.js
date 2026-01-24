@@ -1,33 +1,28 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ELEMENTS */
+/* ===== ELEMENTS ===== */
 const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-const profile = document.getElementById("profile-container");
-const sendPage = document.getElementById("send-container");
+
 const historyList = document.getElementById("history");
 
-/* NAV */
+/* ===== NAV BUTTONS ===== */
 loginBtn.onclick = login;
 goSignup.onclick = () => switchView(auth, step1);
 goLogin1.onclick = () => switchView(step1, auth);
 nextSignup.onclick = () => switchView(step1, step2);
 signupBtn.onclick = register;
 logoutBtn.onclick = logout;
-profileBtn.onclick = loadProfile;
-sendBtn.onclick = () => switchView(dashboard, sendPage);
-backDashboard1.onclick = () => switchView(sendPage, dashboard);
-backDashboard2.onclick = () => switchView(profile, dashboard);
-sendMoneyBtn.onclick = sendMoney;
 
+/* ===== VIEW SWITCH ===== */
 function switchView(hide, show) {
   hide.style.display = "none";
   show.style.display = "flex";
 }
 
-/* LOGIN */
+/* ===== LOGIN ===== */
 async function login() {
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -43,10 +38,11 @@ async function login() {
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
+
   loadDashboard();
 }
 
-/* REGISTER */
+/* ===== REGISTER ===== */
 async function register() {
   const payload = {
     email: regEmail.value,
@@ -66,20 +62,30 @@ async function register() {
     body: JSON.stringify(payload)
   });
 
-  if (!res.ok) return alert("Signup failed");
+  const data = await res.json();
+  if (!res.ok) return alert(data.error || "Signup failed");
 
   alert("Account created");
   switchView(step2, auth);
 }
 
-/* DASHBOARD */
+/* ===== LOGOUT ===== */
+function logout() {
+  localStorage.clear();
+  location.reload();
+}
+
+/* ===== DASHBOARD ===== */
 async function loadDashboard() {
-  auth.style.display = step1.style.display = step2.style.display = "none";
-  profile.style.display = sendPage.style.display = "none";
+  auth.style.display = "none";
+  step1.style.display = "none";
+  step2.style.display = "none";
   dashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
   });
 
   const data = await res.json();
@@ -88,74 +94,51 @@ async function loadDashboard() {
   loadHistory();
 }
 
-/* SEND MONEY */
-async function sendMoney() {
-  const token = localStorage.getItem("token");
-
-  if (!sendEmail.value || !sendAmount.value) {
-    alert("Please fill all fields");
+/* ===== SEND MONEY ===== */
+async function sendMoney(sendEmail, sendAmount) {
+  if (!sendEmail || !sendAmount) {
+    alert("Missing fields");
     return;
   }
+
+  const payload = {
+    to: sendEmail,
+    email: sendEmail,
+    receiverEmail: sendEmail,
+    amount: Number(sendAmount)
+  };
 
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     },
-    body: JSON.stringify({
-      to: sendEmail.value,
-      amount: Number(sendAmount.value)
-    })
+    body: JSON.stringify(payload)
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    alert(data.error || "Failed to send money");
+    console.error(data);
+    alert(data.error || "Send failed");
     return;
   }
 
-  alert("Money sent successfully");
-
-  sendEmail.value = "";
-  sendAmount.value = "";
-
-  switchView(sendPage, dashboard);
+  alert("Money sent");
   loadDashboard();
 }
 
-/* PROFILE */
-async function loadProfile() {
-  dashboard.style.display = "none";
-  profile.style.display = "flex";
-
-  const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-  });
-
-  const u = await res.json();
-
-  pName.innerText = u.fullName || "-";
-  pEmail.innerText = u.email || "-";
-  pPhone.innerText = u.phone || "-";
-  pAddress.innerText = u.address || "-";
-  pCity.innerText = u.city || "-";
-  pState.innerText = u.state || "-";
-  pCountry.innerText = u.country || "-";
-  pZip.innerText = u.zip || "-";
-}
-
-/* HISTORY */
+/* ===== HISTORY ===== */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
 
-  const res = await fetch(
-    `${API}/payment/history/${localStorage.getItem("email")}`
-  );
+  const email = localStorage.getItem("email");
+  const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
   historyList.innerHTML = "";
+
   if (!tx || !tx.length) {
     historyList.innerHTML = "<li>No transactions</li>";
     return;
@@ -168,13 +151,9 @@ async function loadHistory() {
   });
 }
 
-/* LOGOUT */
-function logout() {
-  localStorage.clear();
-  location.reload();
-}
-
-/* AUTO LOGIN */
+/* ===== AUTO LOGIN ===== */
 window.onload = () => {
-  if (localStorage.getItem("token")) loadDashboard();
+  if (localStorage.getItem("token")) {
+    loadDashboard();
+  }
 };
