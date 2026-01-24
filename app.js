@@ -99,7 +99,7 @@ function paystackAddFunds() {
   if (!amount || amount < 100) return alert("Enter valid amount");
 
   const handler = PaystackPop.setup({
-    key: "pk_test_REPLACE_WITH_YOUR_KEY",
+    key: "pk_live_7d47fef7f517ff8d28c728af308dd275828733f3",
     email: localStorage.getItem("email"),
     amount: amount * 100,
     currency: "NGN",
