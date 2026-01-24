@@ -1,22 +1,22 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ELEMENTS */
+/* Views */
 const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-const historyList = document.getElementById("history");
 
-/* NAV */
+/* Buttons */
 loginBtn.onclick = login;
-goSignup.onclick = () => switchView(auth, step1);
-goLogin1.onclick = () => switchView(step1, auth);
-nextSignup.onclick = () => switchView(step1, step2);
+goSignup.onclick = () => show(step1);
+goLogin1.onclick = () => show(auth);
+nextSignup.onclick = () => show(step2);
+signupBtn.onclick = register;
 logoutBtn.onclick = logout;
 
-function switchView(hide, show) {
-  hide.style.display = "none";
-  show.style.display = "flex";
+function show(view) {
+  [auth, step1, step2, dashboard].forEach(v => v.classList.add("hidden"));
+  view.classList.remove("hidden");
 }
 
 /* LOGIN */
@@ -38,12 +38,12 @@ async function login() {
   loadDashboard();
 }
 
-/* REGISTER (2 STEP SAFE) */
+/* REGISTER */
 async function register() {
   const payload = {
     email: regEmail.value,
     password: regPassword.value,
-    fullName: regFullName.value,
+    name: regFullName.value,
     phone: regPhone.value,
     address: regAddress.value,
     city: regCity.value,
@@ -61,15 +61,12 @@ async function register() {
   if (!res.ok) return alert("Signup failed");
 
   alert("Account created");
-  switchView(step2, auth);
+  show(auth);
 }
-
-signupBtn.onclick = register;
 
 /* DASHBOARD */
 async function loadDashboard() {
-  auth.style.display = step1.style.display = step2.style.display = "none";
-  dashboard.style.display = "block";
+  show(dashboard);
 
   const res = await fetch(`${API}/auth/me`, {
     headers: {
@@ -85,24 +82,30 @@ async function loadDashboard() {
 
 /* HISTORY */
 async function loadHistory() {
-  historyList.innerHTML = "<li>Loading...</li>";
+  history.innerHTML = "<li>Loading...</li>";
 
   const email = localStorage.getItem("email");
   const res = await fetch(`${API}/payment/history/${email}`);
   const tx = await res.json();
 
-  historyList.innerHTML = "";
+  history.innerHTML = "";
 
   if (!tx || !tx.length) {
-    historyList.innerHTML = "<li>No transactions</li>";
+    history.innerHTML = "<li>No transactions</li>";
     return;
   }
 
   tx.slice(-5).reverse().forEach(t => {
     const li = document.createElement("li");
-    li.innerText = `${t.type} ₦${t.amount}`;
-    historyList.appendChild(li);
+    li.textContent = `${t.type} ₦${t.amount}`;
+    history.appendChild(li);
   });
+}
+
+/* LOGOUT */
+function logout() {
+  localStorage.clear();
+  location.reload();
 }
 
 /* AUTO LOGIN */
