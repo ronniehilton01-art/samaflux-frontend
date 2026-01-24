@@ -1,5 +1,5 @@
 /* ===============================
-   GLOBAL RESET (SAFE)
+   RESET (SAFE & MINIMAL)
 ================================ */
 * {
   box-sizing: border-box;
@@ -8,38 +8,39 @@
 }
 
 /* ===============================
-   BASE TYPOGRAPHY (FIXED)
+   BASE
 ================================ */
 body {
-  font-family:
-    "Segoe UI",
-    Tahoma,
-    Geneva,
-    Verdana,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f5f7;
   color: #1c1e21;
   min-height: 100vh;
   line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ===============================
-   LOADER (CLICK SAFE)
+   LOADER
 ================================ */
 #page-loader {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   display: none;
-  pointer-events: none; /* IMPORTANT */
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
 }
 
+#page-loader::after {
+  content: "SamaFlux";
+  font-size: 22px;
+  font-weight: 600;
+  color: #003087;
+}
+
 /* ===============================
-   AUTH CONTAINERS
+   AUTH LAYOUT
 ================================ */
 #auth-container,
 #signup-container {
@@ -49,27 +50,25 @@ body {
   align-items: center;
 }
 
-/* ===============================
-   AUTH CARD
-================================ */
 #auth {
   background: #ffffff;
   width: 340px;
   padding: 32px;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* Headings */
+/* ===============================
+   AUTH CONTENT
+================================ */
 #auth h2 {
+  text-align: center;
+  color: #003087;
+  margin-bottom: 20px;
   font-size: 22px;
   font-weight: 600;
-  color: #003087; /* PayPal blue */
-  margin-bottom: 20px;
-  text-align: center;
 }
 
-/* Inputs */
 #auth input {
   width: 100%;
   padding: 12px 14px;
@@ -84,7 +83,9 @@ body {
   border-color: #0070ba;
 }
 
-/* Buttons */
+/* ===============================
+   BUTTONS
+================================ */
 button {
   width: 100%;
   padding: 12px;
@@ -100,6 +101,11 @@ button {
 
 button:hover {
   background: #005ea6;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Link-style buttons */
@@ -121,28 +127,27 @@ button:hover {
   max-width: 960px;
   margin: 40px auto;
   padding: 0 20px;
+  text-align: center;
 }
 
-/* Header */
 #dashboard-container h1 {
   font-size: 26px;
   color: #003087;
   margin-bottom: 20px;
 }
 
-/* Balance card */
 #dashboard-container p {
   font-size: 18px;
   margin-bottom: 20px;
 }
 
-/* Logout button */
 #logoutBtn {
-  max-width: 200px;
+  max-width: 220px;
+  margin: 0 auto;
 }
 
 /* ===============================
-   MOBILE POLISH
+   MOBILE
 ================================ */
 @media (max-width: 480px) {
   #auth {
