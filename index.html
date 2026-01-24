@@ -10,7 +10,6 @@
 
 <div id="top-loader"></div>
 
-<!-- PAGE LOADER -->
 <div id="page-loader">
   <div class="loader-card">
     <div class="logo">Sama<span>Flux</span></div>
@@ -19,30 +18,47 @@
   </div>
 </div>
 
-<!-- AUTH -->
-<div id="auth-container">
-  <div id="auth">
+<!-- LOGIN PAGE -->
+<div id="login-page" class="auth-page">
+  <div class="auth-card">
     <h2>Log in to SamaFlux</h2>
-    <input id="loginEmail" placeholder="Email" />
+
+    <input id="loginEmail" type="email" placeholder="Email" />
     <input id="loginPassword" type="password" placeholder="Password" />
+
     <button onclick="login()">Log in</button>
 
-    <h3>Create account</h3>
-    <input id="regEmail" placeholder="Email" />
+    <button class="link-btn" onclick="goAuth('signup')">
+      Create an account
+    </button>
+  </div>
+</div>
+
+<!-- SIGNUP PAGE -->
+<div id="signup-page" class="auth-page hidden">
+  <div class="auth-card">
+    <h2>Create your account</h2>
+
+    <input id="regEmail" type="email" placeholder="Email" />
     <input id="regPassword" type="password" placeholder="Password" />
-    <button class="secondary" onclick="register()">Sign up</button>
+
+    <button onclick="register()">Sign up</button>
+
+    <button class="link-btn" onclick="goAuth('login')">
+      Already have an account? Log in
+    </button>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard-container" class="page hidden">
+<div id="dashboard-page" class="page hidden">
 
   <header class="topbar">
     <h1>SamaFlux</h1>
     <div class="top-actions">
-      <button onclick="go('add')">Add</button>
-      <button onclick="go('send')">Send</button>
-      <button onclick="go('request')">Request</button>
+      <button onclick="goPage('add')">Add</button>
+      <button onclick="goPage('send')">Send</button>
+      <button onclick="goPage('request')">Request</button>
       <button class="logout" onclick="logout()">Logout</button>
     </div>
   </header>
@@ -58,10 +74,10 @@
   </section>
 </div>
 
-<!-- ADD MONEY PAGE -->
+<!-- ADD MONEY -->
 <div id="add-page" class="page hidden">
   <header class="subbar">
-    <button onclick="go('dashboard')">← Back</button>
+    <button onclick="goPage('dashboard')">← Back</button>
     <h2>Add money</h2>
   </header>
 
@@ -71,10 +87,10 @@
   </div>
 </div>
 
-<!-- SEND MONEY PAGE -->
+<!-- SEND MONEY -->
 <div id="send-page" class="page hidden">
   <header class="subbar">
-    <button onclick="go('dashboard')">← Back</button>
+    <button onclick="goPage('dashboard')">← Back</button>
     <h2>Send money</h2>
   </header>
 
@@ -85,10 +101,10 @@
   </div>
 </div>
 
-<!-- REQUEST MONEY PAGE -->
+<!-- REQUEST MONEY -->
 <div id="request-page" class="page hidden">
   <header class="subbar">
-    <button onclick="go('dashboard')">← Back</button>
+    <button onclick="goPage('dashboard')">← Back</button>
     <h2>Request money</h2>
   </header>
 
