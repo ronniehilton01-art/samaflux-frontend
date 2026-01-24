@@ -90,20 +90,37 @@ async function loadDashboard() {
 
 /* SEND MONEY */
 async function sendMoney() {
+  const token = localStorage.getItem("token");
+
+  if (!sendEmail.value || !sendAmount.value) {
+    alert("Please fill all fields");
+    return;
+  }
+
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
     body: JSON.stringify({
-      from: localStorage.getItem("email"),
       to: sendEmail.value,
-      amount: sendAmount.value
+      amount: Number(sendAmount.value)
     })
   });
 
   const data = await res.json();
-  if (!res.ok) return alert(data.error || "Failed");
+
+  if (!res.ok) {
+    alert(data.error || "Failed to send money");
+    return;
+  }
 
   alert("Money sent successfully");
+
+  sendEmail.value = "";
+  sendAmount.value = "";
+
   switchView(sendPage, dashboard);
   loadDashboard();
 }
