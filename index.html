@@ -1,122 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>SamaFlux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CACHE BUSTER -->
+  <link rel="stylesheet" href="style.css?v=1.0.3">
 </head>
 <body>
 
-<div id="top-loader"></div>
+<div id="page-loader"></div>
 
-<div id="page-loader">
-  <div class="loader-card">
-    <div class="logo">Sama<span>Flux</span></div>
-    <div class="bar"><div class="bar-fill"></div></div>
-    <p>Processing…</p>
-  </div>
-</div>
-
-<!-- LOGIN PAGE -->
-<div id="login-page" class="auth-page">
-  <div class="auth-card">
+<div id="auth-container">
+  <div id="auth">
     <h2>Log in to SamaFlux</h2>
 
-    <input id="loginEmail" type="email" placeholder="Email" />
-    <input id="loginPassword" type="password" placeholder="Password" />
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
 
-    <button onclick="login()">Log in</button>
+    <button id="loginBtn">Log in</button>
 
-    <button class="link-btn" onclick="goAuth('signup')">
-      Create an account
+    <button id="goSignup" class="link-btn">
+      Create account
     </button>
   </div>
 </div>
 
-<!-- SIGNUP PAGE -->
-<div id="signup-page" class="auth-page hidden">
-  <div class="auth-card">
-    <h2>Create your account</h2>
+<div id="signup-container" style="display:none">
+  <div id="auth">
+    <h2>Create account</h2>
 
-    <input id="regEmail" type="email" placeholder="Email" />
-    <input id="regPassword" type="password" placeholder="Password" />
+    <input id="regEmail" type="email" placeholder="Email">
+    <input id="regPassword" type="password" placeholder="Password">
 
-    <button onclick="register()">Sign up</button>
+    <button id="signupBtn">Sign up</button>
 
-    <button class="link-btn" onclick="goAuth('login')">
-      Already have an account? Log in
+    <button id="goLogin" class="link-btn">
+      Back to login
     </button>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard-page" class="page hidden">
-
-  <header class="topbar">
-    <h1>SamaFlux</h1>
-    <div class="top-actions">
-      <button onclick="goPage('add')">Add</button>
-      <button onclick="goPage('send')">Send</button>
-      <button onclick="goPage('request')">Request</button>
-      <button class="logout" onclick="logout()">Logout</button>
-    </div>
-  </header>
-
-  <section class="balance-card">
-    <p>Available balance</p>
-    <h2>₦<span id="balance">0</span></h2>
-  </section>
-
-  <section class="transactions">
-    <h3>Recent activity</h3>
-    <ul id="history"></ul>
-  </section>
+<div id="dashboard-container" style="display:none">
+  <h1>SamaFlux Dashboard</h1>
+  <p>Balance: ₦<span id="balance">0</span></p>
+  <button id="logoutBtn">Logout</button>
 </div>
 
-<!-- ADD MONEY -->
-<div id="add-page" class="page hidden">
-  <header class="subbar">
-    <button onclick="goPage('dashboard')">← Back</button>
-    <h2>Add money</h2>
-  </header>
-
-  <div class="form-card">
-    <input id="amount" type="number" placeholder="Amount" />
-    <button onclick="addMoney()">Continue</button>
-  </div>
-</div>
-
-<!-- SEND MONEY -->
-<div id="send-page" class="page hidden">
-  <header class="subbar">
-    <button onclick="goPage('dashboard')">← Back</button>
-    <h2>Send money</h2>
-  </header>
-
-  <div class="form-card">
-    <input id="sendEmail" placeholder="Recipient email" />
-    <input id="sendAmount" type="number" placeholder="Amount" />
-    <button onclick="sendMoney()">Send</button>
-  </div>
-</div>
-
-<!-- REQUEST MONEY -->
-<div id="request-page" class="page hidden">
-  <header class="subbar">
-    <button onclick="goPage('dashboard')">← Back</button>
-    <h2>Request money</h2>
-  </header>
-
-  <div class="form-card">
-    <input id="requestEmail" placeholder="User email" />
-    <input id="requestAmount" type="number" placeholder="Amount" />
-    <button onclick="requestMoney()">Request</button>
-  </div>
-</div>
-
-<div id="toast-container"></div>
-
-<script src="app.js"></script>
+<script src="app.js?v=1.0.3" defer></script>
 </body>
 </html>
