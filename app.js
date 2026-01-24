@@ -5,31 +5,25 @@ const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-const sendPage = document.getElementById("send-page");
-const addPage = document.getElementById("add-page");
-const historyList = document.getElementById("history");
 
-/* BUTTONS */
+const historyList = document.getElementById("history");
+const balanceEl = document.getElementById("balance");
+
+/* NAV */
 loginBtn.onclick = login;
-goSignup.onclick = () => show(step1);
-goLogin1.onclick = () => show(auth);
-nextSignup.onclick = () => show(step2);
+goSignup.onclick = () => switchView(auth, step1);
+goLogin1.onclick = () => switchView(step1, auth);
+nextSignup.onclick = () => switchView(step1, step2);
 signupBtn.onclick = register;
 logoutBtn.onclick = logout;
 
-sendMoneyBtn.onclick = () => show(sendPage);
-addMoneyBtn.onclick = () => show(addPage);
-backDash1.onclick = () => show(dashboard);
-backDash2.onclick = () => show(dashboard);
-confirmSendBtn.onclick = sendMoney;
-paystackBtn.onclick = payWithPaystack;
+addFundsBtn.onclick = paystackAddFunds;
+sendBtn.onclick = sendMoney;
 
-/* VIEW */
-function show(el) {
-  [auth, step1, step2, dashboard, sendPage, addPage].forEach(v => {
-    if (v) v.style.display = "none";
-  });
-  el.style.display = "flex";
+/* VIEW SWITCH */
+function switchView(hide, show) {
+  hide.style.display = "none";
+  show.style.display = "flex";
 }
 
 /* LOGIN */
@@ -72,32 +66,60 @@ async function register() {
   });
 
   if (!res.ok) return alert("Signup failed");
+
   alert("Account created");
-  show(auth);
+  switchView(step2, auth);
+}
+
+/* LOGOUT */
+function logout() {
+  localStorage.clear();
+  location.reload();
 }
 
 /* DASHBOARD */
 async function loadDashboard() {
-  show(dashboard);
+  auth.style.display = step1.style.display = step2.style.display = "none";
+  dashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
   });
 
   const data = await res.json();
-  balance.innerText = data.balance || 0;
+  balanceEl.innerText = data.balance || 0;
   loadHistory();
 }
 
-/* HISTORY */
-async function loadHistory() {
-  historyList.innerHTML = "<li>Loading...</li>";
-  const res = await fetch(`${API}/payment/history/${localStorage.getItem("email")}`);
-  const tx = await res.json();
+/* ADD FUNDS (PAYSTACK) */
+function paystackAddFunds() {
+  const amount = Number(addAmount.value);
+  if (!amount || amount < 100) return alert("Enter valid amount");
 
-  historyList.innerHTML = tx.length
-    ? tx.slice(0, 5).map(t => `<li>${t.type} ₦${t.amount}</li>`).join("")
-    : "<li>No transactions</li>";
+  const handler = PaystackPop.setup({
+    key: "pk_test_REPLACE_WITH_YOUR_KEY",
+    email: localStorage.getItem("email"),
+    amount: amount * 100,
+    currency: "NGN",
+    ref: "SAMAF_" + Date.now(),
+    callback: function () {
+      fetch(`${API}/payment/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: localStorage.getItem("email"),
+          amount
+        })
+      }).then(() => loadDashboard());
+    },
+    onClose: function () {
+      alert("Payment cancelled");
+    }
+  });
+
+  handler.openIframe();
 }
 
 /* SEND MONEY */
@@ -107,44 +129,44 @@ async function sendMoney() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       fromEmail: localStorage.getItem("email"),
-      toEmail: sendToEmail.value,
+      toEmail: sendTo.value,
       amount: sendAmount.value
     })
   });
 
   const data = await res.json();
   if (!res.ok) return alert(data.error);
+
+  alert("Money sent");
   loadDashboard();
 }
 
-/* PAYSTACK ADD MONEY */
-function payWithPaystack() {
-  const amount = addAmount.value;
+/* HISTORY */
+async function loadHistory() {
+  historyList.innerHTML = "<li>Loading...</li>";
 
-  PaystackPop.setup({
-    key: "pk_test_REPLACE_WITH_YOUR_KEY",
-    email: localStorage.getItem("email"),
-    amount: amount * 100,
-    currency: "NGN",
-    callback: async () => {
-      await fetch(`${API}/payment/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: localStorage.getItem("email"),
-          amount
-        })
-      });
-      loadDashboard();
-    }
-  }).openIframe();
-}
+  const res = await fetch(
+    `${API}/payment/history/${localStorage.getItem("email")}`
+  );
+  const tx = await res.json();
 
-/* LOGOUT */
-function logout() {
-  localStorage.clear();
-  location.reload();
+  historyList.innerHTML = "";
+
+  if (!tx.length) {
+    historyList.innerHTML = "<li>No transactions</li>";
+    return;
+  }
+
+  tx.slice(0, 5).forEach(t => {
+    const li = document.createElement("li");
+    li.innerText = `${t.type} ₦${t.amount}`;
+    historyList.appendChild(li);
+  });
 }
 
 /* AUTO LOGIN */
-if (localStorage.getItem("token")) loadDashboard();
+window.onload = () => {
+  if (localStorage.getItem("token")) {
+    loadDashboard();
+  }
+};
