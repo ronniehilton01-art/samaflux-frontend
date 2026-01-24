@@ -1,37 +1,46 @@
 const API = "https://samaflux-backend.onrender.com";
 
-/* ===== ELEMENTS (MATCH HTML IDS) ===== */
+/* ELEMENTS */
 const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
+const sendPage = document.getElementById("send-page");
+const addPage = document.getElementById("add-page");
 const historyList = document.getElementById("history");
 
-/* ===== BUTTONS ===== */
-document.getElementById("loginBtn").onclick = login;
-document.getElementById("goSignup").onclick = () => show(step1);
-document.getElementById("goLogin1").onclick = () => show(auth);
-document.getElementById("nextSignup").onclick = () => show(step2);
-document.getElementById("signupBtn").onclick = register;
-document.getElementById("logoutBtn").onclick = logout;
+/* BUTTONS */
+loginBtn.onclick = login;
+goSignup.onclick = () => show(step1);
+goLogin1.onclick = () => show(auth);
+nextSignup.onclick = () => show(step2);
+signupBtn.onclick = register;
+logoutBtn.onclick = logout;
 
-/* ===== VIEW SWITCHER ===== */
+sendMoneyBtn.onclick = () => show(sendPage);
+addMoneyBtn.onclick = () => show(addPage);
+backDash1.onclick = () => show(dashboard);
+backDash2.onclick = () => show(dashboard);
+confirmSendBtn.onclick = sendMoney;
+paystackBtn.onclick = payWithPaystack;
+
+/* VIEW */
 function show(el) {
-  [auth, step1, step2, dashboard].forEach(v => {
+  [auth, step1, step2, dashboard, sendPage, addPage].forEach(v => {
     if (v) v.style.display = "none";
   });
   el.style.display = "flex";
 }
 
-/* ===== LOGIN ===== */
+/* LOGIN */
 async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({
+      email: loginEmail.value,
+      password: loginPassword.value
+    })
   });
 
   const data = await res.json();
@@ -39,11 +48,10 @@ async function login() {
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("email", data.email);
-
   loadDashboard();
 }
 
-/* ===== REGISTER (2 STEP) ===== */
+/* REGISTER */
 async function register() {
   const payload = {
     email: regEmail.value,
@@ -64,58 +72,79 @@ async function register() {
   });
 
   if (!res.ok) return alert("Signup failed");
-
   alert("Account created");
   show(auth);
 }
 
-/* ===== DASHBOARD ===== */
+/* DASHBOARD */
 async function loadDashboard() {
   show(dashboard);
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
 
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance || 0;
-
+  balance.innerText = data.balance || 0;
   loadHistory();
 }
 
-/* ===== HISTORY ===== */
+/* HISTORY */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
-
-  const email = localStorage.getItem("email");
-  const res = await fetch(`${API}/payment/history/${email}`);
+  const res = await fetch(`${API}/payment/history/${localStorage.getItem("email")}`);
   const tx = await res.json();
 
-  historyList.innerHTML = "";
-
-  if (!tx || !tx.length) {
-    historyList.innerHTML = "<li>No transactions</li>";
-    return;
-  }
-
-  tx.slice(0, 5).forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = `${t.type} ₦${t.amount}`;
-    historyList.appendChild(li);
-  });
+  historyList.innerHTML = tx.length
+    ? tx.slice(0, 5).map(t => `<li>${t.type} ₦${t.amount}</li>`).join("")
+    : "<li>No transactions</li>";
 }
 
-/* ===== LOGOUT ===== */
+/* SEND MONEY */
+async function sendMoney() {
+  const res = await fetch(`${API}/payment/send`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromEmail: localStorage.getItem("email"),
+      toEmail: sendToEmail.value,
+      amount: sendAmount.value
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.error);
+  loadDashboard();
+}
+
+/* PAYSTACK ADD MONEY */
+function payWithPaystack() {
+  const amount = addAmount.value;
+
+  PaystackPop.setup({
+    key: "pk_test_REPLACE_WITH_YOUR_KEY",
+    email: localStorage.getItem("email"),
+    amount: amount * 100,
+    currency: "NGN",
+    callback: async () => {
+      await fetch(`${API}/payment/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: localStorage.getItem("email"),
+          amount
+        })
+      });
+      loadDashboard();
+    }
+  }).openIframe();
+}
+
+/* LOGOUT */
 function logout() {
   localStorage.clear();
   location.reload();
 }
 
-/* ===== AUTO LOGIN ===== */
-window.onload = () => {
-  if (localStorage.getItem("token")) {
-    loadDashboard();
-  }
-};
+/* AUTO LOGIN */
+if (localStorage.getItem("token")) loadDashboard();
