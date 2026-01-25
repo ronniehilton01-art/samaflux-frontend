@@ -1,5 +1,7 @@
 <!-- DASHBOARD -->
 <div id="dashboard-container" style="display:none">
+
+  <!-- HEADER -->
   <header class="dash-header">
     <h1>SamaFlux</h1>
 
@@ -11,8 +13,8 @@
     </div>
   </header>
 
-  <!-- MAIN DASHBOARD -->
-  <div id="main-dashboard">
+  <!-- ================= MAIN DASHBOARD ================= -->
+  <section id="main-dashboard">
     <div class="card">
       <p>Balance</p>
       <h2>₦<span id="balance">0</span></h2>
@@ -22,38 +24,66 @@
       <h3>Recent Activity</h3>
       <ul id="history"></ul>
     </div>
-  </div>
+  </section>
 
-  <!-- ADD FUNDS PAGE -->
-  <div id="add-funds-page" style="display:none">
+  <!-- ================= ADD FUNDS ================= -->
+  <section id="add-funds-page" style="display:none">
     <div class="card">
       <h3>Add Funds</h3>
-      <input id="fundAmount" type="number" placeholder="Amount">
-      <button id="paystackBtn">Add Funds</button>
-      <button class="link-btn" id="backFromAdd">Back</button>
-    </div>
-  </div>
 
-  <!-- SEND MONEY PAGE -->
-  <div id="send-money-page" style="display:none">
+      <input
+        id="fundAmount"
+        type="number"
+        placeholder="Amount"
+      >
+
+      <button id="paystackBtn">Add Funds</button>
+
+      <button id="backFromAdd" class="link-btn">
+        Back to dashboard
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= SEND MONEY ================= -->
+  <section id="send-money-page" style="display:none">
     <div class="card">
       <h3>Send Money</h3>
-      <input id="sendTo" placeholder="Recipient email">
-      <input id="sendAmount" type="number" placeholder="Amount">
-      <button id="sendBtn">Send</button>
-      <button class="link-btn" id="backFromSend">Back</button>
-    </div>
-  </div>
 
-  <!-- PROFILE PAGE -->
-  <div id="profile-page" style="display:none">
+      <input
+        id="sendTo"
+        type="email"
+        placeholder="Recipient email"
+      >
+
+      <input
+        id="sendAmount"
+        type="number"
+        placeholder="Amount"
+      >
+
+      <button id="sendBtn">Send</button>
+
+      <button id="backFromSend" class="link-btn">
+        Back to dashboard
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= PROFILE ================= -->
+  <section id="profile-page" style="display:none">
     <div class="card">
       <h3>Profile</h3>
-      <p><b>Name:</b> <span id="pName"></span></p>
-      <p><b>Email:</b> <span id="pEmail"></span></p>
-      <p><b>Phone:</b> <span id="pPhone"></span></p>
-      <p><b>Address:</b> <span id="pAddress"></span></p>
-      <button class="link-btn" id="backFromProfile">Back</button>
+
+      <p><strong>Name:</strong> <span id="pName">-</span></p>
+      <p><strong>Email:</strong> <span id="pEmail">-</span></p>
+      <p><strong>Phone:</strong> <span id="pPhone">-</span></p>
+      <p><strong>Address:</strong> <span id="pAddress">-</span></p>
+
+      <button id="backFromProfile" class="link-btn">
+        Back to dashboard
+      </button>
     </div>
-  </div>
+  </section>
+
 </div>
