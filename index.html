@@ -1,61 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>SamaFlux</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css?v=4.1">
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="auth-container">
-  <div class="card auth-card">
-    <h2>Log in</h2>
-
-    <input id="loginEmail" type="email" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-
-    <button id="loginBtn">Log in</button>
-
-    <button id="goSignup" class="link-btn">Create account</button>
-  </div>
-</div>
-
-<!-- SIGNUP STEP 1 -->
-<div id="signup-step1" style="display:none">
-  <div class="card auth-card">
-    <h2>Create account</h2>
-
-    <input id="regEmail" type="email" placeholder="Email">
-    <input id="regPassword" type="password" placeholder="Password">
-
-    <button id="nextSignup">Next</button>
-    <button id="goLogin1" class="link-btn">Back to login</button>
-  </div>
-</div>
-
-<!-- SIGNUP STEP 2 -->
-<div id="signup-step2" style="display:none">
-  <div class="card auth-card">
-    <h2>Your details</h2>
-
-    <input id="regFullName" placeholder="Full name">
-    <input id="regPhone" placeholder="Phone number">
-    <input id="regAddress" placeholder="Home address">
-    <input id="regCity" placeholder="City">
-    <input id="regState" placeholder="State">
-    <input id="regCountry" placeholder="Country">
-    <input id="regZip" placeholder="Zip code">
-
-    <button id="signupBtn">Create account</button>
-  </div>
-</div>
-
+<!-- DASHBOARD -->
 <div id="dashboard-container" style="display:none">
-
   <header class="dash-header">
     <h1>SamaFlux</h1>
+
     <div class="dash-actions">
       <button id="addFundsBtn">Add Funds</button>
       <button id="sendMoneyBtn">Send Money</button>
@@ -64,52 +11,49 @@
     </div>
   </header>
 
-  <section class="dashboard-cards">
-
-    <div class="card balance-card">
-      <h3>Balance</h3>
-      <p>₦<span id="balance">0</span></p>
+  <!-- MAIN DASHBOARD -->
+  <div id="main-dashboard">
+    <div class="card">
+      <p>Balance</p>
+      <h2>₦<span id="balance">0</span></h2>
     </div>
 
-    <div class="card activity-card">
+    <div class="card">
       <h3>Recent Activity</h3>
-      <ul id="transactionList"></ul>
+      <ul id="history"></ul>
     </div>
-
-  </section>
-
-</div>
-
-
-  <div class="card">
-    <p>Balance</p>
-    <h2>₦<span id="balance">0</span></h2>
   </div>
 
-  <div class="card">
-    <h3>Recent activity</h3>
-    <ul id="history"></ul>
+  <!-- ADD FUNDS PAGE -->
+  <div id="add-funds-page" style="display:none">
+    <div class="card">
+      <h3>Add Funds</h3>
+      <input id="fundAmount" type="number" placeholder="Amount">
+      <button id="paystackBtn">Add Funds</button>
+      <button class="link-btn" id="backFromAdd">Back</button>
+    </div>
+  </div>
+
+  <!-- SEND MONEY PAGE -->
+  <div id="send-money-page" style="display:none">
+    <div class="card">
+      <h3>Send Money</h3>
+      <input id="sendTo" placeholder="Recipient email">
+      <input id="sendAmount" type="number" placeholder="Amount">
+      <button id="sendBtn">Send</button>
+      <button class="link-btn" id="backFromSend">Back</button>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div id="profile-page" style="display:none">
+    <div class="card">
+      <h3>Profile</h3>
+      <p><b>Name:</b> <span id="pName"></span></p>
+      <p><b>Email:</b> <span id="pEmail"></span></p>
+      <p><b>Phone:</b> <span id="pPhone"></span></p>
+      <p><b>Address:</b> <span id="pAddress"></span></p>
+      <button class="link-btn" id="backFromProfile">Back</button>
+    </div>
   </div>
 </div>
-
-<!-- PROFILE (READ ONLY – SAFE) -->
-<div id="profile-container" style="display:none">
-  <div class="card">
-    <h2>My Profile</h2>
-
-    <p><strong>Email:</strong> <span id="p-email">-</span></p>
-    <p><strong>Full name:</strong> <span id="p-name">-</span></p>
-    <p><strong>Phone:</strong> <span id="p-phone">-</span></p>
-    <p><strong>Address:</strong> <span id="p-address">-</span></p>
-    <p><strong>City:</strong> <span id="p-city">-</span></p>
-    <p><strong>State:</strong> <span id="p-state">-</span></p>
-    <p><strong>Country:</strong> <span id="p-country">-</span></p>
-    <p><strong>Zip:</strong> <span id="p-zip">-</span></p>
-
-    <button id="backDashboard">Back to dashboard</button>
-  </div>
-</div>
-
-<script src="app.js?v=4.1" defer></script>
-</body>
-</html>
