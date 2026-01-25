@@ -1,10 +1,28 @@
-<!-- DASHBOARD -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SamaFlux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="auth-container">
+  <div class="card">
+    <h2>Log in</h2>
+    <input id="loginEmail" type="email" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button id="loginBtn">Log in</button>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
 <div id="dashboard-container" style="display:none">
 
-  <!-- HEADER -->
   <header class="dash-header">
     <h1>SamaFlux</h1>
-
     <div class="dash-actions">
       <button id="addFundsBtn">Add Funds</button>
       <button id="sendMoneyBtn">Send Money</button>
@@ -13,7 +31,7 @@
     </div>
   </header>
 
-  <!-- ================= MAIN DASHBOARD ================= -->
+  <!-- MAIN DASHBOARD -->
   <section id="main-dashboard">
     <div class="card">
       <p>Balance</p>
@@ -26,64 +44,41 @@
     </div>
   </section>
 
-  <!-- ================= ADD FUNDS ================= -->
+  <!-- ADD FUNDS -->
   <section id="add-funds-page" style="display:none">
     <div class="card">
       <h3>Add Funds</h3>
-
-      <input
-        id="fundAmount"
-        type="number"
-        placeholder="Amount"
-      >
-
+      <input id="fundAmount" type="number" placeholder="Amount" />
       <button id="paystackBtn">Add Funds</button>
-
-      <button id="backFromAdd" class="link-btn">
-        Back to dashboard
-      </button>
+      <button id="backFromAdd" class="link-btn">Back</button>
     </div>
   </section>
 
-  <!-- ================= SEND MONEY ================= -->
+  <!-- SEND MONEY -->
   <section id="send-money-page" style="display:none">
     <div class="card">
       <h3>Send Money</h3>
-
-      <input
-        id="sendTo"
-        type="email"
-        placeholder="Recipient email"
-      >
-
-      <input
-        id="sendAmount"
-        type="number"
-        placeholder="Amount"
-      >
-
+      <input id="sendTo" type="email" placeholder="Recipient email" />
+      <input id="sendAmount" type="number" placeholder="Amount" />
       <button id="sendBtn">Send</button>
-
-      <button id="backFromSend" class="link-btn">
-        Back to dashboard
-      </button>
+      <button id="backFromSend" class="link-btn">Back</button>
     </div>
   </section>
 
-  <!-- ================= PROFILE ================= -->
+  <!-- PROFILE -->
   <section id="profile-page" style="display:none">
     <div class="card">
       <h3>Profile</h3>
-
-      <p><strong>Name:</strong> <span id="pName">-</span></p>
-      <p><strong>Email:</strong> <span id="pEmail">-</span></p>
-      <p><strong>Phone:</strong> <span id="pPhone">-</span></p>
-      <p><strong>Address:</strong> <span id="pAddress">-</span></p>
-
-      <button id="backFromProfile" class="link-btn">
-        Back to dashboard
-      </button>
+      <p><b>Name:</b> <span id="pName">-</span></p>
+      <p><b>Email:</b> <span id="pEmail">-</span></p>
+      <p><b>Phone:</b> <span id="pPhone">-</span></p>
+      <p><b>Address:</b> <span id="pAddress">-</span></p>
+      <button id="backFromProfile" class="link-btn">Back</button>
     </div>
   </section>
 
 </div>
+
+<script src="app.js"></script>
+</body>
+</html>
