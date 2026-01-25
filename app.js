@@ -16,20 +16,20 @@ const profilePage = document.getElementById("profile-page");
 const historyList = document.getElementById("history");
 
 /* Buttons */
-loginBtn.onclick = login;
-goSignup.onclick = () => show(step1);
-goLogin1.onclick = () => show(auth);
-nextSignup.onclick = () => show(step2);
-signupBtn.onclick = register;
-logoutBtn.onclick = logout;
+const loginBtn = document.getElementById("loginBtn");
+const goSignup = document.getElementById("goSignup");
+const goLogin1 = document.getElementById("goLogin1");
+const nextSignup = document.getElementById("nextSignup");
+const signupBtn = document.getElementById("signupBtn");
 
-addFundsBtn.onclick = () => showSection(addFundsPage);
-sendMoneyBtn.onclick = () => showSection(sendMoneyPage);
-profileBtn.onclick = openProfile;
+const logoutBtn = document.getElementById("logoutBtn");
+const profileBtn = document.getElementById("profileBtn");
+const addFundsBtn = document.getElementById("addFundsBtn");
+const sendMoneyBtn = document.getElementById("sendMoneyBtn");
 
-backFromAdd.onclick = () => showSection(mainDashboard);
-backFromSend.onclick = () => showSection(mainDashboard);
-backFromProfile.onclick = () => showSection(mainDashboard);
+const backFromAdd = document.getElementById("backFromAdd");
+const backFromSend = document.getElementById("backFromSend");
+const backFromProfile = document.getElementById("backFromProfile");
 
 /* =====================
    VIEW HELPERS
@@ -46,9 +46,9 @@ function hideAll() {
   profilePage.style.display = "none";
 }
 
-function show(el) {
+function show(el, type = "flex") {
   hideAll();
-  el.style.display = "flex";
+  el.style.display = type;
 }
 
 function showSection(section) {
@@ -59,6 +59,25 @@ function showSection(section) {
 
   section.style.display = "block";
 }
+
+/* =====================
+   NAVIGATION
+===================== */
+loginBtn.onclick = login;
+goSignup.onclick = () => show(step1);
+goLogin1.onclick = () => show(auth);
+nextSignup.onclick = () => show(step2);
+signupBtn.onclick = register;
+
+logoutBtn.onclick = logout;
+profileBtn.onclick = openProfile;
+
+addFundsBtn.onclick = () => showSection(addFundsPage);
+sendMoneyBtn.onclick = () => showSection(sendMoneyPage);
+
+backFromAdd.onclick = () => showSection(mainDashboard);
+backFromSend.onclick = () => showSection(mainDashboard);
+backFromProfile.onclick = () => showSection(mainDashboard);
 
 /* =====================
    LOGIN
@@ -83,7 +102,7 @@ async function login() {
 }
 
 /* =====================
-   REGISTER
+   REGISTER (2 STEP)
 ===================== */
 async function register() {
   const payload = {
@@ -144,10 +163,10 @@ async function openProfile() {
 
   const user = await res.json();
 
-  pName.innerText = user.fullName || "-";
-  pEmail.innerText = user.email || "-";
-  pPhone.innerText = user.phone || "-";
-  pAddress.innerText = user.address || "-";
+  document.getElementById("pName").innerText = user.fullName || "-";
+  document.getElementById("pEmail").innerText = user.email || "-";
+  document.getElementById("pPhone").innerText = user.phone || "-";
+  document.getElementById("pAddress").innerText = user.address || "-";
 }
 
 /* =====================
@@ -183,10 +202,12 @@ function logout() {
 }
 
 /* =====================
-   AUTO LOGIN
+   INITIAL LOAD (FIXES WHITE PAGE)
 ===================== */
 window.onload = () => {
   if (localStorage.getItem("token")) {
     loadDashboard();
+  } else {
+    show(auth);
   }
 };
