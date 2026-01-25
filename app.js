@@ -8,21 +8,11 @@ const mainDashboard = document.getElementById("main-dashboard");
 const addFundsPage = document.getElementById("add-funds-page");
 const sendMoneyPage = document.getElementById("send-money-page");
 const profilePage = document.getElementById("profile-page");
+const addSuccessPage = document.getElementById("add-success-page");
+const sendSuccessPage = document.getElementById("send-success-page");
 
 const balanceEl = document.getElementById("balance");
 const historyList = document.getElementById("history");
-
-/* Buttons */
-loginBtn.onclick = login;
-logoutBtn.onclick = logout;
-
-addFundsBtn.onclick = () => showPage(addFundsPage);
-sendMoneyBtn.onclick = () => showPage(sendMoneyPage);
-profileBtn.onclick = openProfile;
-
-backFromAdd.onclick = showDashboard;
-backFromSend.onclick = showDashboard;
-backFromProfile.onclick = showDashboard;
 
 /* ================= VIEW CONTROL ================= */
 function hideAll() {
@@ -30,6 +20,8 @@ function hideAll() {
   addFundsPage.style.display = "none";
   sendMoneyPage.style.display = "none";
   profilePage.style.display = "none";
+  addSuccessPage.style.display = "none";
+  sendSuccessPage.style.display = "none";
 }
 
 function showDashboard() {
@@ -43,6 +35,9 @@ function showPage(page) {
 }
 
 /* ================= LOGIN ================= */
+loginBtn.onclick = login;
+logoutBtn.onclick = logout;
+
 async function login() {
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -78,6 +73,18 @@ async function loadDashboard() {
   loadHistory();
 }
 
+/* ================= NAV BUTTONS ================= */
+addFundsBtn.onclick = () => showPage(addFundsPage);
+sendMoneyBtn.onclick = () => showPage(sendMoneyPage);
+profileBtn.onclick = openProfile;
+
+backFromAdd.onclick = showDashboard;
+backFromSend.onclick = showDashboard;
+backFromProfile.onclick = showDashboard;
+
+backAfterAdd.onclick = showDashboard;
+backAfterSend.onclick = showDashboard;
+
 /* ================= PROFILE ================= */
 async function openProfile() {
   showPage(profilePage);
@@ -93,23 +100,51 @@ async function openProfile() {
   pAddress.innerText = u.address || "-";
 }
 
+/* ================= ADD FUNDS (PAYSTACK CALLBACK HANDLED SERVER SIDE) ================= */
+paystackBtn.onclick = async () => {
+  const amount = Number(fundAmount.value);
+  if (!amount) return alert("Enter amount");
+
+  const res = await fetch(`${API}/payment/init-paystack`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ amount }),
+  });
+
+  const data = await res.json();
+  if (!data.authorization_url) return alert("Payment failed");
+
+  window.location.href = data.authorization_url;
+};
+
 /* ================= SEND MONEY ================= */
 sendBtn.onclick = async () => {
+  const toEmail = sendTo.value;
+  const amount = Number(sendAmount.value);
+
+  if (!toEmail || !amount) return alert("Missing fields");
+
   const res = await fetch(`${API}/payment/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       fromEmail: localStorage.getItem("email"),
-      toEmail: sendTo.value,
-      amount: Number(sendAmount.value),
+      toEmail,
+      amount,
     }),
   });
 
   const data = await res.json();
   if (!res.ok) return alert(data.error || "Transfer failed");
 
-  alert("Money sent");
-  showDashboard();
+  // Success page
+  document.getElementById("sentAmount").innerText = amount;
+  document.getElementById("sentToEmail").innerText = toEmail;
+
+  showPage(sendSuccessPage);
   loadDashboard();
 };
 
