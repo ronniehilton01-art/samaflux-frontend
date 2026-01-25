@@ -1,45 +1,21 @@
 const API = "https://samaflux-backend.onrender.com";
 
 /* =====================
-   ELEMENTS (SAFE)
+   ELEMENTS
 ===================== */
 const auth = document.getElementById("auth-container");
 const step1 = document.getElementById("signup-step1");
 const step2 = document.getElementById("signup-step2");
 const dashboard = document.getElementById("dashboard-container");
-const profile = document.getElementById("profile-container");
+
+const mainDashboard = document.getElementById("main-dashboard");
+const addFundsPage = document.getElementById("add-funds-page");
+const sendMoneyPage = document.getElementById("send-money-page");
+const profilePage = document.getElementById("profile-page");
 
 const historyList = document.getElementById("history");
 
 /* Buttons */
-const loginBtn = document.getElementById("loginBtn");
-const goSignup = document.getElementById("goSignup");
-const goLogin1 = document.getElementById("goLogin1");
-const nextSignup = document.getElementById("nextSignup");
-const signupBtn = document.getElementById("signupBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const profileBtn = document.getElementById("profileBtn");
-const backDashboard = document.getElementById("backDashboard");
-
-/* =====================
-   VIEW SWITCHER (CORE)
-===================== */
-function hideAll() {
-  auth.style.display = "none";
-  step1.style.display = "none";
-  step2.style.display = "none";
-  dashboard.style.display = "none";
-  if (profile) profile.style.display = "none";
-}
-
-function show(el, type = "flex") {
-  hideAll();
-  el.style.display = type;
-}
-
-/* =====================
-   NAVIGATION
-===================== */
 loginBtn.onclick = login;
 goSignup.onclick = () => show(step1);
 goLogin1.onclick = () => show(auth);
@@ -47,8 +23,42 @@ nextSignup.onclick = () => show(step2);
 signupBtn.onclick = register;
 logoutBtn.onclick = logout;
 
-if (profileBtn) profileBtn.onclick = openProfile;
-if (backDashboard) backDashboard.onclick = () => show(dashboard, "block");
+addFundsBtn.onclick = () => showSection(addFundsPage);
+sendMoneyBtn.onclick = () => showSection(sendMoneyPage);
+profileBtn.onclick = openProfile;
+
+backFromAdd.onclick = () => showSection(mainDashboard);
+backFromSend.onclick = () => showSection(mainDashboard);
+backFromProfile.onclick = () => showSection(mainDashboard);
+
+/* =====================
+   VIEW HELPERS
+===================== */
+function hideAll() {
+  auth.style.display = "none";
+  step1.style.display = "none";
+  step2.style.display = "none";
+  dashboard.style.display = "none";
+
+  mainDashboard.style.display = "none";
+  addFundsPage.style.display = "none";
+  sendMoneyPage.style.display = "none";
+  profilePage.style.display = "none";
+}
+
+function show(el) {
+  hideAll();
+  el.style.display = "flex";
+}
+
+function showSection(section) {
+  mainDashboard.style.display = "none";
+  addFundsPage.style.display = "none";
+  sendMoneyPage.style.display = "none";
+  profilePage.style.display = "none";
+
+  section.style.display = "block";
+}
 
 /* =====================
    LOGIN
@@ -73,7 +83,7 @@ async function login() {
 }
 
 /* =====================
-   REGISTER (2 STEP)
+   REGISTER
 ===================== */
 async function register() {
   const payload = {
@@ -96,7 +106,7 @@ async function register() {
 
   if (!res.ok) return alert("Signup failed");
 
-  alert("Account created successfully");
+  alert("Account created");
   show(auth);
 }
 
@@ -104,7 +114,9 @@ async function register() {
    DASHBOARD
 ===================== */
 async function loadDashboard() {
-  show(dashboard, "block");
+  hideAll();
+  dashboard.style.display = "block";
+  mainDashboard.style.display = "block";
 
   const res = await fetch(`${API}/auth/me`, {
     headers: {
@@ -113,16 +125,16 @@ async function loadDashboard() {
   });
 
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance || 0;
+  balance.innerText = data.balance || 0;
 
   loadHistory();
 }
 
 /* =====================
-   PROFILE (READ ONLY)
+   PROFILE
 ===================== */
 async function openProfile() {
-  show(profile);
+  showSection(profilePage);
 
   const res = await fetch(`${API}/auth/me`, {
     headers: {
@@ -132,18 +144,14 @@ async function openProfile() {
 
   const user = await res.json();
 
-  document.getElementById("p-email").innerText = user.email || "-";
-  document.getElementById("p-name").innerText = user.fullName || "-";
-  document.getElementById("p-phone").innerText = user.phone || "-";
-  document.getElementById("p-address").innerText = user.address || "-";
-  document.getElementById("p-city").innerText = user.city || "-";
-  document.getElementById("p-state").innerText = user.state || "-";
-  document.getElementById("p-country").innerText = user.country || "-";
-  document.getElementById("p-zip").innerText = user.zip || "-";
+  pName.innerText = user.fullName || "-";
+  pEmail.innerText = user.email || "-";
+  pPhone.innerText = user.phone || "-";
+  pAddress.innerText = user.address || "-";
 }
 
 /* =====================
-   TRANSACTION HISTORY
+   HISTORY
 ===================== */
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
