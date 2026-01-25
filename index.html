@@ -21,6 +21,7 @@
 <!-- ================= DASHBOARD ================= -->
 <div id="dashboard-container" style="display:none">
 
+  <!-- HEADER -->
   <header class="dash-header">
     <h1>SamaFlux</h1>
     <div class="dash-actions">
@@ -31,7 +32,7 @@
     </div>
   </header>
 
-  <!-- MAIN DASHBOARD -->
+  <!-- ================= MAIN DASHBOARD ================= -->
   <section id="main-dashboard">
     <div class="card">
       <p>Balance</p>
@@ -44,28 +45,28 @@
     </div>
   </section>
 
-  <!-- ADD FUNDS -->
+  <!-- ================= ADD FUNDS ================= -->
   <section id="add-funds-page" style="display:none">
     <div class="card">
       <h3>Add Funds</h3>
       <input id="fundAmount" type="number" placeholder="Amount" />
       <button id="paystackBtn">Add Funds</button>
-      <button id="backFromAdd" class="link-btn">Back</button>
+      <button id="backFromAdd" class="link-btn">Back to dashboard</button>
     </div>
   </section>
 
-  <!-- SEND MONEY -->
+  <!-- ================= SEND MONEY ================= -->
   <section id="send-money-page" style="display:none">
     <div class="card">
       <h3>Send Money</h3>
       <input id="sendTo" type="email" placeholder="Recipient email" />
       <input id="sendAmount" type="number" placeholder="Amount" />
       <button id="sendBtn">Send</button>
-      <button id="backFromSend" class="link-btn">Back</button>
+      <button id="backFromSend" class="link-btn">Back to dashboard</button>
     </div>
   </section>
 
-  <!-- PROFILE -->
+  <!-- ================= PROFILE ================= -->
   <section id="profile-page" style="display:none">
     <div class="card">
       <h3>Profile</h3>
@@ -73,7 +74,31 @@
       <p><b>Email:</b> <span id="pEmail">-</span></p>
       <p><b>Phone:</b> <span id="pPhone">-</span></p>
       <p><b>Address:</b> <span id="pAddress">-</span></p>
-      <button id="backFromProfile" class="link-btn">Back</button>
+      <button id="backFromProfile" class="link-btn">Back to dashboard</button>
+    </div>
+  </section>
+
+  <!-- ================= ADD FUNDS SUCCESS ================= -->
+  <section id="add-success-page" style="display:none">
+    <div class="card">
+      <h3>Success 🎉</h3>
+      <p>
+        Funds added successfully.<br />
+        Amount: <b>₦<span id="addedAmount">0</span></b>
+      </p>
+      <button id="backAfterAdd" class="link-btn">Back to dashboard</button>
+    </div>
+  </section>
+
+  <!-- ================= SEND MONEY SUCCESS ================= -->
+  <section id="send-success-page" style="display:none">
+    <div class="card">
+      <h3>Transfer Successful ✅</h3>
+      <p>
+        You sent <b>₦<span id="sentAmount">0</span></b><br />
+        To <b><span id="sentToEmail">-</span></b>
+      </p>
+      <button id="backAfterSend" class="link-btn">Back to dashboard</button>
     </div>
   </section>
 
