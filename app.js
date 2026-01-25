@@ -8,11 +8,27 @@ const mainDashboard = document.getElementById("main-dashboard");
 const addFundsPage = document.getElementById("add-funds-page");
 const sendMoneyPage = document.getElementById("send-money-page");
 const profilePage = document.getElementById("profile-page");
-const addSuccessPage = document.getElementById("add-success-page");
-const sendSuccessPage = document.getElementById("send-success-page");
 
 const balanceEl = document.getElementById("balance");
 const historyList = document.getElementById("history");
+
+/* Buttons */
+const addFundsBtn = document.getElementById("addFundsBtn");
+const sendMoneyBtn = document.getElementById("sendMoneyBtn");
+const profileBtn = document.getElementById("profileBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const backFromAdd = document.getElementById("backFromAdd");
+const backFromSend = document.getElementById("backFromSend");
+const backFromProfile = document.getElementById("backFromProfile");
+
+const paystackBtn = document.getElementById("paystackBtn");
+const sendBtn = document.getElementById("sendBtn");
+
+/* Inputs */
+const fundAmount = document.getElementById("fundAmount");
+const sendTo = document.getElementById("sendTo");
+const sendAmount = document.getElementById("sendAmount");
 
 /* ================= VIEW CONTROL ================= */
 function hideAll() {
@@ -20,8 +36,6 @@ function hideAll() {
   addFundsPage.style.display = "none";
   sendMoneyPage.style.display = "none";
   profilePage.style.display = "none";
-  addSuccessPage.style.display = "none";
-  sendSuccessPage.style.display = "none";
 }
 
 function showDashboard() {
@@ -73,7 +87,7 @@ async function loadDashboard() {
   loadHistory();
 }
 
-/* ================= NAV BUTTONS ================= */
+/* ================= NAVIGATION ================= */
 addFundsBtn.onclick = () => showPage(addFundsPage);
 sendMoneyBtn.onclick = () => showPage(sendMoneyPage);
 profileBtn.onclick = openProfile;
@@ -81,9 +95,6 @@ profileBtn.onclick = openProfile;
 backFromAdd.onclick = showDashboard;
 backFromSend.onclick = showDashboard;
 backFromProfile.onclick = showDashboard;
-
-backAfterAdd.onclick = showDashboard;
-backAfterSend.onclick = showDashboard;
 
 /* ================= PROFILE ================= */
 async function openProfile() {
@@ -100,7 +111,7 @@ async function openProfile() {
   pAddress.innerText = u.address || "-";
 }
 
-/* ================= ADD FUNDS (PAYSTACK CALLBACK HANDLED SERVER SIDE) ================= */
+/* ================= ADD FUNDS (PAYSTACK) ================= */
 paystackBtn.onclick = async () => {
   const amount = Number(fundAmount.value);
   if (!amount) return alert("Enter amount");
@@ -140,11 +151,11 @@ sendBtn.onclick = async () => {
   const data = await res.json();
   if (!res.ok) return alert(data.error || "Transfer failed");
 
-  // Success page
-  document.getElementById("sentAmount").innerText = amount;
-  document.getElementById("sentToEmail").innerText = toEmail;
+  alert(`✅ ₦${amount} sent to ${toEmail}`);
 
-  showPage(sendSuccessPage);
+  sendTo.value = "";
+  sendAmount.value = "";
+
   loadDashboard();
 };
 
