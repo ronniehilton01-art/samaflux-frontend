@@ -8,6 +8,8 @@ const mainDashboard = document.getElementById("main-dashboard");
 const addFundsPage = document.getElementById("add-funds-page");
 const sendMoneyPage = document.getElementById("send-money-page");
 const profilePage = document.getElementById("profile-page");
+const addSuccessPage = document.getElementById("add-success-page");
+const sendSuccessPage = document.getElementById("send-success-page");
 
 const balanceEl = document.getElementById("balance");
 const historyList = document.getElementById("history");
@@ -21,6 +23,8 @@ const logoutBtn = document.getElementById("logoutBtn");
 const backFromAdd = document.getElementById("backFromAdd");
 const backFromSend = document.getElementById("backFromSend");
 const backFromProfile = document.getElementById("backFromProfile");
+const backAfterAdd = document.getElementById("backAfterAdd");
+const backAfterSend = document.getElementById("backAfterSend");
 
 const paystackBtn = document.getElementById("paystackBtn");
 const sendBtn = document.getElementById("sendBtn");
@@ -36,6 +40,8 @@ function hideAll() {
   addFundsPage.style.display = "none";
   sendMoneyPage.style.display = "none";
   profilePage.style.display = "none";
+  addSuccessPage.style.display = "none";
+  sendSuccessPage.style.display = "none";
 }
 
 function showDashboard() {
@@ -87,7 +93,7 @@ async function loadDashboard() {
   loadHistory();
 }
 
-/* ================= NAVIGATION ================= */
+/* ================= NAV ================= */
 addFundsBtn.onclick = () => showPage(addFundsPage);
 sendMoneyBtn.onclick = () => showPage(sendMoneyPage);
 profileBtn.onclick = openProfile;
@@ -95,6 +101,8 @@ profileBtn.onclick = openProfile;
 backFromAdd.onclick = showDashboard;
 backFromSend.onclick = showDashboard;
 backFromProfile.onclick = showDashboard;
+backAfterAdd.onclick = showDashboard;
+backAfterSend.onclick = showDashboard;
 
 /* ================= PROFILE ================= */
 async function openProfile() {
@@ -111,10 +119,12 @@ async function openProfile() {
   pAddress.innerText = u.address || "-";
 }
 
-/* ================= ADD FUNDS (PAYSTACK) ================= */
+/* ================= ADD FUNDS ================= */
 paystackBtn.onclick = async () => {
   const amount = Number(fundAmount.value);
   if (!amount) return alert("Enter amount");
+
+  localStorage.setItem("lastFundAmount", amount);
 
   const res = await fetch(`${API}/payment/init-paystack`, {
     method: "POST",
@@ -151,12 +161,10 @@ sendBtn.onclick = async () => {
   const data = await res.json();
   if (!res.ok) return alert(data.error || "Transfer failed");
 
-  alert(`✅ ₦${amount} sent to ${toEmail}`);
+  document.getElementById("sentAmount").innerText = amount;
+  document.getElementById("sentToEmail").innerText = toEmail;
 
-  sendTo.value = "";
-  sendAmount.value = "";
-
-  loadDashboard();
+  showPage(sendSuccessPage);
 };
 
 /* ================= HISTORY ================= */
