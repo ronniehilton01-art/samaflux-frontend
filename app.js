@@ -15,10 +15,11 @@ const balanceEl = document.getElementById("balance");
 const historyList = document.getElementById("history");
 
 /* Buttons */
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 const addFundsBtn = document.getElementById("addFundsBtn");
 const sendMoneyBtn = document.getElementById("sendMoneyBtn");
 const profileBtn = document.getElementById("profileBtn");
-const logoutBtn = document.getElementById("logoutBtn");
 
 const backFromAdd = document.getElementById("backFromAdd");
 const backFromSend = document.getElementById("backFromSend");
@@ -64,8 +65,8 @@ async function login() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: loginEmail.value,
-      password: loginPassword.value,
-    }),
+      password: loginPassword.value
+    })
   });
 
   const data = await res.json();
@@ -84,7 +85,7 @@ async function loadDashboard() {
   showDashboard();
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
 
   const data = await res.json();
@@ -109,7 +110,7 @@ async function openProfile() {
   showPage(profilePage);
 
   const res = await fetch(`${API}/auth/me`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
 
   const u = await res.json();
@@ -130,9 +131,9 @@ paystackBtn.onclick = async () => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     },
-    body: JSON.stringify({ amount }),
+    body: JSON.stringify({ amount })
   });
 
   const data = await res.json();
@@ -154,16 +155,15 @@ sendBtn.onclick = async () => {
     body: JSON.stringify({
       fromEmail: localStorage.getItem("email"),
       toEmail,
-      amount,
-    }),
+      amount
+    })
   });
 
   const data = await res.json();
   if (!res.ok) return alert(data.error || "Transfer failed");
 
-  document.getElementById("sentAmount").innerText = amount;
-  document.getElementById("sentToEmail").innerText = toEmail;
-
+  sentAmount.innerText = amount;
+  sentToEmail.innerText = toEmail;
   showPage(sendSuccessPage);
 };
 
@@ -171,15 +171,26 @@ sendBtn.onclick = async () => {
 async function loadHistory() {
   historyList.innerHTML = "<li>Loading...</li>";
 
-  const res = await fetch(
-    `${API}/payment/history/${localStorage.getItem("email")}`
-  );
+  const res = await fetch(`${API}/payment/history/${localStorage.getItem("email")}`);
   const tx = await res.json();
 
   historyList.innerHTML = tx.length
     ? tx.slice(0, 5).map(t => `<li>${t.type} ₦${t.amount}</li>`).join("")
     : "<li>No transactions</li>";
 }
+
+/* ================= PAYSTACK RETURN HANDLER ================= */
+(function handlePaystackReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("reference")) {
+    const amount = localStorage.getItem("lastFundAmount");
+    if (amount) {
+      addedAmount.innerText = amount;
+      localStorage.removeItem("lastFundAmount");
+      showPage(addSuccessPage);
+    }
+  }
+})();
 
 /* ================= LOGOUT ================= */
 function logout() {
