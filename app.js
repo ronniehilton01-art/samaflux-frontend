@@ -180,14 +180,22 @@ async function loadHistory() {
 }
 
 /* ================= PAYSTACK RETURN HANDLER ================= */
-(function handlePaystackReturn() {
+(async function handlePaystackReturn() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get("reference")) {
-    const amount = localStorage.getItem("lastFundAmount");
-    if (amount) {
-      addedAmount.innerText = amount;
-      localStorage.removeItem("lastFundAmount");
+  const reference = params.get("reference");
+
+  if (reference) {
+    const res = await fetch(`${API}/payment/verify/${reference}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      addedAmount.innerText = data.amount;
       showPage(addSuccessPage);
+      loadDashboard();
     }
   }
 })();
